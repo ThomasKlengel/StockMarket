@@ -1,0 +1,26 @@
+﻿<Page x:Class="StockMarket.Pages.AddOrderPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:StockMarket.Pages"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddOrderPage">
+
+    <Grid>
+        <StackPanel Orientation="Vertical" Margin="5">
+            <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged"></ComboBox>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label>Price</Label>
+                <TextBox Name="TB_Price" Width=" 100"></TextBox>                
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="5">
+                <Label>Amount</Label>
+                <TextBox Name="TB_Amount" Width=" 100"></TextBox>
+            </StackPanel>
+            <Button Name="B_AddOrder" Margin="5" Click="B_AddOrder_Click">Add</Button>
+        </StackPanel>
+        
+    </Grid>
+</Page>

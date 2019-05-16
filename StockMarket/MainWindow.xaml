@@ -1,0 +1,21 @@
+﻿<Window x:Class="StockMarket.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StockMarket"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
+    <Grid>
+        <StackPanel Orientation="Vertical">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
+                <Button Height="20" Width="100" Click="B_AddShare_Click">AddShare</Button>
+                <Button Height="20" Width="100" Click="B_AddOrder_Click">AddOrder</Button>
+            </StackPanel>
+            <Frame Name="MainFrame">
+
+            </Frame>
+        </StackPanel>
+
+    </Grid>
+</Window>
