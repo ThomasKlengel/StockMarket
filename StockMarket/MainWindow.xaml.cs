@@ -30,12 +30,12 @@ namespace StockMarket
 
         private void B_AddShare_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new Pages.AddSharePage(ref shares, ref MainFrame));
+            MainFrame.Navigate(new Pages.AddSharePage(ref shares));
         }
 
         private void B_AddOrder_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new Pages.AddOrderPage(ref shares, ref MainFrame));
+            MainFrame.Navigate(new Pages.AddOrderPage(ref shares));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

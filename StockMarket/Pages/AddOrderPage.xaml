@@ -3,24 +3,29 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:StockMarket.Pages"
+      xmlns:local="clr-namespace:StockMarket"
+      xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddOrderPage">
-
+    <Page.DataContext>
+        <view:OrderViewModel></view:OrderViewModel>
+    </Page.DataContext>
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
-            <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged"></ComboBox>
+            <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged" ItemsSource="{Binding Shares}"
+                      DisplayMemberPath="ShareName" >
+            </ComboBox>
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Label>Price</Label>
-                <TextBox Name="TB_Price" Width=" 100"></TextBox>                
+                <TextBox Width="100" Text="{Binding SharePrice,ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Label>Amount</Label>
-                <TextBox Name="TB_Amount" Width=" 100"></TextBox>
+                <TextBox Width="100" Text="{Binding Amount}"/>
             </StackPanel>
             <Button Name="B_AddOrder" Margin="5" Click="B_AddOrder_Click">Add</Button>
         </StackPanel>
-        
+
     </Grid>
 </Page>

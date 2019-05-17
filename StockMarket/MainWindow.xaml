@@ -12,7 +12,7 @@
                 <Button Height="20" Width="100" Click="B_AddShare_Click">AddShare</Button>
                 <Button Height="20" Width="100" Click="B_AddOrder_Click">AddOrder</Button>
             </StackPanel>
-            <Frame Name="MainFrame">
+            <Frame Name="MainFrame" NavigationUIVisibility="Hidden">
 
             </Frame>
         </StackPanel>

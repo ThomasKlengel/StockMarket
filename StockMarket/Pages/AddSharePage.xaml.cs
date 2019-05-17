@@ -14,6 +14,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using StockMarket.ViewModels;
 
 namespace StockMarket.Pages
 {
@@ -22,76 +23,89 @@ namespace StockMarket.Pages
     /// </summary>
     public partial class AddSharePage : Page
     {
-        List<Share> shares;
-        Frame mainFrame;
-        public AddSharePage(ref List<Share> shares, ref Frame frame)
+        List<Share> _shares;
+        ShareViewModel _vmShare;
+        public AddSharePage(ref List<Share> shares)
         {
             InitializeComponent();
-            this.shares = shares;
-            mainFrame = frame;
+            _shares = shares;
+            _vmShare = new ShareViewModel();
+
+            //Datacontext for the textboxes is a share
+            this.DataContext = _vmShare;
         }
 
         private void B_Confirm_Click(object sender, RoutedEventArgs e)
         {
-
-            var share = new Share(TB_Name.Text, TB_WebSite.Text, TB_WKN.Text, TB_ISIN.Text);
-            if (!shares.Contains(share))
-            {
-                share.DayValues.Add(new DayValue() { Date = DateTime.Today, Price = Convert.ToDouble(TB_Price.Text) });
-                shares.Add(share);
+            var share = Share.CreateFromViewModel(_vmShare);
+            // check if share is already in the list...
+            if (!_shares.Contains(share))
+            {                 
+                // ...if not, add it to the list
+                _shares.Add(share);
             }
-            mainFrame.Navigate(new Pages.BlankPage());
+            else
+            {
+                MessageBox.Show($"You already have a share with an ISIN matching ISIN={share.ISIN}");
+            }
         }
 
         private void B_AutoFill_Click(object sender, RoutedEventArgs e)
         {
-            if (TB_WebSite.Text==String.Empty)
+            if (_vmShare.WebSite==String.Empty)
             {
                 return;
             }
 
-            string retstr = string.Empty;
+            string webContent = string.Empty;
 
-            //try
-            //{
+            // try to get the website content
+            try
+            {
                 using (WebClient client = new WebClient())
                 {
                     // https://www.finanzen.net/aktien...
-                    retstr = client.DownloadString(TB_WebSite.Text);
+                    webContent = client.DownloadString(_vmShare.WebSite);
                 }
-            //}
-            //catch () { }
-            
-            if (retstr == string.Empty)
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+
+            if (webContent == string.Empty)
             {
                 return;
             }
 
+            // get the section containing the share price
             //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-            var kursMatch = Regex.Match(retstr, "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span");
-            if (!kursMatch.Success)
+            var priceMatch = Regex.Match(webContent, Helpers.REGEX_Group_SharePrice);
+            if (!priceMatch.Success)
             {
                 return;
             }
-            string kurs = Regex.Match(kursMatch.Value, "\\d*\\.?\\d*,\\d*").Value;
+            //
+            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".","").Replace(",",".");
 
             //id">WKN: 623100 / ISIN: DE0006231004</span>
             //var test= "nbsp;<span class=\"instrument - id\">WKN: 623100 / ISIN: DE0006231004</span></h1><div"
-            var idMatch = Regex.Match(retstr, "instrument-id\"\\>.{40}");
-            var wknMatch = Regex.Match(idMatch.Value, "WKN: \\d{6}");
-            var isinMatch = Regex.Match(idMatch.Value, "ISIN: \\S{2}\\d{10}");
+            var idMatch = Regex.Match(webContent, Helpers.REGEX_Group_IDs);
+            var wknMatch = Regex.Match(idMatch.Value, Helpers.REGEX_WKN);
+            var isinMatch = Regex.Match(idMatch.Value, Helpers.REGEX_ISIN);
             string wkn = wknMatch.Value.Substring(5);
             string isin = isinMatch.Value.Substring(6);
 
             //< h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
-            var nameMatch = Regex.Match(retstr, "box-headline\"\\>Aktienkurs.{50}");
-            var nameM2 = Regex.Match(nameMatch.Value, "Aktienkurs .* in");
+            var nameMatch = Regex.Match(webContent, Helpers.REGEX_Group_ShareName);
+            var nameM2 = Regex.Match(nameMatch.Value, Helpers.REGEX_ShareName);
             var name = nameM2.Value.Substring(10).Trim().Replace(" in", "");
 
-            TB_ISIN.Text = isin;
-            TB_Name.Text = name;
-            TB_WKN.Text = wkn;
-            TB_Price.Text = kurs;
+            _vmShare.ISIN = isin;
+            _vmShare.ShareName = name;
+            _vmShare.WKN = wkn;
+            _vmShare.ActualPrice = Convert.ToDouble(sharePrice);
+            _vmShare.DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = _vmShare.ActualPrice });
 
         }
     }
