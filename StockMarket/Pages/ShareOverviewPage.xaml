@@ -4,12 +4,58 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:StockMarket.Pages"
+      xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ShareOverviewPage">
+    <Page.DataContext>
+        <view:ShareViewModel></view:ShareViewModel>
+    </Page.DataContext>
 
     <Grid>
-        <ComboBox x:Name="CoBo_AG" Margin="5,5,14.6,422.6" SelectionChanged="CoBo_AG_SelectionChanged"/>
+        <StackPanel Orientation="Vertical" Margin="5">
+            <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged" ItemsSource="{Binding Shares}"
+                      DisplayMemberPath="ShareName" >
+            </ComboBox>
+            <Grid Margin="5" Height="300">
+                <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="{Binding Path=Backgropund}" Margin="5" Width="700">
+                                <StackPanel Orientation="Horizontal" >
+                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                        <Label HorizontalAlignment="Center">Date</Label>
+                                        <TextBlock Margin="5" Text="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                        <Label HorizontalAlignment="Center">Amount</Label>
+                                        <TextBlock Margin="5" Text="{Binding Path=Amount}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                        <Label HorizontalAlignment="Center">SharePrice</Label>
+                                        <TextBlock Margin="5" Text="{Binding Path=SharePrice}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                        <Label HorizontalAlignment="Center">Sum Buy</Label>
+                                        <TextBlock Margin="5" Text="{Binding Path=SumBuy}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                        <Label HorizontalAlignment="Center">Sum Now</Label>
+                                        <TextBlock Margin="5" Text="{Binding Path=SumNow}"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0">
+                                        <Label HorizontalAlignment="Center">Percentage</Label>
+                                        <TextBlock Margin="5" Text="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+
+                </ListView>
+
+            </Grid>
+        </StackPanel>
 
     </Grid>
 </Page>

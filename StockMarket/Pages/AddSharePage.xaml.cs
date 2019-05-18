@@ -1,19 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using StockMarket.ViewModels;
 
 namespace StockMarket.Pages
@@ -86,7 +76,7 @@ namespace StockMarket.Pages
                 return;
             }
             //
-            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".","").Replace(",",".");
+            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".","");
 
             //id">WKN: 623100 / ISIN: DE0006231004</span>
             //var test= "nbsp;<span class=\"instrument - id\">WKN: 623100 / ISIN: DE0006231004</span></h1><div"

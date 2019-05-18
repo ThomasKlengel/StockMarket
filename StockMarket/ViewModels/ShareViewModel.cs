@@ -17,8 +17,8 @@ namespace StockMarket.ViewModels
             DayValues = new ObservableCollection<DayValueViewModel>();
         }
 
-        # endregion
-        
+        #endregion
+
         #region Properties
 
         private string _shareName;
@@ -87,14 +87,22 @@ namespace StockMarket.ViewModels
         public ObservableCollection<OrderViewModel> Orders
         {
             get { return _orders; }
-            set { _orders = value; }
+            set
+            {
+                _orders = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Orders)));
+            }
         }
 
         private ObservableCollection<DayValueViewModel> _dayValues;
         public ObservableCollection<DayValueViewModel> DayValues
         {
             get { return _dayValues; }
-            set { _dayValues = value; }
+            set
+            {
+                _dayValues = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(DayValues)));
+            }
         }
 
         #endregion

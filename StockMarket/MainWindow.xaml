@@ -11,6 +11,7 @@
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Button Height="20" Width="100" Click="B_AddShare_Click">AddShare</Button>
                 <Button Height="20" Width="100" Click="B_AddOrder_Click">AddOrder</Button>
+                <Button Height="20" Width="100" Click="B_Overview_Click">Overview</Button>
             </StackPanel>
             <Frame Name="MainFrame" NavigationUIVisibility="Hidden">
 

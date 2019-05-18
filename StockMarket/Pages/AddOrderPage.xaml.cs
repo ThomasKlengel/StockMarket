@@ -68,7 +68,7 @@ namespace StockMarket.Pages
                 return;
             }
             // get the SharePrice in the desired format
-            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".", "").Replace(",", ".");
+            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".", "");
 
             _vmOrder.SharePrice = Convert.ToDouble(sharePrice);
         }
