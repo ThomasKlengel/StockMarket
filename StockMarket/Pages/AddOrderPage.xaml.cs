@@ -1,11 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
+using StockMarket.DataModels;
+
 
 namespace StockMarket.Pages
 {
@@ -14,12 +15,12 @@ namespace StockMarket.Pages
     /// </summary>
     public partial class AddOrderPage : Page
     {
-        List<Share> shares;
+        SharesDataModel _model;
         OrderViewModel _vmOrder;
-        public AddOrderPage(ref List<Share> shares)
+        public AddOrderPage(ref SharesDataModel model)
         {
             InitializeComponent();
-            this.shares = shares;
+            _model = model;
             _vmOrder = new OrderViewModel();
 
             // Datacontext for textboxes is an Order
@@ -27,14 +28,14 @@ namespace StockMarket.Pages
 
             // We need to populate the comboboxItems with ShareNames
             // so DataContext for Combobox is the MainViemodel which contains all Shares (and their names)
-            CoBo_AG.DataContext = MainViewModel.PopulateFromShares(shares);
+            CoBo_AG.DataContext = MainViewModel.PopulateFromModel(model);
 
         }
 
         private void CoBo_AG_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             // get the website of the selected Share
-            var website = from share in shares
+            var website = from share in _model.Shares
                           where share.ShareName == (e.AddedItems[0] as ShareViewModel).ShareName 
                           select share.WebSite;
 
@@ -62,13 +63,13 @@ namespace StockMarket.Pages
 
             // get the section of the website which contains the SharePrice
             //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-            var priceMatch = Regex.Match(retStr, Helpers.REGEX_Group_SharePrice);
+            var priceMatch = Regex.Match(retStr, RegexHelper.REGEX_Group_SharePrice);
             if (!priceMatch.Success)
             {
                 return;
             }
             // get the SharePrice in the desired format
-            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".", "");
+            string sharePrice = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
 
             _vmOrder.SharePrice = Convert.ToDouble(sharePrice);
         }
@@ -77,11 +78,6 @@ namespace StockMarket.Pages
         {
             if (_vmOrder.Amount>0)
             {
-                // get the share which matches the selected item of the combobox
-                var share = from s in shares
-                            where s.ISIN == (CoBo_AG.SelectedValue as ShareViewModel).ISIN
-                            select s;
-
                 // create a new order
                 Order o = new Order();
                 o.Amount = Convert.ToInt32(_vmOrder.Amount);
@@ -91,7 +87,7 @@ namespace StockMarket.Pages
                 o.Date = DateTime.Today;
 
                 // add the order to the matched share
-                share.First().Orders.Add(o);
+                _model.Orders.Add(o);
             }
         }
     }

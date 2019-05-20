@@ -5,6 +5,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
+using StockMarket.DataModels;
 
 namespace StockMarket.Pages
 {
@@ -13,27 +14,22 @@ namespace StockMarket.Pages
     /// </summary>
     public partial class ShareOverviewPage : Page
     {
-        List<Share> shares;
-        public ShareOverviewPage(ref List<Share> shares)
+        SharesDataModel _model;
+        public ShareOverviewPage(ref SharesDataModel model)
         {
             InitializeComponent();
-            this.shares = shares;
+            _model = model;
 
             // We need to populate the comboboxItems with ShareNames
             // so DataContext for Combobox is the MainViemodel which contains all Shares (and their names)
-            CoBo_AG.DataContext = MainViewModel.PopulateFromShares(shares);
+            CoBo_AG.DataContext = MainViewModel.PopulateFromModel(_model);
             CoBo_AG.SelectedIndex = 0;
 
         }
 
         private void CoBo_AG_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            //select get share that matches the ComboBox
-            var share = from s in shares
-                        where s.ISIN == (e.AddedItems[0] as ShareViewModel).ISIN
-                        select s;
-
-            var svm = ShareViewModel.CreateFromShare(share.First());
+            var svm = e.AddedItems[0] as ShareViewModel;
 
             var retstr = string.Empty;
             using (WebClient client = new WebClient())
@@ -41,8 +37,8 @@ namespace StockMarket.Pages
                 retstr = client.DownloadString(svm.WebSite);
             }
 
-            var group = Regex.Match(retstr, Helpers.REGEX_Group_SharePrice);
-            var price = Regex.Match(group.Value, Helpers.REGEX_SharePrice).Value.Replace(".", "");
+            var group = Regex.Match(retstr, RegexHelper.REGEX_Group_SharePrice);
+            var price = Regex.Match(group.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
 
 
 

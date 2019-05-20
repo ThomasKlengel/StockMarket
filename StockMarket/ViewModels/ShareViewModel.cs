@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using StockMarket.DataModels;
+
 
 namespace StockMarket.ViewModels
 {
@@ -109,17 +107,22 @@ namespace StockMarket.ViewModels
 
         #region Methods
 
-        public static ShareViewModel CreateFromShare(Share share)
+        public static ShareViewModel CreateFromShare(SharesDataModel model, Share share)
         {
             ShareViewModel vm_Share = new ShareViewModel();
             vm_Share.ISIN = share.ISIN;
             vm_Share.WKN = share.WKN;
             vm_Share.ShareName = share.ShareName;
             vm_Share.WebSite = share.WebSite;
-            var orders = new ObservableCollection<OrderViewModel>();
-            foreach (var order in share.Orders)
+            var orderCollection = new ObservableCollection<OrderViewModel>();
+
+            var orders = from o in model.Orders
+                         where o.ISIN == vm_Share.ISIN
+                         select o;
+
+            foreach (var order in orders)
             {
-                orders.Add(new OrderViewModel()
+                orderCollection.Add(new OrderViewModel()
                 {
                     Date = order.Date,
                     Amount = order.Amount,
@@ -128,20 +131,25 @@ namespace StockMarket.ViewModels
                     SharePrice = order.SharePrice
                 });
             }
-            vm_Share.Orders = orders;
+            vm_Share.Orders = orderCollection;
 
-            var dayValues = new ObservableCollection<DayValueViewModel>();
-            foreach (var dayVal in share.DayValues)
+            var valueCollection = new ObservableCollection<DayValueViewModel>();
+
+            var values = from sv in model.ShareValues
+                         where sv.ISIN == vm_Share.ISIN
+                         select sv;
+
+            foreach (var dayVal in values)
             {
-                dayValues.Add(new DayValueViewModel()
+                valueCollection.Add(new DayValueViewModel()
                 {
                     Date = dayVal.Date,
                     Price = dayVal.Price
                 });
             }
-            vm_Share.Orders = orders;
+            vm_Share.Orders = orderCollection;
 
-            vm_Share.DayValues = dayValues;
+            vm_Share.DayValues = valueCollection;
 
             return vm_Share;
 

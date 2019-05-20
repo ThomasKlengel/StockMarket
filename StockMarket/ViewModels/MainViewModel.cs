@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.Collections.ObjectModel;
+using StockMarket.DataModels;
 
 namespace StockMarket.ViewModels
 {
@@ -31,12 +32,12 @@ namespace StockMarket.ViewModels
 
         #region Methods
 
-        public static MainViewModel PopulateFromShares(List<Share> shares)
+        public static MainViewModel PopulateFromModel(SharesDataModel model)
         {
             MainViewModel vm = new MainViewModel();
-            foreach (var share in shares)
+            foreach (var share in model.Shares)
             {
-                vm.Shares.Add(ShareViewModel.CreateFromShare(share));
+                vm.Shares.Add(ShareViewModel.CreateFromShare(model,share));
             }
             return vm;
         }

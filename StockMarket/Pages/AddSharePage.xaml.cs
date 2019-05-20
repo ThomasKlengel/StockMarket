@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
+using StockMarket.DataModels;
 
 namespace StockMarket.Pages
 {
@@ -13,12 +14,12 @@ namespace StockMarket.Pages
     /// </summary>
     public partial class AddSharePage : Page
     {
-        List<Share> _shares;
+        SharesDataModel _model;
         ShareViewModel _vmShare;
-        public AddSharePage(ref List<Share> shares)
+        public AddSharePage(ref SharesDataModel model)
         {
             InitializeComponent();
-            _shares = shares;
+            _model = model;
             _vmShare = new ShareViewModel();
 
             //Datacontext for the textboxes is a share
@@ -27,12 +28,18 @@ namespace StockMarket.Pages
 
         private void B_Confirm_Click(object sender, RoutedEventArgs e)
         {
-            var share = Share.CreateFromViewModel(_vmShare);
+            var share = new Share()
+            {
+                ISIN = _vmShare.ISIN,
+                ShareName = _vmShare.ShareName,
+                WebSite = _vmShare.WebSite,
+                WKN = _vmShare.WebSite
+            };
             // check if share is already in the list...
-            if (!_shares.Contains(share))
-            {                 
+            if (!_model.Shares.Contains(share))
+            {
                 // ...if not, add it to the list
-                _shares.Add(share);
+                _model.Shares.Add(share);
             }
             else
             {
@@ -70,25 +77,25 @@ namespace StockMarket.Pages
 
             // get the section containing the share price
             //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-            var priceMatch = Regex.Match(webContent, Helpers.REGEX_Group_SharePrice);
+            var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_SharePrice);
             if (!priceMatch.Success)
             {
                 return;
             }
             //
-            string sharePrice = Regex.Match(priceMatch.Value, Helpers.REGEX_SharePrice).Value.Replace(".","");
+            string sharePrice = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".","");
 
             //id">WKN: 623100 / ISIN: DE0006231004</span>
             //var test= "nbsp;<span class=\"instrument - id\">WKN: 623100 / ISIN: DE0006231004</span></h1><div"
-            var idMatch = Regex.Match(webContent, Helpers.REGEX_Group_IDs);
-            var wknMatch = Regex.Match(idMatch.Value, Helpers.REGEX_WKN);
-            var isinMatch = Regex.Match(idMatch.Value, Helpers.REGEX_ISIN);
+            var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
+            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
+            var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
             string wkn = wknMatch.Value.Substring(5);
             string isin = isinMatch.Value.Substring(6);
 
             //< h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
-            var nameMatch = Regex.Match(webContent, Helpers.REGEX_Group_ShareName);
-            var nameM2 = Regex.Match(nameMatch.Value, Helpers.REGEX_ShareName);
+            var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
+            var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
             var name = nameM2.Value.Substring(10).Trim().Replace(" in", "");
 
             _vmShare.ISIN = isin;
