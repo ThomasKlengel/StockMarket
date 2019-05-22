@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
 using StockMarket.DataModels;
-
 
 namespace StockMarket.Pages
 {
@@ -39,14 +37,14 @@ namespace StockMarket.Pages
                           where share.ShareName == (e.AddedItems[0] as ShareViewModel).ShareName 
                           select share.WebSite;
 
-            string retStr = string.Empty;
+            string webContent = string.Empty;
 
             // try to get the website content
             try
             {
                 using (WebClient client = new WebClient())
                 {
-                    retStr = client.DownloadString(website.First());
+                    webContent = client.DownloadString(website.First());
                 }
             }
             catch (Exception ex)
@@ -55,23 +53,12 @@ namespace StockMarket.Pages
                 return;
             }
 
-            if (retStr == string.Empty)
+            if (webContent == string.Empty)
             {
                 return;
             }
 
-
-            // get the section of the website which contains the SharePrice
-            //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-            var priceMatch = Regex.Match(retStr, RegexHelper.REGEX_Group_SharePrice);
-            if (!priceMatch.Success)
-            {
-                return;
-            }
-            // get the SharePrice in the desired format
-            string sharePrice = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
-
-            _vmOrder.SharePrice = Convert.ToDouble(sharePrice);
+            _vmOrder.SharePrice = RegexHelper.GetSharPrice(webContent);
         }
 
         private void B_AddOrder_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -85,6 +72,7 @@ namespace StockMarket.Pages
                 o.OrderType = OrderType.buy;
                 o.SharePrice = Convert.ToDouble(_vmOrder.SharePrice);
                 o.Date = DateTime.Today;
+                o.ISIN = (CoBo_AG.SelectedItem as ShareViewModel).ISIN;
 
                 // add the order to the matched share
                 _model.Orders.Add(o);

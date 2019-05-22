@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Text.RegularExpressions;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
 using StockMarket.DataModels;
@@ -29,18 +26,16 @@ namespace StockMarket.Pages
 
         private void CoBo_AG_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            // get the selected Share
             var svm = e.AddedItems[0] as ShareViewModel;
 
-            var retstr = string.Empty;
+            var webContent = string.Empty;
             using (WebClient client = new WebClient())
             {
-                retstr = client.DownloadString(svm.WebSite);
+                webContent = client.DownloadString(svm.WebSite);
             }
 
-            var group = Regex.Match(retstr, RegexHelper.REGEX_Group_SharePrice);
-            var price = Regex.Match(group.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
-
-
+            double price = RegexHelper.GetSharPrice(webContent);
 
             foreach (var order in svm.Orders)
             {

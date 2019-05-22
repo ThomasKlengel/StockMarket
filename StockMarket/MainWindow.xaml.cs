@@ -12,7 +12,7 @@ namespace StockMarket
         public MainWindow()
         {
             InitializeComponent();
-            model = Helper.ReadFromDB();
+            model = DataBaseHelper.ReadFromDB();
             MainFrame.Navigate(new Pages.BlankPage());
         }
 
@@ -28,7 +28,7 @@ namespace StockMarket
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Helper.SaveToDB(model);
+            DataBaseHelper.SaveToDB(model);
         }
 
         private void B_Overview_Click(object sender, RoutedEventArgs e)

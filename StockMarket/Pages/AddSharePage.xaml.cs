@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Windows;
@@ -75,16 +74,6 @@ namespace StockMarket.Pages
                 return;
             }
 
-            // get the section containing the share price
-            //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-            var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_SharePrice);
-            if (!priceMatch.Success)
-            {
-                return;
-            }
-            //
-            string sharePrice = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".","");
-
             //id">WKN: 623100 / ISIN: DE0006231004</span>
             //var test= "nbsp;<span class=\"instrument - id\">WKN: 623100 / ISIN: DE0006231004</span></h1><div"
             var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
@@ -101,7 +90,7 @@ namespace StockMarket.Pages
             _vmShare.ISIN = isin;
             _vmShare.ShareName = name;
             _vmShare.WKN = wkn;
-            _vmShare.ActualPrice = Convert.ToDouble(sharePrice);
+            _vmShare.ActualPrice = RegexHelper.GetSharPrice(webContent);
             _vmShare.DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = _vmShare.ActualPrice });
 
         }

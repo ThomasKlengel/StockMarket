@@ -1,9 +1,12 @@
 ﻿using SQLite;
 using StockMarket.DataModels;
+using System;
+using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace StockMarket
 {
-    static class Helper
+    public static class DataBaseHelper
     {
         private const string DEFAULTPATH = "Share.DB";
 
@@ -94,5 +97,20 @@ namespace StockMarket
         public const string REGEX_WKN = "WKN: \\d{6}";
         public const string REGEX_Group_ShareName = "box-headline\"\\>Aktienkurs.{50}";
         public const string REGEX_ShareName = "Aktienkurs .* in";
+
+        public static double GetSharPrice (string input)
+        {
+            // get the section of the website which contains the SharePrice
+            //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
+            var priceMatch = Regex.Match(input, RegexHelper.REGEX_Group_SharePrice);
+            if (!priceMatch.Success)
+            {
+                return 0.0;
+            }
+            // get the SharePrice in the desired format
+            string sharePrice = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
+
+            return Convert.ToDouble(sharePrice, CultureInfo.GetCultureInfo("de-DE"));
+        }
     }
 }

@@ -33,15 +33,15 @@
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="0,0,10,0">
                                         <Label HorizontalAlignment="Center">SharePrice</Label>
-                                        <TextBlock Margin="5" Text="{Binding Path=SharePrice}"/>
+                                        <TextBlock Margin="5" Text="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="0,0,10,0">
                                         <Label HorizontalAlignment="Center">Sum Buy</Label>
-                                        <TextBlock Margin="5" Text="{Binding Path=SumBuy}"/>
+                                        <TextBlock Margin="5" Text="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="0,0,10,0">
                                         <Label HorizontalAlignment="Center">Sum Now</Label>
-                                        <TextBlock Margin="5" Text="{Binding Path=SumNow}"/>
+                                        <TextBlock Margin="5" Text="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     </StackPanel>
                                     <StackPanel Orientation="Vertical" Margin="0,0,10,0">
                                         <Label HorizontalAlignment="Center">Percentage</Label>

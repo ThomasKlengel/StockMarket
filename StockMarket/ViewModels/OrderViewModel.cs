@@ -56,21 +56,16 @@ namespace StockMarket.ViewModels
             }
         }
 
-        public double SumBuy {get { return _sharePrice * _amount; } }
+        public double SumBuy {get { return SharePrice * _amount; } }
 
         public double SumNow
         {
-            get
-            {
-                Random r = new Random();
-                int a = r.Next(0, 2);
-                return _sharePrice * _amount + (a > 0 ? 100 : -100);
-            }
+             get { return ActPrice * _amount; } 
         }
 
         public SolidColorBrush Backgropund
         {
-            get { return SumNow - SumBuy > 0 ? new SolidColorBrush(Colors.Green) : new SolidColorBrush(Colors.Red); }
+            get { return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222,255,209)) : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
         }
 
         public double Percentage
