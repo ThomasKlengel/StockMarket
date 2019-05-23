@@ -63,20 +63,21 @@ namespace StockMarket.Pages
 
             // set the share as DataContext for the ListView
             LV.DataContext = svm;
-        }
 
-        private void Page_Unloaded(object sender, System.Windows.RoutedEventArgs e)
-        {
-            refrehTimer.Stop();
             OrderOverviewViewModel oovm = new OrderOverviewViewModel();
             oovm.ActPrice = price;
 
             var orders = from order in svm.Orders
-                          select order;
+                         select order;
 
             oovm.Orders = orders.ToList<OrderViewModel>();
 
             Overview_Grid.DataContext = oovm;
+        }
+
+        private void Page_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            refrehTimer.Stop();          
 
         }
     }
