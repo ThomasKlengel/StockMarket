@@ -3,6 +3,7 @@ using System.Net;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
 using StockMarket.DataModels;
+using System.Linq;
 
 namespace StockMarket.Pages
 {
@@ -44,6 +45,16 @@ namespace StockMarket.Pages
 
             // set the share as DataContext for the ListView
             LV.DataContext = svm;
+
+            OrderOverviewViewModel oovm = new OrderOverviewViewModel();
+            oovm.ActPrice = price;
+
+            var orders = from order in svm.Orders
+                          select order;
+
+            oovm.Orders = orders.ToList<OrderViewModel>();
+
+            Overview_Grid.DataContext = oovm;
 
         }
     }
