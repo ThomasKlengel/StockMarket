@@ -78,7 +78,6 @@
     <Compile Include="UserControls\UserStackPanelList.xaml.cs">
       <DependentUpon>UserStackPanelList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="NewShare.cs" />
     <Compile Include="Pages\AddOrderPage.xaml.cs">
       <DependentUpon>AddOrderPage.xaml</DependentUpon>
     </Compile>
