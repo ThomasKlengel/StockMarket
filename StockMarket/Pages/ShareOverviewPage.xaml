@@ -7,7 +7,7 @@
       xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="ShareOverviewPage">
+      Title="ShareOverviewPage" Unloaded="Page_Unloaded">
     <Page.DataContext>
         <view:ShareViewModel></view:ShareViewModel>
     </Page.DataContext>

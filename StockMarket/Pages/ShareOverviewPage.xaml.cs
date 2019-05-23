@@ -3,6 +3,7 @@ using System.Net;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
 using StockMarket.DataModels;
+using System.Windows.Threading;
 
 namespace StockMarket.Pages
 {
@@ -11,6 +12,7 @@ namespace StockMarket.Pages
     /// </summary>
     public partial class ShareOverviewPage : Page
     {
+        DispatcherTimer refrehTimer;
         SharesDataModel _model;
         public ShareOverviewPage(ref SharesDataModel model)
         {
@@ -22,6 +24,16 @@ namespace StockMarket.Pages
             CoBo_AG.DataContext = MainViewModel.PopulateFromModel(_model);
             CoBo_AG.SelectedIndex = 0;
 
+            refrehTimer = new DispatcherTimer();
+            refrehTimer.Interval = new TimeSpan(0,10,0);
+            refrehTimer.Tick += RefrehTimer_Tick;
+            refrehTimer.Start();
+
+        }
+
+        private void RefrehTimer_Tick(object sender, EventArgs e)
+        {
+            RefreshPrice(CoBo_AG.SelectedItem as ShareViewModel);
         }
 
         private void CoBo_AG_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -29,6 +41,12 @@ namespace StockMarket.Pages
             // get the selected Share
             var svm = e.AddedItems[0] as ShareViewModel;
 
+            RefreshPrice(svm);
+
+        }
+
+        private void RefreshPrice(ShareViewModel svm)
+        {
             var webContent = string.Empty;
             using (WebClient client = new WebClient())
             {
@@ -44,7 +62,11 @@ namespace StockMarket.Pages
 
             // set the share as DataContext for the ListView
             LV.DataContext = svm;
+        }
 
+        private void Page_Unloaded(object sender, System.Windows.RoutedEventArgs e)
+        {
+            refrehTimer.Stop();
         }
     }
 }

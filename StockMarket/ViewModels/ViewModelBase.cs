@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel;
 
 namespace StockMarket.ViewModels
 {
@@ -13,10 +8,7 @@ namespace StockMarket.ViewModels
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, e);
-            }
+            PropertyChanged?.Invoke(this, e);
         }
     }
 }
