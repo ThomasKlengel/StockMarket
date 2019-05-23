@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Media;
 
 namespace StockMarket.ViewModels
@@ -11,6 +8,7 @@ namespace StockMarket.ViewModels
     class OrderOverviewViewModel:ViewModelBase
     {
         #region Properties
+               
 
         public double AvgSharePrice
         {
@@ -94,8 +92,6 @@ namespace StockMarket.ViewModels
 
         public List<OrderViewModel> Orders { get; set; }
 
-        #endregion
-
-
+        #endregion        
     }
 }

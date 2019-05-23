@@ -3,54 +3,38 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:StockMarket.Pages"
+      xmlns:local="clr-namespace:StockMarket"
       xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ShareOverviewPage" Unloaded="Page_Unloaded">
+    <!--
+    
+    Use only while creating the binding
+    
     <Page.DataContext>
         <view:ShareViewModel></view:ShareViewModel>
     </Page.DataContext>
-
+    
+    -->    
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
             <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged" ItemsSource="{Binding Shares}"
                       DisplayMemberPath="ShareName" >
             </ComboBox>
-            <Grid Margin="5" Height="250">
+            <Grid Margin="5" Height="270">
                 <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="{Binding Path=Backgropund}" Margin="5" >
-                                <StackPanel Orientation="Horizontal" >
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">Date</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">Amount</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=Amount}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">SharePrice</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">ActPrice</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">Sum Buy</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">Sum Now</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                                        <Label HorizontalAlignment="Center">Percentage</Label>
-                                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
-                                    </StackPanel>
+                            <Grid Background="{Binding Path=Backgropund}" Margin="5,2.5,5,2.5" >
+                                <StackPanel Orientation="Horizontal">                                    
+                                    <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="SharePrice" ValueText="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>                                    
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
@@ -62,36 +46,23 @@
                     </ListView.ItemContainerStyle>
                 </ListView>                
             </Grid>
-            <Grid Background="{Binding Path=Backgropund}" Margin="10" Name="Overview_Grid">
-                <StackPanel Orientation="Horizontal" >
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">Date</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">Amount</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=Amount}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">AvgSharePrice</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=AvgSharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">ActPrice</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">Sum Buy</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">Sum Now</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" Margin="0,0,10,0" Width="90">
-                        <Label HorizontalAlignment="Center">Percentage</Label>
-                        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
-                    </StackPanel>
+            <Grid Background="{Binding Path=Backgropund}" Margin="15,5,30,2.5" Name="OverViewGrid">
+                <!--
+                
+                Use this while doing the Binding
+                
+                <Grid.DataContext>
+                    <view:OrderOverviewViewModel/>
+                </Grid.DataContext>
+                -->
+                <StackPanel Orientation="Horizontal">
+                    <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="AvgPrice" ValueText="{Binding Path=AvgSharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
                 </StackPanel>
             </Grid>
         </StackPanel>

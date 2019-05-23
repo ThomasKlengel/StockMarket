@@ -5,6 +5,7 @@ using StockMarket.ViewModels;
 using StockMarket.DataModels;
 using System.Windows.Threading;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace StockMarket.Pages
 {
@@ -18,17 +19,18 @@ namespace StockMarket.Pages
         public ShareOverviewPage(ref SharesDataModel model)
         {
             InitializeComponent();
+
             _model = model;
 
             // We need to populate the comboboxItems with ShareNames
             // so DataContext for Combobox is the MainViemodel which contains all Shares (and their names)
             CoBo_AG.DataContext = MainViewModel.PopulateFromModel(_model);
-            CoBo_AG.SelectedIndex = 0;
+            CoBo_AG.SelectedIndex = 0;                   
 
             refrehTimer = new DispatcherTimer();
             refrehTimer.Interval = new TimeSpan(0,10,0);
             refrehTimer.Tick += RefrehTimer_Tick;
-            refrehTimer.Start();
+            refrehTimer.Start();           
 
         }
 
@@ -72,7 +74,7 @@ namespace StockMarket.Pages
 
             oovm.Orders = orders.ToList<OrderViewModel>();
 
-            Overview_Grid.DataContext = oovm;
+            OverViewGrid.DataContext = oovm;
         }
 
         private void Page_Unloaded(object sender, System.Windows.RoutedEventArgs e)

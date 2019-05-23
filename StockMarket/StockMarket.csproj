@@ -75,6 +75,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataModels\SharesDataModel.cs" />
+    <Compile Include="UserControls\UserStackPanelList.xaml.cs">
+      <DependentUpon>UserStackPanelList.xaml</DependentUpon>
+    </Compile>
     <Compile Include="NewShare.cs" />
     <Compile Include="Pages\AddOrderPage.xaml.cs">
       <DependentUpon>AddOrderPage.xaml</DependentUpon>
@@ -93,6 +96,10 @@
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Helper.cs" />
+    <Page Include="UserControls\UserStackPanelList.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\AddOrderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -121,6 +128,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\ShareOverviewPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Styles\StackPanelStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -154,12 +165,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="graph.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Styles\StackPanelStyles.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />
