@@ -4,11 +4,16 @@ using System.Windows.Media;
 
 namespace StockMarket.ViewModels
 {
+    /// <summary>
+    /// A ViewModel for a single <see cref="Order"/>
+    /// </summary>
     public class OrderViewModel : ViewModelBase
     {
         #region Properties
         private double _sharePrice;
-
+        /// <summary>
+        /// The prices of a single share at the day of purchase
+        /// </summary>
         public double SharePrice
         {
             get { return _sharePrice; }
@@ -20,7 +25,9 @@ namespace StockMarket.ViewModels
         }
 
         private double _actPrice;
-
+        /// <summary>
+        /// The current price of a single share
+        /// </summary>
         public double ActPrice
         {
             get { return _actPrice; }
@@ -33,7 +40,9 @@ namespace StockMarket.ViewModels
 
 
         private int _amount;
-
+        /// <summary>
+        /// The amount of shares purchased
+        /// </summary>
         public int Amount
         {
             get { return _amount; }
@@ -45,7 +54,9 @@ namespace StockMarket.ViewModels
         }
 
         private DateTime _date;
-
+        /// <summary>
+        /// The date of the purchase
+        /// </summary>
         public DateTime Date
         {
             get { return _date.Date; }
@@ -56,25 +67,42 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The summed up price of the shares at the day of purchase
+        /// (getter only)
+        /// </summary>
         public double SumBuy {get { return SharePrice * _amount; } }
 
+        /// <summary>
+        /// The current summed up price of the shares
+        /// (getter only)
+        /// </summary>
         public double SumNow
         {
              get { return ActPrice * _amount; } 
         }
 
+        /// <summary>
+        /// The color for the order determined by 
+        /// a positive or negative development of share prices
+        /// </summary>
         public SolidColorBrush Backgropund
         {
             get { return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222,255,209)) : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
         }
 
+        /// <summary>
+        /// The development of share prices in percent
+        /// </summary>
         public double Percentage
         {
             get { return SumNow / SumBuy - 1.0; }
         }
 
         private double _orderExpenses;
-
+        /// <summary>
+        /// The fees of the order
+        /// </summary>
         public double OrderExpenses
         {
             get { return _orderExpenses; }
@@ -86,7 +114,9 @@ namespace StockMarket.ViewModels
         }
 
         private OrderType _orderType;
-
+        /// <summary>
+        /// The type of order
+        /// </summary>
         public OrderType OrderType
         {
             get { return _orderType; }

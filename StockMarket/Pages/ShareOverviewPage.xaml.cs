@@ -36,6 +36,7 @@ namespace StockMarket.Pages
 
         private void RefrehTimer_Tick(object sender, EventArgs e)
         {
+            //refresh the actual prices
             RefreshPrice(CoBo_AG.SelectedItem as ShareViewModel);
         }
 
@@ -44,12 +45,18 @@ namespace StockMarket.Pages
             // get the selected Share
             var svm = e.AddedItems[0] as ShareViewModel;
 
+            // refresh the actual prices
             RefreshPrice(svm);
 
         }
 
+        /// <summary>
+        /// refreshes the actual prices for the orders shown on the page
+        /// </summary>
+        /// <param name="svm">The ViewModel containing the shown orders</param>
         private void RefreshPrice(ShareViewModel svm)
         {
+            // get the actual price from the website
             var webContent = string.Empty;
             using (WebClient client = new WebClient())
             {
@@ -58,6 +65,7 @@ namespace StockMarket.Pages
 
             double price = RegexHelper.GetSharPrice(webContent);
 
+            // set the price for each order, since they are of the same ISIN
             foreach (var order in svm.Orders)
             {
                 order.ActPrice = Convert.ToDouble(price);
@@ -66,6 +74,8 @@ namespace StockMarket.Pages
             // set the share as DataContext for the ListView
             LV.DataContext = svm;
 
+
+            // create a new viewmodel for the overview, containing the new order data
             OrderOverviewViewModel oovm = new OrderOverviewViewModel();
             oovm.ActPrice = price;
 
@@ -74,13 +84,13 @@ namespace StockMarket.Pages
 
             oovm.Orders = orders.ToList<OrderViewModel>();
 
+            // set the viewmodel as data context of the grid
             OverViewGrid.DataContext = oovm;
         }
 
         private void Page_Unloaded(object sender, System.Windows.RoutedEventArgs e)
         {
-            refrehTimer.Stop();          
-
+            refrehTimer.Stop();
         }
     }
 }

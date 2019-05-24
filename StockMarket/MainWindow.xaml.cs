@@ -12,7 +12,10 @@ namespace StockMarket
         public MainWindow()
         {
             InitializeComponent();
+
+            //initialize the model
             model = DataBaseHelper.ReadFromDB();
+
             MainFrame.Navigate(new Pages.BlankPage());
         }
 

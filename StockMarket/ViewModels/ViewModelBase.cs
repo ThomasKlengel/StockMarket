@@ -2,6 +2,9 @@
 
 namespace StockMarket.ViewModels
 {
+    /// <summary>
+    /// The basic ViewModel for simplifying the creation of other ViewModels
+    /// </summary>
     public class ViewModelBase : INotifyPropertyChanged
     {
         public event PropertyChangedEventHandler PropertyChanged;

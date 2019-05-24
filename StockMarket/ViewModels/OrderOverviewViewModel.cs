@@ -5,11 +5,16 @@ using System.Windows.Media;
 
 namespace StockMarket.ViewModels
 {
+    /// <summary>
+    /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>
+    /// </summary>
     class OrderOverviewViewModel:ViewModelBase
     {
         #region Properties
                
-
+        /// <summary>
+        /// The average share price for the orders
+        /// </summary>
         public double AvgSharePrice
         {
             get
@@ -26,6 +31,9 @@ namespace StockMarket.ViewModels
 
         private double _actPrice;
 
+        /// <summary>
+        /// The current share price for the orders
+        /// </summary>
         public double ActPrice
         {
             get { return _actPrice; }
@@ -36,6 +44,9 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The amount of shares in all orders
+        /// </summary>
         public int Amount
         {
             get
@@ -49,11 +60,17 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The current date
+        /// </summary>
         public DateTime Date
         {
             get { return DateTime.Today; }            
         }
 
+        /// <summary>
+        /// The summed up price for all orders on the date of purchase
+        /// </summary>
         public double SumBuy
         {
             get
@@ -67,6 +84,9 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The current summed up price for all orders 
+        /// </summary>
         public double SumNow
         {
             get
@@ -80,16 +100,26 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The background color for the overview determined by 
+        /// a positive or negative development of share prices
+        /// </summary>
         public SolidColorBrush Backgropund
         {
             get { return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209)) : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
         }
 
+        /// <summary>
+        /// The development of share prices in percent
+        /// </summary>
         public double Percentage
         {
             get { return SumNow / SumBuy - 1.0; }
         }
 
+        /// <summary>
+        /// All orders of the selected share
+        /// </summary>
         public List<OrderViewModel> Orders { get; set; }
 
         #endregion        

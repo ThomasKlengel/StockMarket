@@ -3,6 +3,9 @@ using System.ComponentModel;
 
 namespace StockMarket.ViewModels
 {
+    /// <summary>
+    /// ViewModel for the value of a share at a day 
+    /// </summary>
     public class DayValueViewModel : ViewModelBase
     {
         #region ctors
@@ -15,6 +18,9 @@ namespace StockMarket.ViewModels
         #region Properties
         private double _price;
 
+        /// <summary>
+        /// The price of the <see cref="Share"/> at the <see cref="Date"/>
+        /// </summary>
         public double Price
         {
             get { return _price; }
@@ -27,6 +33,9 @@ namespace StockMarket.ViewModels
 
         private DateTime _date;
 
+        /// <summary>
+        /// The Date of the <see cref="Price"/>
+        /// </summary>
         public DateTime Date
         {
             get { return _date; }

@@ -7,12 +7,18 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800" Closing="Window_Closing">
     <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical">
+            <!-- the StackPanel containing the navigation Buttons-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
                 <Button Height="20" Width="100" Click="B_AddShare_Click">AddShare</Button>
                 <Button Height="20" Width="100" Click="B_AddOrder_Click">AddOrder</Button>
                 <Button Height="20" Width="100" Click="B_Overview_Click">Overview</Button>
             </StackPanel>
+
+            <!--The Frame containing the content selected by the navigation-->
             <Frame Name="MainFrame" NavigationUIVisibility="Hidden">
 
             </Frame>

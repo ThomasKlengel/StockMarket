@@ -9,8 +9,9 @@ using StockMarket.DataModels;
 namespace StockMarket.Pages
 {
     /// <summary>
-    /// Interaktionslogik für AddOrderPage.xaml
+    /// A page showing data for purchasing <see cref="Share"/>s
     /// </summary>
+    /// /// Interaktionslogik für AddOrderPage.xaml
     public partial class AddOrderPage : Page
     {
         SharesDataModel _model;
@@ -58,6 +59,7 @@ namespace StockMarket.Pages
                 return;
             }
 
+            // set the share price for the view
             _vmOrder.SharePrice = RegexHelper.GetSharPrice(webContent);
         }
 
@@ -74,7 +76,7 @@ namespace StockMarket.Pages
                 o.Date = DateTime.Today;
                 o.ISIN = (CoBo_AG.SelectedItem as ShareViewModel).ISIN;
 
-                // add the order to the matched share
+                // add the order to the matching share
                 _model.Orders.Add(o);
             }
         }

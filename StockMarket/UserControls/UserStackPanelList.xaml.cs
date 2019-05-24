@@ -4,12 +4,15 @@ using System.Windows.Controls;
 namespace StockMarket
 {
     /// <summary>
-    /// Interaktionslogik für ListStackPanelUser.xaml
+    /// A Usercontrol containing two TextBlocks in a vertical StackPanel
     /// </summary>
+    /// Interaktionslogik für ListStackPanelUser.xaml
     public partial class UserStackPanelList : UserControl
     {
 
-
+        /// <summary>
+        /// The Text of the upper TextBlock
+        /// </summary>
         public string HeaderText
         {
             get { return (string)GetValue(HeaderTextProperty); }
@@ -21,7 +24,9 @@ namespace StockMarket
             DependencyProperty.Register("HeaderText", typeof(string), typeof(UserStackPanelList), new PropertyMetadata(string.Empty));
 
 
-
+        /// <summary>
+        /// The Text of the lower TextBlock
+        /// </summary>
         public string ValueText
         {
             get { return (string)GetValue(ValueTextProperty); }

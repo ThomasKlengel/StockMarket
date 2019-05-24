@@ -27,6 +27,7 @@ namespace StockMarket.Pages
 
         private void B_Confirm_Click(object sender, RoutedEventArgs e)
         {
+            //create a new share
             var share = new Share()
             {
                 ISIN = _vmShare.ISIN,
@@ -34,6 +35,7 @@ namespace StockMarket.Pages
                 WebSite = _vmShare.WebSite,
                 WKN = _vmShare.WebSite
             };
+
             // check if share is already in the list...
             if (!_model.Shares.Contains(share))
             {

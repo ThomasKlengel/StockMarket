@@ -13,17 +13,25 @@
     </Page.DataContext>
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
+            
+            <!-- ComboBox to the select the a for which to add an order-->
             <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged" ItemsSource="{Binding Shares}"
                       DisplayMemberPath="ShareName" >
             </ComboBox>
+            
+            <!--StackPanel for price information (auto initialized when selection of CB is changed)-->
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Label>Price</Label>
                 <TextBox Width="100" Text="{Binding SharePrice,ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
             </StackPanel>
+
+            <!--StackPanel for the amount of shares to order-->
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Label>Amount</Label>
                 <TextBox Width="100" Text="{Binding Amount}"/>
             </StackPanel>
+            
+            <!-- Button to add the order with the given values to the list-->
             <Button Name="B_AddOrder" Margin="5" Click="B_AddOrder_Click">Add</Button>
         </StackPanel>
 

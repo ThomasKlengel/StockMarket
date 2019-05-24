@@ -19,10 +19,14 @@
     -->    
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
+            
+            <!--Combobox containing the shares in the database-->
             <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged" ItemsSource="{Binding Shares}"
                       DisplayMemberPath="ShareName" >
             </ComboBox>
             <Grid Margin="5" Height="270">
+                
+                <!--ListView containing information about all orders of the selected share-->
                 <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
                     <ListView.ItemTemplate>
                         <DataTemplate>
@@ -46,6 +50,8 @@
                     </ListView.ItemContainerStyle>
                 </ListView>                
             </Grid>
+            
+            <!--Grid containing s summary infoprmation for the selected share-->
             <Grid Background="{Binding Path=Backgropund}" Margin="15,5,30,2.5" Name="OverViewGrid">
                 <!--
                 
