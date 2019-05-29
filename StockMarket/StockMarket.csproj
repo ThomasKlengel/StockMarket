@@ -88,6 +88,7 @@
       <DependentUpon>ShareOverviewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataModels\Share.cs" />
+    <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\DayValueViewModel.cs" />
     <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OrderOverviewViewModel.cs" />

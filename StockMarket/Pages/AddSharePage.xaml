@@ -4,11 +4,12 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:StockMarket"
+      xmlns:view ="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="400"
       Title="AddSharePage">
     <Page.DataContext>
-        <local:Share></local:Share>
+        <view:ShareViewModel/>
     </Page.DataContext>
     <Grid Name="ContentGrid">
         <Grid.RowDefinitions>
@@ -36,16 +37,19 @@
                 <TextBox Height="25" Margin="0,5,0,0" Text="{Binding WKN}"/>
                 <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ISIN}"/>
                 <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ShareName}"/>
-                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ActualPrice, ConverterCulture='de-DE', StringFormat= 0:{C2}}"/>                
+                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                <!--<TextBox Height="25" Margin="0,5,0,0" Text="{Binding ActualPrice, ConverterCulture='de-DE', StringFormat= 0:{C2}}"/>-->                
             </StackPanel>
         </Grid>
         <UniformGrid Grid.Row="1">
             
             <!--Button to auto fill the input when a website is set-->
-            <Button Height="30" Margin="10" VerticalAlignment="Top" Click="B_AutoFill_Click">AutoFill</Button>
+            <Button x:Name="B_AutoFill"  Height="30" Margin="10" VerticalAlignment="Top" Command="{Binding AutoFillCommand}" 
+                    CommandParameter="{Binding ElementName=B_AutoFill}" ToolTipService.ShowOnDisabled="True" >AutoFill</Button>
             
             <!--Button to add the share to the database-->
-            <Button Height="30" Margin="10" VerticalAlignment="Top" Click="B_Confirm_Click">Confirm</Button>
+            <Button x:Name="B_Insert" Height="30" Margin="10" VerticalAlignment="Top" Command="{Binding InsertCommand}"
+                    CommandParameter="{Binding ElementName=B_Insert}" ToolTipService.ShowOnDisabled="True">Confirm</Button>
         </UniformGrid>
     </Grid>
 </Page>

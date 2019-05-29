@@ -51,5 +51,6 @@ namespace StockMarket.ViewModels
         }
 
         #endregion
+
     }
 }

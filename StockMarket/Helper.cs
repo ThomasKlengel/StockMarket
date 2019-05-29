@@ -1,5 +1,6 @@
 ﻿using SQLite;
 using StockMarket.DataModels;
+using StockMarket.ViewModels;
 using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
@@ -99,17 +100,58 @@ namespace StockMarket
 
             return model;
         }
+
+        /// <summary>
+        /// Adds a <see cref="Share"/> to the database
+        /// </summary>
+        /// <param name="share">The <see cref="Share"/> to add</param>
+        /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
+        /// <returns>True if successful</returns>
+        public static short AddShareToDB(ShareViewModel share, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Share>();
+                    con.CreateTable<ShareValue>();                    
+                    
+                    // check if the share is lready in the database...
+                    if (con.Find<Share>(share.ISIN) == null)
+                    {   //... if not, add it to the tables
+                        con.Insert(new Share(share.ShareName, share.WebSite, share.WKN, share.ISIN));
+                        con.Insert(new ShareValue() { Date = DateTime.Now, ISIN = share.ISIN, Price = share.ActualPrice });
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
     }
 
     public static class RegexHelper
     {
+        #region Regex strings
         public const string REGEX_SharePrice = "\\d*\\.?\\d*,\\d*";
         public const string REGEX_Group_SharePrice = "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span";
         public const string REGEX_Group_IDs = "instrument-id\"\\>.{40}";
-        public const string REGEX_ISIN = "ISIN: \\S{2}\\d{10}";
-        public const string REGEX_WKN = "WKN: \\d{6}";
+        public const string REGEX_ISIN = "ISIN: \\S{12}";
+        public const string REGEX_WKN = "WKN: .{6}";
         public const string REGEX_Group_ShareName = "box-headline\"\\>Aktienkurs.{50}";
         public const string REGEX_ShareName = "Aktienkurs .* in";
+        public const string REGEX_ISIN_Valid = "^\\S{12}$";
+        public const string REGEX_IsShare = "^https:\\/{2}w{3}\\.finanzen\\.net\\/aktien\\/.+-Aktie$";
+        public const string REGEX_IsOption = "^https:\\/{2}w{3}\\.finanzen\\.net\\/optionsscheine\\/Auf-.+\\/.{6}$";
+        public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
+        #endregion
 
         /// <summary>
         /// Gets the price of a share from a string
@@ -130,7 +172,26 @@ namespace StockMarket
 
             return Convert.ToDouble(sharePrice, CultureInfo.GetCultureInfo("de-DE"));
         }
+ 
+        /// <summary>
+        /// Checks if a website is valid for handling by this programm
+        /// </summary>
+        /// <param name="website">the website to check</param>
+        /// <returns>true if the website is valid</returns>
+        public static bool WebsiteIsValid(string website)
+        {            
+            return Regex.Match(website, REGEX_Website_Valid).Success;
+        }
 
-        //TODO: create regex matches for valid website, isin, etc.
+        /// <summary>
+        /// Checks if an ISIN is valid for handling by this programm
+        /// </summary>
+        /// <param name="website">the ISIN to check</param>
+        /// <returns>true if the ISIN is valid</returns>
+        public static bool IsinIsValid(string isin)
+        {            
+            return Regex.Match(isin, REGEX_ISIN_Valid).Success;
+        }
+
     }
 }

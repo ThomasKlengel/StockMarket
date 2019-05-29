@@ -53,8 +53,10 @@ namespace StockMarket
         /// <returns></returns>
         public override bool Equals(object obj)
         {
+            // check if it is a share to compare
             if (obj.GetType() == typeof(Share))
             {
+                // compare the ISIN
                 return this.ISIN == (obj as Share).ISIN;
             }
             return false;
