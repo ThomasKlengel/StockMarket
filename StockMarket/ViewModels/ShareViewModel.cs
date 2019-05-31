@@ -274,6 +274,8 @@ namespace StockMarket.ViewModels
 
         }
 
+
+
         public RelayCommand InsertCommand { get; private set; }
 
         private void Insert(object o)

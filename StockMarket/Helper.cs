@@ -2,6 +2,7 @@
 using StockMarket.DataModels;
 using StockMarket.ViewModels;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
@@ -135,6 +136,122 @@ namespace StockMarket
                 return -1;
             }
         }
+
+        /// <summary>
+        /// Adds an <see cref="Order"/> to the database
+        /// </summary>
+        /// <param name="order">The <see cref="Order"/> to add</param>
+        /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
+        /// <returns>True if successful</returns>
+        public static short AddOrderToDB(Order order, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Order>();         
+                    // insert the order
+                    con.Insert(order);                    
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        public static List<Order> GetOrdersFromDB(Share share, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Order>();
+                    // insert the order
+                    return con.Table<Order>().ToList().FindAll((order) => { return order.ISIN == share.ISIN; });
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static List<Order> GetOrdersFromDB(string isin, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Order>();
+                    // insert the order
+                    return con.Table<Order>().ToList().FindAll((order)=> { return order.ISIN == isin; });
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static List<Share> GetSharesFromDB(string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Share>();
+                    // insert the order
+                    return con.Table<Share>().ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static List<ShareValue> GetShareValuesFromDB(Share share, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<ShareValue>();
+                    // insert the order
+                    return con.Table<ShareValue>().ToList().FindAll((val)=> { return val.ISIN == share.ISIN; });
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static List<ShareValue> GetShareValuesFromDB(string isin, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<ShareValue>();
+                    // insert the order
+                    return con.Table<ShareValue>().ToList().FindAll((val) => { return val.ISIN == isin; });
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
     }
 
     public static class RegexHelper

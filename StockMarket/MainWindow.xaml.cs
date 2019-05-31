@@ -26,7 +26,7 @@ namespace StockMarket
 
         private void B_AddOrder_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new Pages.AddOrderPage(ref model));
+            MainFrame.Navigate(new Pages.AddOrderPage());
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)

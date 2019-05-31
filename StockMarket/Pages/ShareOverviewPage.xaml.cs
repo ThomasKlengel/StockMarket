@@ -72,6 +72,13 @@ namespace StockMarket.Pages
             }
 
             // set the share as DataContext for the ListView
+            //var sorted = svm.Orders.OrderByDescending((o) => { return o.Date; });
+            //svm.Orders.Clear();
+            //foreach (var order in sorted)
+            //{
+            //    svm.Orders.Add(order);
+            //}
+
             LV.DataContext = svm;
 
 

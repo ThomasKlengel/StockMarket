@@ -21,21 +21,18 @@ namespace StockMarket.ViewModels
         /// </summary>
         /// <param name="execute">The <see cref="Action"/> the command should exectute.</param>
         /// <param name="canExecute">The <see cref="Predicate{T}"/> to check if the command can be executed.</param>
-        public RelayCommand(Action<object> execute, Predicate<object> canExecute )
+        public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
             _execute = execute;
-            _canExecute = canExecute;
+            _canExecute = canExecute != null ? canExecute : new Predicate<object>((o) => { return true; });
         }
 
         /// <summary>
         /// Creates a new RelayCommand that can always execute 
         /// </summary>
         /// <param name="execute">The <see cref="Action"/> the command should exectute.</param>
-        public RelayCommand(Action<object> execute)
-        {
-            _execute = execute;
-            _canExecute = new Predicate<object>((o)=> { return true; });
-        }
+        public RelayCommand(Action<object> execute) : this(execute, null) { }
+
 
         public bool CanExecute(object parameter)
         {

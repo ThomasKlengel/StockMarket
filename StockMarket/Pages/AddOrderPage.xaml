@@ -9,20 +9,20 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="AddOrderPage">
     <Page.DataContext>
-        <view:OrderViewModel></view:OrderViewModel>
+        <view:AddOrderViewModel/>
     </Page.DataContext>
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
             
             <!-- ComboBox to the select the a for which to add an order-->
-            <ComboBox Name="CoBo_AG" Margin="5" SelectionChanged="CoBo_AG_SelectionChanged" ItemsSource="{Binding Shares}"
+            <ComboBox x:Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}" SelectedItem="{Binding SelectedShare, Mode=OneWayToSource}"
                       DisplayMemberPath="ShareName" >
             </ComboBox>
             
             <!--StackPanel for price information (auto initialized when selection of CB is changed)-->
             <StackPanel Orientation="Horizontal" Margin="5">
                 <Label>Price</Label>
-                <TextBox Width="100" Text="{Binding SharePrice,ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                <TextBox Width="100" Text="{Binding ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
             </StackPanel>
 
             <!--StackPanel for the amount of shares to order-->
@@ -32,7 +32,7 @@
             </StackPanel>
             
             <!-- Button to add the order with the given values to the list-->
-            <Button Name="B_AddOrder" Margin="5" Click="B_AddOrder_Click">Add</Button>
+            <Button x:Name="B_AddOrder" Margin="5" Command="{Binding AddOrderCommand}" CommandParameter="{Binding ElementName=B_AddOrder}">Add</Button>
         </StackPanel>
 
     </Grid>

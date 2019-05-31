@@ -1,5 +1,6 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Windows.Controls;
 using System.Windows.Media;
 
 namespace StockMarket.ViewModels
@@ -9,6 +10,14 @@ namespace StockMarket.ViewModels
     /// </summary>
     public class OrderViewModel : ViewModelBase
     {
+        #region ctor
+        public OrderViewModel()
+        {
+            AddOrderCommand = new RelayCommand(AddOrder, CanAddOrder);
+        }
+
+        #endregion
+
         #region Properties
         private double _sharePrice;
         /// <summary>
@@ -129,5 +138,47 @@ namespace StockMarket.ViewModels
 
         #endregion
 
+        #region Commands
+        public RelayCommand AddOrderCommand { get; private set; }
+
+        private void AddOrder(object o)
+        {
+            if (o != null)
+            {
+                if (o.GetType() == typeof(Button))
+                {
+                    Button b = o as Button;
+                    var sp = b.Parent as StackPanel;
+                    ComboBox cobo=null;
+                    foreach (var child in sp.Children)
+                    {
+                        if (child.GetType()==typeof(ComboBox))
+                        {
+                            cobo = child as ComboBox;
+                            break;
+                        }
+                    }
+                    
+                    // create a new order
+                    Order order = new Order();
+                    order.Amount = Convert.ToInt32(Amount);
+                    order.OrderExpenses = 10;
+                    order.OrderType = OrderType.buy;
+                    order.SharePrice = Convert.ToDouble(SharePrice);
+                    order.Date = DateTime.Today;
+                    order.ISIN = (cobo.SelectedItem as ShareViewModel).ISIN;
+
+                    // add the order to the matching share
+                    DataBaseHelper.AddOrderToDB(order);
+                }
+            }
+
+        }
+
+        private bool CanAddOrder (object o)
+        {
+            return Amount > 0 ? true : false;
+        }
+        #endregion
     }
 }
