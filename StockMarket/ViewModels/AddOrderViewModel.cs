@@ -52,32 +52,8 @@ namespace StockMarket.ViewModels
                 _selectedShare = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
 
-                if (SelectedShare != null)
-                {
-                    // try to get the website content
-                    try
-                    {
-                        using (WebClient client = new WebClient())
-                        {
-                            // https://www.finanzen.net/aktien...
-                            client.DownloadStringCompleted += Client_DownloadStringCompleted;
-                            client.DownloadStringAsync(new Uri(SelectedShare.WebSite));
-                        }
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(ex.Message);
-                    }                    
-                }
+                RefreshPriceAsync();
             }
-        }
-
-        private void Client_DownloadStringCompleted(object sender, DownloadStringCompletedEventArgs e)
-        {
-            if (!string.IsNullOrEmpty(e.Result))
-            {
-                ActPrice = RegexHelper.GetSharPrice(e.Result);
-            }            
         }
 
         private int _amount;
@@ -108,6 +84,15 @@ namespace StockMarket.ViewModels
             }
         }
 
+        #endregion
+
+        #region Methods
+        private async void RefreshPriceAsync()
+        {
+            var content = await WebHelper.getWebContent(SelectedShare.WebSite);
+            var price = RegexHelper.GetSharPrice(content);
+            ActPrice = price;
+        }
         #endregion
 
         #region Commands

@@ -11,9 +11,25 @@ namespace StockMarket.ViewModels
     public class OrderViewModel : ViewModelBase
     {
         #region ctor
+        /// <summary>
+        /// Creates a ViewModel for an order with an AddOrderCommand 
+        /// </summary>
         public OrderViewModel()
         {
             AddOrderCommand = new RelayCommand(AddOrder, CanAddOrder);
+        }
+
+        /// <summary>
+        /// Creates a ViewModel for an order from an order 
+        /// </summary>
+        /// <param name="order">The <see cref="Order"/> to create a ViewModel for</param>
+        public OrderViewModel(Order order)
+        {
+            this.Amount = order.Amount;
+            this.Date = order.Date;
+            this.OrderExpenses = order.OrderExpenses;
+            this.OrderType = order.OrderType;
+            this.SharePrice = order.SharePrice;
         }
 
         #endregion
@@ -44,6 +60,8 @@ namespace StockMarket.ViewModels
             {
                 _actPrice = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
             }
         }
 

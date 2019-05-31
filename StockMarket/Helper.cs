@@ -4,12 +4,14 @@ using StockMarket.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace StockMarket
 {
     /// <summary>
-    /// A helper classe for database handling
+    /// A helper class for database handling
     /// </summary>
     public static class DataBaseHelper
     {
@@ -188,7 +190,7 @@ namespace StockMarket
                 {
                     // get the required tables of the database
                     con.CreateTable<Order>();
-                    // insert the order
+                    // retrun the orders matching the ISIN
                     return con.Table<Order>().ToList().FindAll((order)=> { return order.ISIN == isin; });
                 }
             }
@@ -254,6 +256,9 @@ namespace StockMarket
 
     }
 
+    /// <summary>
+    /// A helper class for Regex expressions
+    /// </summary>
     public static class RegexHelper
     {
         #region Regex strings
@@ -308,6 +313,28 @@ namespace StockMarket
         public static bool IsinIsValid(string isin)
         {            
             return Regex.Match(isin, REGEX_ISIN_Valid).Success;
+        }
+
+    }
+
+    /// <summary>
+    /// A helper class for web access
+    /// </summary>
+    public static class WebHelper
+    {
+        /// <summary>
+        /// get the content of a website
+        /// </summary>
+        /// <param name="webSite">the website to get the content from</param>
+        /// <returns>the content of the website</returns>
+        public static async Task<string> getWebContent (string webSite)
+        {
+            string webContent=string.Empty;
+            using (WebClient client = new WebClient())
+            {
+                webContent = await client.DownloadStringTaskAsync(webSite);
+                return webContent;
+            }            
         }
 
     }

@@ -19,7 +19,7 @@ namespace StockMarket.ViewModels
             Orders = new ObservableCollection<OrderViewModel>();
             DayValues = new ObservableCollection<DayValueViewModel>();
 
-            AutoFillCommand = new RelayCommand(Autofill, CanAutoFill);
+            AutoFillCommand = new RelayCommand(AutofillAsync, CanAutoFill);
             InsertCommand = new RelayCommand(Insert, CanInsert);
         }
 
@@ -200,38 +200,18 @@ namespace StockMarket.ViewModels
         #region Commands
         public RelayCommand AutoFillCommand { get; private set; }
         
-        private void Autofill(object o)
+        /// <summary>
+        /// The execute method of of the AutoFill<see cref="RelayCommand"/>
+        /// Sets <see cref="ShareViewModel"/> properties after reading data from a website
+        /// </summary>
+        /// <param name="o">A parameter for this method</param>
+        private async void AutofillAsync(object o)
         {
-
-            if (!RegexHelper.WebsiteIsValid(WebSite))
-            {
-                MessageBox.Show("The website entered is not valid...\r\nHas to start with https:\\\\www.finanzen.net\\...");
-                return;
-            }
-
-            string webContent = string.Empty;
-
-            // try to get the website content
-            try
-            {
-                using (WebClient client = new WebClient())
-                {
-                    // https://www.finanzen.net/aktien...
-                    webContent = client.DownloadString(WebSite);
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
-
-            if (webContent == string.Empty)
-            {
-                return;
-            }
+            string webContent = await WebHelper.getWebContent(WebSite);
 
             //id">WKN: 623100 / ISIN: DE0006231004</span>
             //var test= "nbsp;<span class=\"instrument - id\">WKN: 623100 / ISIN: DE0006231004</span></h1><div"
+            // get values of WKN and ISIN
             var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
             var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
             var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
@@ -239,25 +219,33 @@ namespace StockMarket.ViewModels
             string isin = isinMatch.Value.Substring(6);
 
             //< h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
+            // get name of SHARE
             var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
             var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
             var name = nameM2.Value.Substring(10).Trim().Replace(" in", "");
 
+            // set values of the share
             ISIN = isin;
             ShareName = name;
             WKN = wkn;
             ActualPrice = RegexHelper.GetSharPrice(webContent);
             DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = ActualPrice });
+
         }
 
-        private bool CanAutoFill(object o)
+        /// <summary>
+        /// The canExecute method of of the AutoFill<see cref="RelayCommand"/>
+        /// Checks by validating a website
+        /// </summary>
+        /// <param name="sender">A parameter for this method</param>
+        private bool CanAutoFill(object sender)
         {
             Button b = new Button(); 
-            if (o!= null)
+            if (sender!= null)
             {
-                if (o.GetType()==typeof(Button))
+                if (sender.GetType()==typeof(Button))
                 {
-                    b = o as Button;
+                    b = sender as Button;
                     b.ToolTip = "Website is not valid";
                 }
             }
@@ -273,11 +261,14 @@ namespace StockMarket.ViewModels
             return false;
 
         }
-
-
-
+               
         public RelayCommand InsertCommand { get; private set; }
 
+        /// <summary>
+        /// The execute method of of the Insert<see cref="RelayCommand"/>
+        /// Tries to add the share to the Database
+        /// </summary>
+        /// <param name="o">A parameter for this method</param>
         private void Insert(object o)
         {
             // Add the share to the database
@@ -294,34 +285,49 @@ namespace StockMarket.ViewModels
 
         }
 
-        private bool CanInsert(object o)
+        /// <summary>
+        /// The canExecute method of of the Insert<see cref="RelayCommand"/>
+        /// Checks by validating ISIN and WebSite
+        /// </summary>
+        /// <param name="sender">A parameter for this method</param>
+        private bool CanInsert(object sender)
         {
-
+            
             Button b = new Button();
-            if (o != null)
+            if (sender != null)
             {
-                if (o.GetType() == typeof(Button))
+                // check if sender/executer is a button
+                if (sender.GetType() == typeof(Button))
                 {
-                    b = o as Button;
+                    b = sender as Button;
+                    // set default tooltip
                     b.ToolTip = "Website or ISIN are not valid";
+                }
+                else
+                {
+                    return false;
                 }
             }
             
 
             if (WebSite != null && ISIN != null)
             {
+                // if WebSite is not valid...
                 if (!RegexHelper.WebsiteIsValid(WebSite))
                 {
+                    //... set error tooltip
                     b.ToolTip = "Website is not valid";
                     return false;
                 }
+                // if ISIN is not valid...
                 else if (!RegexHelper.IsinIsValid(ISIN))
-                {
+                {   //... set error tooltip
                     b.ToolTip = "ISIN is not valid";
                     return false;
                 }
+                // if both are valid...
                 else
-                {
+                {   //... set ok tooltip
                     b.ToolTip = "You can add the share to the database";
                     return true;
                 }                           
@@ -333,7 +339,5 @@ namespace StockMarket.ViewModels
 
         #endregion
     }
-
-
 
 }

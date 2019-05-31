@@ -84,14 +84,13 @@
     <Compile Include="Pages\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ShareOverviewPage.xaml.cs">
-      <DependentUpon>ShareOverviewPage.xaml</DependentUpon>
+    <Compile Include="Pages\OrdersOverviewPage.xaml.cs">
+      <DependentUpon>OrdersOverviewPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataModels\Share.cs" />
     <Compile Include="ViewModels\AddOrderViewModel.cs" />
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\DayValueViewModel.cs" />
-    <Compile Include="ViewModels\MainViewModel.cs" />
     <Compile Include="ViewModels\OrderOverviewViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
@@ -128,7 +127,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ShareOverviewPage.xaml">
+    <Page Include="Pages\OrdersOverviewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

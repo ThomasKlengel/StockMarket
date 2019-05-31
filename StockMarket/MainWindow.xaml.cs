@@ -7,15 +7,10 @@ namespace StockMarket
     /// Interaktionslogik für MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
-    {
-        DataModels.SharesDataModel model;
+    {        
         public MainWindow()
         {
             InitializeComponent();
-
-            //initialize the model
-            model = DataBaseHelper.ReadFromDB();
-
             MainFrame.Navigate(new Pages.BlankPage());
         }
 
@@ -29,14 +24,9 @@ namespace StockMarket
             MainFrame.Navigate(new Pages.AddOrderPage());
         }
 
-        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            DataBaseHelper.SaveToDB(model);
-        }
-
         private void B_Overview_Click(object sender, RoutedEventArgs e)
         {
-            MainFrame.Navigate(new Pages.ShareOverviewPage(ref model));
+            MainFrame.Navigate(new Pages.OrdersOverviewPage());
         }
     }
 }
