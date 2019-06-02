@@ -5,17 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StockMarket"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition/>
-        </Grid.ColumnDefinitions>
         <StackPanel Orientation="Vertical">
             <!-- the StackPanel containing the navigation Buttons-->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top">
-                <Button Height="20" Width="100" Click="B_AddShare_Click">AddShare</Button>
-                <Button Height="20" Width="100" Click="B_AddOrder_Click">AddOrder</Button>
-                <Button Height="20" Width="100" Click="B_Overview_Click">Overview</Button>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,5">
+                <Button Height="20" Width="100" Click="B_AddShare_Click">Add share</Button>
+                <Button Height="20" Width="100" Click="B_AddOrder_Click">Add order</Button>
+                <Button Height="20" Width="100" Click="B_Overview_Click">Order cverview</Button>
             </StackPanel>
 
             <!--The Frame containing the content selected by the navigation-->

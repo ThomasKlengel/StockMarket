@@ -3,6 +3,7 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:local="clr-namespace:StockMarket"
       xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
@@ -11,25 +12,49 @@
     <Page.DataContext>
         <view:AddOrderViewModel/>
     </Page.DataContext>
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>             
+                <ResourceDictionary Source="..\Styles\GeneralStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+   
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
             
             <!-- ComboBox to the select the a for which to add an order-->
-            <ComboBox x:Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}" SelectedItem="{Binding SelectedShare, Mode=OneWayToSource}"
+            <ComboBox x:Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}" SelectedItem="{Binding SelectedShare}"
                       DisplayMemberPath="ShareName" >
             </ComboBox>
+
+            <Grid Margin="5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="100"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>                
+                <StackPanel Orientation="Vertical" Grid.Column="0">
+                    <Label Style="{StaticResource StandardSpacer}">Price</Label>
+                    <Label Style="{StaticResource StandardSpacer}">Expenses</Label>
+                    <Label Style="{StaticResource StandardSpacer}">Amount</Label>
+                    <Label Style="{StaticResource StandardSpacer}">Order date</Label>
+                    <Label Style="{StaticResource StandardSpacer}">Order type</Label>
+                </StackPanel>
+
+                <StackPanel Orientation="Vertical" Grid.Column="1" Width="100" HorizontalAlignment="Left">
+                    <TextBox Text="{Binding ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
+                    <TextBox Text="{Binding Expenses, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
+                    <TextBox  Text="{Binding Amount}" Style="{StaticResource StandardSpacer}"/>
+                    <DatePicker DisplayDateEnd="{Binding Source={x:Static sys:DateTime.Today}, Path=.}"
+                            SelectedDate="{Binding OrderDate}" Style="{StaticResource StandardSpacer}"/>
+                    <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,0">
+                        <RadioButton IsChecked="{Binding OrderIsBuy}" Margin="5"  VerticalAlignment="Center">Buy</RadioButton>
+                        <RadioButton IsChecked="{Binding OrderIsSell}" Margin="5" VerticalAlignment="Center">Sell</RadioButton>
+                    </StackPanel>
+                </StackPanel>
+            </Grid>
             
             <!--StackPanel for price information (auto initialized when selection of CB is changed)-->
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <Label>Price</Label>
-                <TextBox Width="100" Text="{Binding ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-            </StackPanel>
-
-            <!--StackPanel for the amount of shares to order-->
-            <StackPanel Orientation="Horizontal" Margin="5">
-                <Label>Amount</Label>
-                <TextBox Width="100" Text="{Binding Amount}"/>
-            </StackPanel>
             
             <!-- Button to add the order with the given values to the list-->
             <Button x:Name="B_AddOrder" Margin="5" Command="{Binding AddOrderCommand}" CommandParameter="{Binding ElementName=B_AddOrder}">Add</Button>

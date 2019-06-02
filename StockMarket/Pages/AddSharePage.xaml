@@ -8,6 +8,13 @@
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="400"
       Title="AddSharePage">
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Styles\GeneralStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
     <Page.DataContext>
         <view:ShareViewModel/>
     </Page.DataContext>
@@ -24,20 +31,20 @@
             
             <!--StackPanel for labeling the input-->
             <StackPanel Orientation="Vertical" Grid.Column="0" Margin="0,10">
-                <Label Height="25" Margin="0,5,0,0">Website:</Label>
-                <Label Height="25" Margin="0,5,0,0">WKN:</Label>
-                <Label Height="25" Margin="0,5,0,0">ISIN:</Label>
-                <Label Height="25" Margin="0,5,0,0">Name:</Label>
-                <Label Height="25" Margin="0,5,0,0">Purchase price:</Label>                
+                <Label Style="{StaticResource StandardSpacer}">Website:</Label>
+                <Label Style="{StaticResource StandardSpacer}">WKN:</Label>
+                <Label Style="{StaticResource StandardSpacer}">ISIN:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Name:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Purchase price:</Label>                
             </StackPanel>
             
             <!--StackPanel for the actual input-->
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,10">
-                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding WebSite}"/>
-                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding WKN}"/>
-                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ISIN}"/>
-                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ShareName}"/>
-                <TextBox Height="25" Margin="0,5,0,0" Text="{Binding ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite}"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WKN}"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ISIN}"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ShareName}"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                 <!--<TextBox Height="25" Margin="0,5,0,0" Text="{Binding ActualPrice, ConverterCulture='de-DE', StringFormat= 0:{C2}}"/>-->                
             </StackPanel>
         </Grid>

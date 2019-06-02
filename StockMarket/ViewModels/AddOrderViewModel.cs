@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using System.Windows;
@@ -21,6 +22,7 @@ namespace StockMarket.ViewModels
             {
                 Shares.Add(share);
             }
+            SelectedShare = Shares.First();
         }
 
         #endregion
@@ -40,6 +42,20 @@ namespace StockMarket.ViewModels
             {
                 _actPrice = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
+            }
+        }
+
+        private double _expenses =10.0;
+        /// <summary>
+        /// The current price of a single share
+        /// </summary>
+        public double Expenses
+        {
+            get { return _expenses; }
+            set
+            {
+                _expenses = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Expenses)));
             }
         }
 
@@ -70,7 +86,7 @@ namespace StockMarket.ViewModels
             }
         }             
 
-        private OrderType _orderType;
+        private OrderType _orderType = OrderType.buy;
         /// <summary>
         /// The type of order
         /// </summary>
@@ -81,17 +97,55 @@ namespace StockMarket.ViewModels
             {
                 _orderType = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsBuy)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
             }
         }
 
+        public bool OrderIsBuy
+        {
+            get
+            {
+
+                return OrderType == OrderType.buy;
+            }
+            set
+            {
+                OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+            }
+        }
+        public bool OrderIsSell
+        {
+            get
+            {
+                return OrderType == OrderType.sell;
+            }
+            set
+            {
+                OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+            }
+        }
+
+        private DateTime _dateTime = DateTime.Today;
+        public DateTime OrderDate
+        {
+            get { return _dateTime; }
+            set { _dateTime = value;
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderDate)));
+            }
+        }       
+        
         #endregion
 
         #region Methods
         private async void RefreshPriceAsync()
         {
-            var content = await WebHelper.getWebContent(SelectedShare.WebSite);
-            var price = RegexHelper.GetSharPrice(content);
-            ActPrice = price;
+            if (SelectedShare != null)
+            {
+                var content = await WebHelper.getWebContent(SelectedShare.WebSite);
+                var price = RegexHelper.GetSharPrice(content);
+                ActPrice = price;
+            }
         }
         #endregion
 
@@ -103,10 +157,10 @@ namespace StockMarket.ViewModels
             // create a new order
             Order order = new Order();
             order.Amount = Amount;
-            order.OrderExpenses = 10;
-            order.OrderType = OrderType.buy;
+            order.OrderExpenses = Expenses;
+            order.OrderType = OrderType;
             order.SharePrice = ActPrice;
-            order.Date = DateTime.Now;
+            order.Date = OrderDate;
             order.ISIN = SelectedShare.ISIN;
 
             // add the order to the matching share
