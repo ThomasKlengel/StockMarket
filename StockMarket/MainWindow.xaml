@@ -4,21 +4,25 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StockMarket"
+        xmlns:view="clr-namespace:StockMarket.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
-    <Grid>
+    <Grid x:Name="MainGrid">
+        <Grid.DataContext>
+            <view:MainWindowViewModel/>
+        </Grid.DataContext>
         <StackPanel Orientation="Vertical">
             <!-- the StackPanel containing the navigation Buttons-->
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,5">
-                <Button Height="20" Width="100" Click="B_AddShare_Click">Add share</Button>
-                <Button Height="20" Width="100" Click="B_AddOrder_Click">Add order</Button>
-                <Button Height="20" Width="100" Click="B_Overview_Click">Order cverview</Button>
+                <Button Height="20" Width="100" Command="{Binding AddShareCommand}">Add share</Button>
+                <Button Height="20" Width="100" Command="{Binding AddOrderCommand}">Add order</Button>
+                <Button Height="20" Width="100" Command="{Binding DisplayOrderOverviewCommand}">Order cverview</Button>
+                <Button Height="20" Width="100" Command="{Binding DisplayOrderOverviewCommand}">Share cverview</Button>
             </StackPanel>
 
             <!--The Frame containing the content selected by the navigation-->
-            <Frame Name="MainFrame" NavigationUIVisibility="Hidden">
-
-            </Frame>
+            <Frame Name="MainFrame" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage}"
+                   HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
         </StackPanel>
 
     </Grid>

@@ -1,14 +1,61 @@
-﻿<Page x:Class="StockMarket.Pages.Overview"
+﻿<Page x:Class="StockMarket.Pages.SharesOverviewPage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:local="clr-namespace:StockMarket.Pages"
+      xmlns:local="clr-namespace:StockMarket"
+      xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Overview">
+    <Page.DataContext>
+        <view:SharesOverviewViewModel/>
+    </Page.DataContext>
 
     <Grid>
-        
+        <StackPanel Orientation="Vertical" Margin="5">
+
+
+            <Grid Margin="5" Height="270">
+
+                <!--ListView containing information about all orders of the selected share-->
+                <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Background="{Binding Path=Backgropund}" Margin="5,2.5,5,2.5" >
+                                <StackPanel Orientation="Horizontal">
+                                    <local:UserStackPanelList Height="60" HeaderText="Name" ValueText="{Binding Path=ShareName}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>                                    
+                                    <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
+                                </StackPanel>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </Grid>
+
+            <!--Grid containing s summary infoprmation for the selected share-->
+            <Grid Background="{Binding Path=Backgropund}" Margin="15,5,30,2.5" Name="OverViewGrid">
+
+                <StackPanel Orientation="Horizontal">                    
+                    <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
+                    <local:UserStackPanelList Height="60" HeaderText="" ValueText=""/>
+                    <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="" ValueText=""/>
+                    <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+
     </Grid>
 </Page>

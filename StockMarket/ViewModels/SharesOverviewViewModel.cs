@@ -60,6 +60,20 @@ namespace StockMarket.ViewModels
             }
         }
 
+        public int Amount
+        {
+            get
+            {
+                int amount = 0;
+                foreach (var share in Shares)
+                {
+                    amount += share.Amount;
+                }
+
+                return amount;
+            }
+        }
+
         /// <summary>
         /// The background color for the overview determined by 
         /// a positive or negative development of share prices

@@ -11,22 +11,7 @@ namespace StockMarket
         public MainWindow()
         {
             InitializeComponent();
-            MainFrame.Navigate(new Pages.BlankPage());
         }
 
-        private void B_AddShare_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new Pages.AddSharePage());
-        }
-
-        private void B_AddOrder_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new Pages.AddOrderPage());
-        }
-
-        private void B_Overview_Click(object sender, RoutedEventArgs e)
-        {
-            MainFrame.Navigate(new Pages.OrdersOverviewPage());
-        }
     }
 }
