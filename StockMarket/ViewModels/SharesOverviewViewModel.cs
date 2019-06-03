@@ -9,7 +9,7 @@ using System.Windows.Threading;
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for all <see cref="Shares"/> handled by this programm
+    /// A ViewModel for all <see cref="Shares"/> in the <see cref="Pages.SharesOverviewPage"/>
     /// </summary>
     class SharesOverviewViewModel : ViewModelBase
     {
@@ -96,6 +96,9 @@ namespace StockMarket.ViewModels
         }
     }
 
+    /// <summary>
+    /// A ViewModel for a single <see cref="Share"/> in the <see cref="Pages.SharesOverviewPage"/>
+    /// </summary>
     class ShareOverviewViewModel : ViewModelBase
     {
         #region Properties
@@ -284,13 +287,15 @@ namespace StockMarket.ViewModels
         }
 
         /// <summary>
-        /// The development of share prices in percent
+        /// The development of share prices in percent (as a fraction of 1.0)
         /// </summary>
         public double Percentage
         {
             get { return SumNow / SumBuy - 1.0; }
         }
+        #endregion
 
+        #region Methods
         /// <summary>
         /// refreshes the actual <see cref="Share"/> price
         /// </summary>
@@ -302,13 +307,12 @@ namespace StockMarket.ViewModels
             var price = RegexHelper.GetSharPrice(content);
             //set the price for the UI
             this.ActualPrice = price;
-        }       
-
-        public void refreshPrice ()
-        {
-            RefreshPriceAsync();
         }
 
-        #endregion
+        public void refreshPrice()
+        {
+            RefreshPriceAsync();
+        } 
+        #endregion        
     }
 }

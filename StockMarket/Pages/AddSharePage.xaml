@@ -18,11 +18,14 @@
     <Page.DataContext>
         <view:ShareViewModel/>
     </Page.DataContext>
+    <!-- outer grid-->
     <Grid Name="ContentGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="200"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
+        
+        <!--inner grid for user information-->
         <Grid Height="200" Margin="10" VerticalAlignment="Top" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
@@ -40,13 +43,22 @@
             
             <!--StackPanel for the actual input-->
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,10">
+                <!-- the website to look for information about the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite}"/>
+                
+                <!--the wkn of the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WKN}"/>
+                
+                <!--the isin of the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ISIN}"/>
+                
+                <!--the name of the stock company-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ShareName}"/>
-                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                <!--<TextBox Height="25" Margin="0,5,0,0" Text="{Binding ActualPrice, ConverterCulture='de-DE', StringFormat= 0:{C2}}"/>-->                
+                
+                <!--the current price of the share-->
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>                
             </StackPanel>
+            
         </Grid>
         <UniformGrid Grid.Row="1">
             

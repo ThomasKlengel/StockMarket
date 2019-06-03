@@ -2,8 +2,9 @@
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Style x:Key="StandardSpacer" TargetType="Control">
-        <Setter Property="Height" Value="25"/>
+        <Setter Property="Height" Value="30"/>
         <Setter Property="Margin" Value="0,5,0,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
     </Style>
 
             <!--<Style x:Key="ListStackPanel2" TargetType="StackPanel">

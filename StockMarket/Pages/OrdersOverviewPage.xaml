@@ -48,14 +48,7 @@
             
             <!--Grid containing s summary infoprmation for the selected share-->
             <Grid Background="{Binding Path=Backgropund}" Margin="15,5,30,2.5" Name="OverViewGrid">
-                <!--
-                
-                Use this while doing the Binding
-                
-                <Grid.DataContext>
-                    <view:OrderOverviewViewModel/>
-                </Grid.DataContext>
-                -->
+
                 <StackPanel Orientation="Horizontal">
                     <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
                     <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>

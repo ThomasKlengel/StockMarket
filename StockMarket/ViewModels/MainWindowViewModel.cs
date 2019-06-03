@@ -8,12 +8,20 @@ using System.Windows.Controls;
 
 namespace StockMarket.ViewModels
 {
+    /// <summary>
+    /// a view model for the main window
+    /// </summary>
     class MainWindowViewModel: ViewModels.ViewModelBase
-    {               
-
+    {          
+        /// <summary>
+        /// creates a new instance of a ViewModel for the MainWindow
+        /// </summary>
         public MainWindowViewModel()
         {
+            // set the start page to an empty page
             DisplayPage = new Pages.BlankPage();
+
+            // define the commands for the buttons
             AddShareCommand = new RelayCommand(AddShare);
             AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
             DisplayOrderOverviewCommand = new RelayCommand(DisplayOrderOverview, CanDisplayOrderOverview);
@@ -22,6 +30,9 @@ namespace StockMarket.ViewModels
 
         #region Properties
         private Page _displayPage;
+        /// <summary>
+        /// The <see cref="Page"/> to display in the main frame
+        /// </summary>
         public Page DisplayPage {
             get
             {
@@ -35,29 +46,31 @@ namespace StockMarket.ViewModels
                 }
         #endregion
 
-        #region Commands
+        #region Commands             
 
+        #region Add Share Command        
         public RelayCommand AddShareCommand { get; private set; }
-        public RelayCommand AddOrderCommand { get; private set; }
-        public RelayCommand DisplayOrderOverviewCommand { get; private set; }
-        public RelayCommand DisplayShareOverviewCommand { get; private set; }
 
         private void AddShare(object o)
         {
             DisplayPage = new Pages.AddSharePage();
         }
+        #endregion
+
+        #region Add Order Command
+        public RelayCommand AddOrderCommand { get; private set; }
 
         private void AddOrder(object o)
-        {            
+        {
             DisplayPage = new Pages.AddOrderPage();
         }
 
-        private bool CanAddOrder (object o)
+        private bool CanAddOrder(object o)
         {
             int shares = 0;
             // try-catch only for UI generator
             try
-            {                
+            {
                 shares = DataBaseHelper.GetSharesFromDB().Count;
             }
             catch
@@ -65,8 +78,12 @@ namespace StockMarket.ViewModels
                 return true;
             }
             // execute only when we have at least one share
-            return shares > 0 ;
+            return shares > 0;
         }
+        #endregion
+
+        #region Display Order Overview Command
+        public RelayCommand DisplayOrderOverviewCommand { get; private set; }
 
         private void DisplayOrderOverview(object o)
         {
@@ -92,8 +109,12 @@ namespace StockMarket.ViewModels
             }
 
             // execute only when we have at least one order of any share
-            return orders>0;
+            return orders > 0;
         }
+        #endregion
+
+        #region Display Share Overview Command
+        public RelayCommand DisplayShareOverviewCommand { get; private set; }
 
         private void DisplayShareOverview(object o)
         {
@@ -114,7 +135,9 @@ namespace StockMarket.ViewModels
             }
             // execute only when we have at least one share
             return count > 0;
-        }
+        } 
+        #endregion
+
         #endregion
     }
 }

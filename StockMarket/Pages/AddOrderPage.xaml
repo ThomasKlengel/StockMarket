@@ -32,7 +32,9 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>                
+                </Grid.ColumnDefinitions>    
+                
+                <!-- Panel showing information about the items an the right side-->
                 <StackPanel Orientation="Vertical" Grid.Column="0">
                     <Label Style="{StaticResource StandardSpacer}">Price</Label>
                     <Label Style="{StaticResource StandardSpacer}">Expenses</Label>
@@ -41,16 +43,28 @@
                     <Label Style="{StaticResource StandardSpacer}">Order type</Label>
                 </StackPanel>
 
+                <!--Panel containg information that may be given by the user-->
                 <StackPanel Orientation="Vertical" Grid.Column="1" Width="100" HorizontalAlignment="Left">
+                    
+                    <!--the price for which the shares are purchesed/sold-->
                     <TextBox Text="{Binding ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
+                    
+                    <!--additional expenses for this order (demanded by the bank)-->
                     <TextBox Text="{Binding Expenses, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
+                    
+                    <!--the amount of shares purchased/sold-->
                     <TextBox  Text="{Binding Amount}" Style="{StaticResource StandardSpacer}"/>
+                    
+                    <!--the date of the order-->
                     <DatePicker DisplayDateEnd="{Binding Source={x:Static sys:DateTime.Today}, Path=.}"
                             SelectedDate="{Binding OrderDate}" Style="{StaticResource StandardSpacer}"/>
+                    
+                    <!--Panel to select the order type-->
                     <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,0">
                         <RadioButton IsChecked="{Binding OrderIsBuy}" Margin="5"  VerticalAlignment="Center">Buy</RadioButton>
                         <RadioButton IsChecked="{Binding OrderIsSell}" Margin="5" VerticalAlignment="Center">Sell</RadioButton>
                     </StackPanel>
+                    
                 </StackPanel>
             </Grid>
             

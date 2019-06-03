@@ -105,7 +105,8 @@ namespace StockMarket
         }
 
         /// <summary>
-        /// Adds a <see cref="Share"/> to the database
+        /// Adds a <see cref="Share"/> to the database,
+        /// also adds a new <see cref="ShareValue"/> for today to the database 
         /// </summary>
         /// <param name="share">The <see cref="Share"/> to add</param>
         /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
