@@ -7,8 +7,9 @@
              mc:Ignorable="d" 
              Name="thisUserControl"
              d:DesignHeight="50" d:DesignWidth="100">
-    <StackPanel Height="50" Width="90" Margin="0,0,10,0" Orientation="Vertical">
-        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding HeaderText, ElementName=thisUserControl}"/>
-        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding ValueText, ElementName=thisUserControl}"/>
+    <!-- Set the Stackpanel width to anything given in the UI using this UserControl. If no value is given, set it to 90-->
+    <StackPanel Margin="0,0,10,0" Width="{Binding ElementName=ContentPresenter, Path=ActualWidth, FallbackValue=90}" Orientation="Vertical">
+        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding HeaderText, ElementName=thisUserControl}" />
+        <TextBlock Margin="5" HorizontalAlignment="Center" Text="{Binding ValueText, ElementName=thisUserControl}" />
     </StackPanel>
 </UserControl>

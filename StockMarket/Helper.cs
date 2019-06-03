@@ -7,6 +7,7 @@ using System.Globalization;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace StockMarket
 {
@@ -209,8 +210,8 @@ namespace StockMarket
                 {
                     // get the required tables of the database
                     con.CreateTable<Share>();
-                    // insert the order
-                    return con.Table<Share>().ToList();
+                    // return the table as list, orderd by the ShareName
+                    return con.Table<Share>().ToList().OrderBy((s) => { return s.ShareName; }).ToList(); ;
                 }
             }
             catch (Exception ex)

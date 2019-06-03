@@ -62,6 +62,7 @@ namespace StockMarket.ViewModels
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
             }
         }
 
