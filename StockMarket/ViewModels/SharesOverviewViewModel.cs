@@ -238,7 +238,7 @@ namespace StockMarket.ViewModels
                 {
                     if (o.OrderType == OrderType.buy)
                     {
-                        buy +=  o.Amount * o.SharePrice + 2 * o.OrderExpenses;
+                        buy +=  o.Amount * o.SharePrice + o.OrderExpenses;
                     }
                 }
                 return buy;
@@ -255,21 +255,23 @@ namespace StockMarket.ViewModels
                 var Orders = DataBaseHelper.GetOrdersFromDB(ISIN).OrderBy((o)=> { return o.Date; });
                 int notSold=0;
                 double sell=0;
+                double buyExpenses = 0;
                 
                 foreach (var o in Orders)
                 {
                     if (o.OrderType == OrderType.buy)
                     {
                         notSold+=o.Amount;
+                        buyExpenses += o.OrderExpenses;
                     }
                     else
                     {
-                        sell+=o.Amount * o.SharePrice;
+                        sell += o.Amount * o.SharePrice - o.OrderExpenses;
                         notSold -= o.Amount;                        
                     }
                 }
 
-                sell += notSold * ActualPrice;
+                sell += notSold * ActualPrice + buyExpenses;
                 return sell;
             }
         }

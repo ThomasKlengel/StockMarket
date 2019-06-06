@@ -11,7 +11,17 @@
     <Page.DataContext>
         <view:SharesOverviewViewModel/>
     </Page.DataContext>
-
+    <!--
+    <Page.Resources>
+        <ResourceDictionary> 
+            <DataTemplate x:Key="GridCellTemplate">
+                <DockPanel Background="Red">
+                    <TextBlock Text="{Binding Path=ShareName}"/>
+                </DockPanel>
+            </DataTemplate>            
+        </ResourceDictionary>
+    </Page.Resources>
+    -->
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
 
@@ -21,10 +31,10 @@
                 <!--ListView containing information about all orders of the selected share-->
                 <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
                     <ListView.View>
-                        <GridView AllowsColumnReorder="true" ColumnHeaderToolTip="Employee Information">
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=ShareName}" Header=" Name" Width="100"/>
+                        <GridView AllowsColumnReorder="False">
+                            <GridViewColumn Header="Name" Width="100" CellTemplate="{StaticResource GridCellTemplate}"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Amount}" Header="Amount" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="buy" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="now" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}" Header="Percentage" Width="100"/>

@@ -26,7 +26,7 @@
                                 <StackPanel Orientation="Horizontal">
                                     <local:UserStackPanelList Height="60" HeaderText="Name" ValueText="{Binding Path=ShareName}" Width="200"/>
                                     <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>                                    
-                                    <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
@@ -47,7 +47,7 @@
 
                 <StackPanel Orientation="Horizontal">                    
                     <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
-                    <local:UserStackPanelList Height="60" />
+                    <local:UserStackPanelList Height="60" Width=" 200"/>
                     <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>
                     <local:UserStackPanelList Height="60" />
                     <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>

@@ -60,9 +60,12 @@ namespace StockMarket.ViewModels
             {
                 _actPrice = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                if (OrderType == OrderType.buy)
+                {
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                }
             }
         }
 
@@ -99,7 +102,14 @@ namespace StockMarket.ViewModels
         /// The summed up price of the shares at the day of purchase
         /// (getter only)
         /// </summary>
-        public double SumBuy {get { return SharePrice * _amount; } }
+        public double SumBuy
+        {
+            get
+            {   //TODO: SumBuy dependend on ordertype
+                //if sell my need to get all other orders of this share
+                return SharePrice * _amount;
+            }
+        }
 
         /// <summary>
         /// The current summed up price of the shares
@@ -107,6 +117,8 @@ namespace StockMarket.ViewModels
         /// </summary>
         public double SumNow
         {
+             //TODO: SumNow dependend on ordertype
+             //if sell == shareprice*amount - (according buyexpense + according sell expense)
              get { return ActPrice * _amount; } 
         }
 
@@ -116,7 +128,7 @@ namespace StockMarket.ViewModels
         /// </summary>
         public SolidColorBrush Backgropund
         {
-            get { return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222,255,209)) : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
+            get { return Percentage >= 0 ? new SolidColorBrush(Color.FromRgb(222,255,209)) : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
         }
 
         /// <summary>
