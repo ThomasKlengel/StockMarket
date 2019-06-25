@@ -28,7 +28,14 @@
                             <Grid Background="{Binding Path=Backgropund}" Margin="5,2.5,5,2.5" >
                                 <StackPanel Orientation="Horizontal">                                    
                                     <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
-                                    <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>
+                                    <local:UserStackPanelList Height="60" HeaderText="Amount">
+                                        <local:UserStackPanelList.ValueText>
+                                            <MultiBinding StringFormat="{}{0} (-{1})">
+                                                <Binding Path="Amount"/>
+                                                <Binding Path="AmountSold"/>
+                                            </MultiBinding>
+                                        </local:UserStackPanelList.ValueText>
+                                    </local:UserStackPanelList>
                                     <local:UserStackPanelList Height="60" HeaderText="SharePrice" ValueText="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                                     <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
@@ -51,7 +58,14 @@
 
                 <StackPanel Orientation="Horizontal">
                     <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
-                    <local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>
+                    <local:UserStackPanelList Height="60" HeaderText="Amount">
+                        <local:UserStackPanelList.ValueText>
+                            <MultiBinding StringFormat="{}{0} (-{1})">
+                                <Binding Path="Amount"/>
+                                <Binding Path="AmountSold"/>
+                            </MultiBinding>
+                        </local:UserStackPanelList.ValueText>
+                    </local:UserStackPanelList>
                     <local:UserStackPanelList Height="60" HeaderText="AvgPrice" ValueText="{Binding Path=AvgSharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                     <local:UserStackPanelList Height="60" HeaderText="ActPrice" ValueText="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
                     <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>

@@ -280,12 +280,17 @@ namespace StockMarket.ViewModels
         /// The background color for the overview determined by 
         /// a positive or negative development of share prices
         /// </summary>
-        public SolidColorBrush Backgropund
+        public Brush Backgropund
         {
             get
             {
-                return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209))
-                                           : new SolidColorBrush(Color.FromRgb(255, 127, 127));
+                var paleRed = Color.FromRgb(255, 127, 127);
+                var paleGreen = Color.FromRgb(222, 255, 209);
+                var color = SumNow - SumBuy > 0 ? paleGreen : paleRed;
+                Brush solidBack = new SolidColorBrush(color);
+                Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
+
+                return Amount > 0 ? solidBack : gradientBack;                
             }
         }
 

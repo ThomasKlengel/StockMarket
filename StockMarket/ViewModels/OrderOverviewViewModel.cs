@@ -77,12 +77,35 @@ namespace StockMarket.ViewModels
                 int sum = 0;
                 foreach (var order in Orders)
                 {
-                    sum += order.Amount;
+                    if (order.OrderType == OrderType.buy)
+                    {
+                        sum += order.Amount;
+                    }
                 };
                 return sum;
             }
         }
 
+        /// <summary>
+        /// The amount of shares sold over all orders
+        /// </summary>
+        public int AmountSold
+        {
+            get
+            {
+                int sum = 0;
+                foreach (var order in Orders)
+                {
+                    if (order.OrderType == OrderType.sell)
+                    {
+                        // Amount is already negative for sell orders
+                        sum -= order.Amount;
+                    }
+                };
+                return sum;
+            }
+        }
+                     
         /// <summary>
         /// The current date
         /// </summary>
@@ -99,10 +122,11 @@ namespace StockMarket.ViewModels
             get
             {
                 double sum = 0;
+
                 foreach (var order in Orders)
                 {
-                    sum += order.Amount * order.SharePrice;
-                };
+                    sum += order.SumBuy;                    
+                }
                 return sum;
             }
         }
@@ -111,13 +135,13 @@ namespace StockMarket.ViewModels
         /// The current summed up price for all orders 
         /// </summary>
         public double SumNow
-        {
+        {            
             get
             {
                 double sum = 0;
                 foreach (var order in Orders)
                 {
-                    sum += order.Amount * ActPrice;
+                    sum += order.SumNow ;
                 };
                 return sum;
             }
@@ -127,10 +151,18 @@ namespace StockMarket.ViewModels
         /// The background color for the overview determined by 
         /// a positive or negative development of share prices
         /// </summary>
-        public SolidColorBrush Backgropund
+        public Brush Backgropund
         {
-            get { return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209)) 
-                                             : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
+            get
+            {
+                var paleRed = Color.FromRgb(255, 127, 127);
+                var paleGreen = Color.FromRgb(222, 255, 209);
+                var color = Percentage >= 0 ? paleGreen : paleRed;
+                Brush solidBack = new SolidColorBrush(color);
+                Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
+
+                return Amount-AmountSold > 0 ? solidBack : gradientBack;
+            }
         }
 
         /// <summary>
@@ -194,6 +226,7 @@ namespace StockMarket.ViewModels
 
             // notify UI of changes
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(AvgSharePrice)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
 

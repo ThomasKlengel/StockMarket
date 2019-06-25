@@ -2,6 +2,8 @@
 using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Media;
+using System.Linq;
+using System.Collections.Generic;
 
 namespace StockMarket.ViewModels
 {
@@ -30,11 +32,14 @@ namespace StockMarket.ViewModels
             this.OrderExpenses = order.OrderExpenses;
             this.OrderType = order.OrderType;
             this.SharePrice = order.SharePrice;
+            this.ISIN = order.ISIN;          
         }
 
         #endregion
 
         #region Properties
+        private string ISIN;
+
         private double _sharePrice;
         /// <summary>
         /// The prices of a single share at the day of purchase
@@ -76,11 +81,57 @@ namespace StockMarket.ViewModels
         /// </summary>
         public int Amount
         {
-            get { return _amount; }
+            get { return _amount*(int)OrderType; }
             set
             {
                 _amount = value;
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+            }
+        }
+
+        public int AmountSold
+        {
+            get
+            {
+                switch (OrderType)
+                {
+                    case OrderType.buy:
+                        {
+                            //get buys and sells
+                            var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
+                            var sells = orders.FindAll(o => o.OrderType == OrderType.sell).OrderBy(o => o.Date).ToList();
+                            var buys = orders.FindAll(o => o.OrderType == OrderType.buy && o.Date < Date).OrderBy(o => o.Date).ToList();
+
+                            //sum up the amount of sold shares
+                            int numSells = 0;
+                            foreach (var order in sells)
+                            {
+                                numSells += order.Amount;
+                            }
+
+                            // remove them from the buys prior to this one
+                            for (int i = 0; i < buys.Count(); i++)
+                            {
+                                if (numSells < 1)
+                                {
+                                    break;
+                                }
+
+                                if (numSells > buys[i].Amount)
+                                {
+                                    numSells -= buys[i].Amount;
+                                    buys[i].Amount = 0;
+                                }
+                                else
+                                {
+                                    buys[i].Amount -= numSells;
+                                    numSells = 0;
+                                }
+                            }
+                            return numSells;
+                        }
+                    default: return 0;
+                }
             }
         }
 
@@ -105,9 +156,77 @@ namespace StockMarket.ViewModels
         public double SumBuy
         {
             get
-            {   //TODO: SumBuy dependend on ordertype
-                //if sell my need to get all other orders of this share
-                return SharePrice * _amount;
+            {
+                switch (OrderType)
+                {
+                    case OrderType.sell:
+                        {
+                            //get buys and sells
+                            var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
+                            var sells = orders.FindAll(o => o.OrderType == OrderType.sell && o.Date<Date).OrderBy(o => o.Date).ToList();
+                            var buys = orders.FindAll(o => o.OrderType == OrderType.buy).OrderBy(o => o.Date).ToList();
+
+                            //sum up the amount of sold shares prior to this one
+                            int numSells = 0;
+                            foreach (var order in sells)
+                            {
+                                numSells += order.Amount;
+                            }
+                            
+                            // remove them from the buys
+                            for (int i = 0; i < buys.Count(); i++)
+                            {
+                                if (numSells < 1)
+                                {
+                                    break;
+                                }
+
+                                if (numSells > buys[i].Amount)
+                                {
+                                    numSells -= buys[i].Amount;
+                                    buys[i].Amount = 0;
+                                }
+                                else
+                                {
+                                    buys[i].Amount -= numSells;
+                                    numSells = 0;
+                                }                                
+                            }
+
+                            // sum up the prices
+                            double buyprice = 0.0;
+                            int tempamount = _amount;
+                            for (int i = 0; i < buys.Count(); i++)
+                            {
+                                if (tempamount==0)
+                                {
+                                    break;
+                                }
+                                if (buys[i].Amount==0)
+                                {
+                                    continue;
+                                }
+
+                                if (tempamount > buys[i].Amount)
+                                {
+                                    tempamount -= buys[i].Amount;
+                                    buyprice += buys[i].Amount * buys[i].SharePrice + buys[i].OrderExpenses;
+                                }
+                                else
+                                {
+                                    buyprice += tempamount * buys[i].SharePrice + buys[i].OrderExpenses * tempamount / buys[i].Amount;
+                                    tempamount = 0;
+                                    break;
+                                }
+                            }
+                            return buyprice;
+                        }                        
+                    default:
+                        {                        
+                            // sum up the prices                     
+                            return SharePrice * (_amount - AmountSold);
+                        }
+                }                
             }
         }
 
@@ -117,18 +236,69 @@ namespace StockMarket.ViewModels
         /// </summary>
         public double SumNow
         {
-             //TODO: SumNow dependend on ordertype
-             //if sell == shareprice*amount - (according buyexpense + according sell expense)
-             get { return ActPrice * _amount; } 
+            get
+            {
+                switch (OrderType)
+                {
+                    case OrderType.sell: return SharePrice * _amount + OrderExpenses;
+                    default:
+                        {
+
+                            //get buys and sells
+                            var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
+                            var sells = orders.FindAll(o => o.OrderType == OrderType.sell).OrderBy(o => o.Date).ToList();
+                            var buys = orders.FindAll(o => o.OrderType == OrderType.buy && o.Date < Date).OrderBy(o => o.Date).ToList();
+
+                            //sum up the amount of sold shares
+                            int numSells = 0;
+                            foreach (var order in sells)
+                            {
+                                numSells += order.Amount;
+                            }
+
+                            // remove them from the buys prior to this one
+                            for (int i = 0; i < buys.Count(); i++)
+                            {
+                                if (numSells < 1)
+                                {
+                                    break;
+                                }
+
+                                if (numSells > buys[i].Amount)
+                                {
+                                    numSells -= buys[i].Amount;
+                                    buys[i].Amount = 0;
+                                }
+                                else
+                                {
+                                    buys[i].Amount -= numSells;
+                                    numSells = 0;
+                                }
+                            }
+
+                            // sum up the prices                     
+                            return ActPrice * (_amount - numSells) + (numSells < _amount ? OrderExpenses * ((_amount - numSells) / _amount) : 0);
+                        }
+                }
+            }
         }
 
         /// <summary>
         /// The color for the order determined by 
         /// a positive or negative development of share prices
         /// </summary>
-        public SolidColorBrush Backgropund
+        public Brush Backgropund
         {
-            get { return Percentage >= 0 ? new SolidColorBrush(Color.FromRgb(222,255,209)) : new SolidColorBrush(Color.FromRgb(255, 127, 127)); }
+            get
+            {
+                var paleRed = Color.FromRgb(255, 127, 127);
+                var paleGreen = Color.FromRgb(222, 255, 209);
+                var color = Percentage >= 0 ? paleGreen : paleRed;
+                Brush solidBack = new SolidColorBrush(color);
+                Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
+
+                return Amount-AmountSold > 0 ? solidBack : gradientBack;
+            }
         }
 
         /// <summary>
