@@ -173,21 +173,23 @@ namespace StockMarket.ViewModels
                                 numSells += order.Amount;
                             }
                             
-                            // remove them from the buys
+                            // remove the sold ones from the buys
                             for (int i = 0; i < buys.Count(); i++)
                             {
-                                if (numSells < 1)
+                                if (numSells < 1) // break when sells are 0
                                 {
                                     break;
                                 }
 
-                                if (numSells > buys[i].Amount)
+                                if (numSells > buys[i].Amount) // if remaining sells are greater then the amount of shares in the actual buy order
                                 {
+                                    // ...remove Amount from sells, set Amount to 0 the actual buy order
                                     numSells -= buys[i].Amount;
                                     buys[i].Amount = 0;
                                 }
-                                else
+                                else// the amount of shares bought with this order is greater then the remaining sells, so...
                                 {
+                                    // ... remove the remaining sells from the actual buy order, set numSells to 0  
                                     buys[i].Amount -= numSells;
                                     numSells = 0;
                                 }                                
@@ -198,30 +200,34 @@ namespace StockMarket.ViewModels
                             int tempamount = _amount;
                             for (int i = 0; i < buys.Count(); i++)
                             {
-                                if (tempamount==0)
+                                if (tempamount==0) // break when the amount remaining for this sell order is 0
                                 {
                                     break;
                                 }
-                                if (buys[i].Amount==0)
+                                if (buys[i].Amount==0) // skip if the actual buy has no more shares
                                 {
                                     continue;
                                 }
 
-                                if (tempamount > buys[i].Amount)
+                                if (tempamount > buys[i].Amount) // when the shares remaining in this sell order is greater then the shares bought...
                                 {
+                                    // ...remove the boughht shares from the remaining shares
                                     tempamount -= buys[i].Amount;
+                                    // add the buyprice of the buy order, take into account the whole order expenses
                                     buyprice += buys[i].Amount * buys[i].SharePrice + buys[i].OrderExpenses;
                                 }
-                                else
+                                else // when the shares remaining in this sell order are smaller then the shares bought...
                                 {
+                                    // add the proportion of the buyprice of the buy order, take into account the proportional order expenses
                                     buyprice += tempamount * buys[i].SharePrice + buys[i].OrderExpenses * tempamount / buys[i].Amount;
+
                                     tempamount = 0;
                                     break;
                                 }
                             }
                             return buyprice;
                         }                        
-                    default:
+                    default: // buys, for safety as default
                         {                        
                             // sum up the prices                     
                             return SharePrice * (_amount - AmountSold);
@@ -241,9 +247,8 @@ namespace StockMarket.ViewModels
                 switch (OrderType)
                 {
                     case OrderType.sell: return SharePrice * _amount + OrderExpenses;
-                    default:
+                    default: // buys, default for safety
                         {
-
                             //get buys and sells
                             var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
                             var sells = orders.FindAll(o => o.OrderType == OrderType.sell).OrderBy(o => o.Date).ToList();
@@ -256,27 +261,29 @@ namespace StockMarket.ViewModels
                                 numSells += order.Amount;
                             }
 
-                            // remove them from the buys prior to this one
+                            // remove the sold shares from the buys prior to this one
                             for (int i = 0; i < buys.Count(); i++)
                             {
-                                if (numSells < 1)
+                                if (numSells < 1) // break if sells are 0
                                 {
                                     break;
                                 }
 
-                                if (numSells > buys[i].Amount)
+                                if (numSells > buys[i].Amount) // if the remaining sells are greater then the amount of shares in the buy order...
                                 {
+                                    // ...remove Amount from sells, set Amount to 0 the actual buy order
                                     numSells -= buys[i].Amount;
                                     buys[i].Amount = 0;
                                 }
-                                else
+                                else // the amount of shares bought with this order is greater then the remaining sells, so...
                                 {
+                                    // ... remove the remaining sells from the actual buy order, set numSells to 0  
                                     buys[i].Amount -= numSells;
                                     numSells = 0;
                                 }
                             }
 
-                            // sum up the prices                     
+                            // sum up the prices, take into account the sold ones and probable order expenses                     
                             return ActPrice * (_amount - numSells) + (numSells < _amount ? OrderExpenses * ((_amount - numSells) / _amount) : 0);
                         }
                 }
