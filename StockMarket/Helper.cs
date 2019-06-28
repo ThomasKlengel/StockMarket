@@ -40,40 +40,43 @@ namespace StockMarket
                 con.DeleteAll<Share>();
                 con.DeleteAll<Order>();
                 con.DeleteAll<ShareValue>();
-                                
-                foreach (var s in model.Shares)
-                {   // populate the share table with the values of the datamodel
-                    con.Insert(new Share()
-                    {
-                        ISIN = s.ISIN,
-                        ShareName = s.ShareName,
-                        WebSite = s.WebSite,
-                        WKN = s.WKN
-                    }, typeof(Share));
-                }
-                                
-                foreach (var o in model.Orders)
-                {   // populate the order table with the values of the datamodel
-                    con.Insert(new Order()
-                    {
-                        ISIN = o.ISIN,
-                        Amount = o.Amount,
-                        Date = o.Date,
-                        OrderExpenses = o.OrderExpenses,
-                        OrderType = o.OrderType,
-                        SharePrice = o.SharePrice
-                    }, typeof(Order));
-                }
 
-                foreach (var v in model.ShareValues)
-                {   // populate the share table with the values of the datamodel
-                    con.Insert(new ShareValue()
-                    {
-                        Date = v.Date,
-                        ISIN = v.ISIN,
-                        Price = v.Price
-                    }, typeof(ShareValue));
+                if (model != null)
+                {
+                    foreach (var s in model.Shares)
+                    {   // populate the share table with the values of the datamodel
+                        con.Insert(new Share()
+                        {
+                            ISIN = s.ISIN,
+                            ShareName = s.ShareName,
+                            WebSite = s.WebSite,
+                            WKN = s.WKN
+                        }, typeof(Share));
+                    }
 
+                    foreach (var o in model.Orders)
+                    {   // populate the order table with the values of the datamodel
+                        con.Insert(new Order()
+                        {
+                            ISIN = o.ISIN,
+                            Amount = o.Amount,
+                            Date = o.Date,
+                            OrderExpenses = o.OrderExpenses,
+                            OrderType = o.OrderType,
+                            SharePrice = o.SharePrice
+                        }, typeof(Order));
+                    }
+
+                    foreach (var v in model.ShareValues)
+                    {   // populate the share table with the values of the datamodel
+                        con.Insert(new ShareValue()
+                        {
+                            Date = v.Date,
+                            ISIN = v.ISIN,
+                            Price = v.Price
+                        }, typeof(ShareValue));
+
+                    }
                 }
             }            
         }

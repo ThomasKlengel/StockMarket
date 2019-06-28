@@ -128,7 +128,7 @@ namespace StockMarket.ViewModels
                                     numSells = 0;
                                 }
                             }
-                            return numSells;
+                            return _amount < numSells ? _amount : numSells;
                         }
                     default: return 0;
                 }

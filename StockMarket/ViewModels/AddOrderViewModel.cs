@@ -102,16 +102,19 @@ namespace StockMarket.ViewModels
             }
         }
 
+
         public bool OrderIsBuy
         {
             get
             {
-
                 return OrderType == OrderType.buy;
             }
             set
             {
-                OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+                if (value) // ignore the when bound CheckBox is unchecked
+                {
+                    OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+                }
             }
         }
         public bool OrderIsSell
@@ -122,7 +125,10 @@ namespace StockMarket.ViewModels
             }
             set
             {
-                OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+                if (value) // ignore the when bound CheckBox is unchecked
+                {
+                    OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+                }
             }
         }
 
