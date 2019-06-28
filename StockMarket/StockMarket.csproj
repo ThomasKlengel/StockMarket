@@ -98,6 +98,7 @@
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\DayValueViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\ShareOverviewViewModel.cs" />
     <Compile Include="ViewModels\SharesOverviewViewModel.cs" />
     <Compile Include="ViewModels\OrderOverviewViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
