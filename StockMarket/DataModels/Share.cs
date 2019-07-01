@@ -11,12 +11,13 @@ namespace StockMarket
         #region ctors
         public Share() { }
 
-        public Share(string name, string website, string wkn, string isin)
+        public Share(string name, string website, string wkn, string isin, ShareType shareType= ShareType.Share)
         {
             ShareName = name;
             WebSite = website;
             WKN = wkn;
             ISIN = isin;
+            ShareType = shareType;
         }
 
         #endregion
@@ -43,6 +44,11 @@ namespace StockMarket
         /// </summary>
         [PrimaryKey]
         public string ISIN { get; set; }
+
+        /// <summary>
+        /// The type of the share (Share, Certificate)
+        /// </summary>
+        public ShareType ShareType { get; set; }
         #endregion
 
         #region Methods
@@ -161,5 +167,11 @@ namespace StockMarket
     {
         buy = 1,
         sell = -1
+    }
+
+    public enum ShareType
+    {
+        Share=0,
+        Certificate=1
     }
 }

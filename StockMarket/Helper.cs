@@ -276,7 +276,7 @@ namespace StockMarket
         public const string REGEX_ShareName = "Aktienkurs .* in";
         public const string REGEX_ISIN_Valid = "^\\S{12}$";
         public const string REGEX_IsShare = "^https:\\/{2}w{3}\\.finanzen\\.net\\/aktien\\/.+-Aktie$";
-        public const string REGEX_IsOption = "^https:\\/{2}w{3}\\.finanzen\\.net\\/optionsscheine\\/Auf-.+\\/.{6}$";
+        public const string REGEX_IsCertificate = "^https:\\/{2}w{3}\\.finanzen\\.net\\/optionsscheine\\/Auf-.+\\/.{6}$";
         public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
         #endregion
 
@@ -318,6 +318,19 @@ namespace StockMarket
         public static bool IsinIsValid(string isin)
         {            
             return Regex.Match(isin, REGEX_ISIN_Valid).Success;
+        }
+
+        public static bool IsShareTypeShare(string website)
+        {            
+            if (Regex.Match(website, REGEX_IsShare).Success)
+            {
+                return true;
+            }
+            else if (Regex.Match(website, REGEX_IsCertificate).Success)
+            {
+                return false;
+            }
+            return true;
         }
 
     }
