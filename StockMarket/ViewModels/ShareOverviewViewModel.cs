@@ -107,7 +107,7 @@ namespace StockMarket.ViewModels
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
             }
         }
 
@@ -122,14 +122,15 @@ namespace StockMarket.ViewModels
 
                 foreach (var o in Orders)
                 {
-                    if (o.OrderType == OrderType.buy)
-                    {
-                        amount += o.Amount;
-                    }
-                    else
-                    {
-                        amount -= o.Amount;
-                    }
+                    amount += o.Amount;
+                    //if (o.OrderType == OrderType.buy)
+                    //{
+                    //    amount += o.Amount;
+                    //}
+                    //else
+                    //{
+                    //    amount -= o.Amount;
+                    //}
                 }
                 return amount;
             }
@@ -180,7 +181,7 @@ namespace StockMarket.ViewModels
         /// The background color for the overview determined by 
         /// a positive or negative development of share prices
         /// </summary>
-        public Brush Backgropund
+        public Brush Background
         {
             get
             {

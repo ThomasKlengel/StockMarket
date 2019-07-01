@@ -22,8 +22,23 @@ namespace StockMarket.ViewModels
             {
                 Shares.Add(new ShareOverviewViewModel(share));
             }
+            Timer = new DispatcherTimer();
+            Timer.Interval = new TimeSpan(0,0,10);
+            Timer.Tick += Timer_Tick;
+            Timer.Start();
+
         }
 
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
+            Timer.Stop();
+        }
+
+        private DispatcherTimer Timer;
         public List<ShareOverviewViewModel> Shares { get; private set; }
 
         /// <summary>
@@ -50,13 +65,13 @@ namespace StockMarket.ViewModels
         {
             get
             {
-                double buy = 0;
+                double now = 0;
 
                 foreach (var share in Shares)
                 {
-                    buy += share.SumNow;
+                    now += share.SumNow;
                 }
-                return buy;
+                return now;
             }
         }
 
@@ -78,11 +93,11 @@ namespace StockMarket.ViewModels
         /// The background color for the overview determined by 
         /// a positive or negative development of share prices
         /// </summary>
-        public SolidColorBrush Backgropund
+        public SolidColorBrush Background
         {
             get
             {
-                return SumNow - SumBuy > 0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209))
+                return Percentage > 0.0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209))
                                            : new SolidColorBrush(Color.FromRgb(255, 127, 127));
             }
         }
