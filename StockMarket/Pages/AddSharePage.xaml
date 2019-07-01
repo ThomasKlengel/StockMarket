@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:StockMarket"
       xmlns:view ="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="300" d:DesignWidth="400"
+      d:DesignHeight="400" d:DesignWidth="400"
       Title="AddSharePage">
     <Page.Resources>
         <ResourceDictionary>
@@ -21,12 +21,12 @@
     <!-- outer grid-->
     <Grid Name="ContentGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="200"></RowDefinition>
+            <RowDefinition Height="290"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
         <!--inner grid for user information-->
-        <Grid Height="200" Margin="10" VerticalAlignment="Top" Grid.Row="0">
+        <Grid  Margin="10" VerticalAlignment="Top" Grid.Row="0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
@@ -38,6 +38,8 @@
                 <Label Style="{StaticResource StandardSpacer}">WKN:</Label>
                 <Label Style="{StaticResource StandardSpacer}">ISIN:</Label>
                 <Label Style="{StaticResource StandardSpacer}">Name:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Type:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Factor:</Label>
                 <Label Style="{StaticResource StandardSpacer}">Purchase price:</Label>                
             </StackPanel>
             
@@ -54,7 +56,15 @@
                 
                 <!--the name of the stock company-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ShareName}"/>
-                
+
+                <StackPanel Orientation="Horizontal" Height="30" Margin="0,5,0,0">
+                    <RadioButton IsChecked="{Binding IsShare}" Margin="5"  VerticalAlignment="Center">Share</RadioButton>
+                    <RadioButton IsChecked="{Binding IsCertificate}" Margin="5" VerticalAlignment="Center">Certificate</RadioButton>
+                </StackPanel>
+
+                <!--the factor of the certificate-->
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding Factor}"/>
+
                 <!--the current price of the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>                
             </StackPanel>

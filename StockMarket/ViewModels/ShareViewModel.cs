@@ -96,7 +96,48 @@ namespace StockMarket.ViewModels
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
             }
         }
-              
+
+        private bool _shareTypeIsShare;
+        public bool IsShare
+        {
+            get { return _shareTypeIsShare; }
+            set
+            {
+                if (value)
+                {
+                    _shareTypeIsShare = _shareTypeIsShare ? !_shareTypeIsShare : true;
+                }
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
+            }
+        }
+
+        public bool IsCertificate
+        {
+            get { return !_shareTypeIsShare; }
+            set
+            {
+                if (value)
+                {
+                    _shareTypeIsShare = _shareTypeIsShare ? !_shareTypeIsShare : true;
+                }
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
+            }
+        }
+
+        private byte _factor;
+        public byte Factor
+        {
+            get { return _factor; }
+            set
+            {
+                if (_factor != value)
+                {
+                    _factor = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Factor)));
+                }
+            }
+        }
+
         #endregion
 
         #region Commands
@@ -131,6 +172,7 @@ namespace StockMarket.ViewModels
             ShareName = name;
             WKN = wkn;
             ActualPrice = RegexHelper.GetSharPrice(webContent);
+            IsShare = RegexHelper.IsShareTypeShare(WebSite);
             //DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = ActualPrice });
 
         }
