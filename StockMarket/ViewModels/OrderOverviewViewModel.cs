@@ -240,7 +240,7 @@ namespace StockMarket.ViewModels
             // get the website content
             var content = await WebHelper.getWebContent(SelectedShare.WebSite);
             //get the price
-            var price=  RegexHelper.GetSharPrice(content);
+            var price=  RegexHelper.GetSharePrice(content,SelectedShare.ShareType);
             //set the price for the UI
             ActPrice = price;
         }

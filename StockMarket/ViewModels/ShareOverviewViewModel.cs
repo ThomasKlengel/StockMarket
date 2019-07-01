@@ -27,12 +27,14 @@ namespace StockMarket.ViewModels
             WKN = share.WKN;
             ISIN = share.ISIN;
             ShareName = share.ShareName;
+            ShareType = share.ShareType;
             GetOrders();
             RefreshPriceAsync();
             
         }
 
         private List<OrderViewModel> Orders;
+        public ShareType ShareType { get; private set; }
 
         private string _shareName;
         /// <summary>
@@ -213,7 +215,7 @@ namespace StockMarket.ViewModels
             // get the website content
             var content = await WebHelper.getWebContent(WebSite);
             //get the price
-            var price = RegexHelper.GetSharPrice(content);
+            var price = RegexHelper.GetSharePrice(content, ShareType);
             //set the price for the UI
             this.ActualPrice = price;
         }

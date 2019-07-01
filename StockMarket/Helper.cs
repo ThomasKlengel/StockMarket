@@ -123,12 +123,13 @@ namespace StockMarket
                 {
                     // get the required tables of the database
                     con.CreateTable<Share>();
-                    con.CreateTable<ShareValue>();                    
-                    
+                    con.CreateTable<ShareValue>();
+
                     // check if the share is lready in the database...
                     if (con.Find<Share>(share.ISIN) == null)
                     {   //... if not, add it to the tables
-                        con.Insert(new Share(share.ShareName, share.WebSite, share.WKN, share.ISIN));
+                        var shareType = share.IsShare ? ShareType.Share : ShareType.Certificate;
+                        con.Insert(new Share(share.ShareName, share.WebSite, share.WKN, share.ISIN, shareType));
                         con.Insert(new ShareValue() { Date = DateTime.Now, ISIN = share.ISIN, Price = share.ActualPrice });
                     }
                     else
@@ -267,6 +268,8 @@ namespace StockMarket
     public static class RegexHelper
     {
         #region Regex strings
+        public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
+
         public const string REGEX_SharePrice = "\\d*\\.?\\d*,\\d*";
         public const string REGEX_Group_SharePrice = "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span";
         public const string REGEX_Group_IDs = "instrument-id\"\\>.{40}";
@@ -275,29 +278,52 @@ namespace StockMarket
         public const string REGEX_Group_ShareName = "box-headline\"\\>Aktienkurs.{50}";
         public const string REGEX_ShareName = "Aktienkurs .* in";
         public const string REGEX_ISIN_Valid = "^\\S{12}$";
-        public const string REGEX_IsShare = "^https:\\/{2}w{3}\\.finanzen\\.net\\/aktien\\/.+-Aktie$";
-        public const string REGEX_IsCertificate = "^https:\\/{2}w{3}\\.finanzen\\.net\\/optionsscheine\\/Auf-.+\\/.{6}$";
-        public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
+
+        public const string REGEX_CertificateFactor = "\\bFaktor\\b .+ \\bZertifikat\\b";
+        public const string REGEX_CertificateTitle = "<title>.*<\\/title>";
+        public const string REGEX_Group_CertWKN = ".{6} \\|";
+        public const string REGEX_Group_CertISIN = "\\| \\S{12}  *\\|";
+        public const string REGEX_Group_CertName = "\\bauf .* von\\b";
+        public const string REGEX_Group_CertFactor = "Faktor \\d{1,2}";
+        public const string REGEX_Group_CertPrice = "<div .*data-template=\"Bid\".* data-animation.*<\\/span><\\/div>";
+
         #endregion
 
         /// <summary>
         /// Gets the price of a share from a string
         /// </summary>
-        /// <param name="input">the string to check for the price</param>
+        /// <param name="webContent">the string to check for the price</param>
         /// <returns>the price of the share</returns>
-        public static double GetSharPrice (string input)
+        public static double GetSharePrice (string webContent, ShareType type)
         {
-            // get the section of the website which contains the SharePrice
-            //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-            var priceMatch = Regex.Match(input, RegexHelper.REGEX_Group_SharePrice);
-            if (!priceMatch.Success)
+            string price = "";
+            switch (type)
             {
-                return 0.0;
-            }
-            // get the SharePrice in the desired format
-            string sharePrice = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
+                case ShareType.Share:
+                    {
+                        // get the section of the website which contains the SharePrice
+                        //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
+                        var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_SharePrice);
+                        if (!priceMatch.Success)
+                        {
+                            return 0.0;
+                        }
+                        // get the SharePrice in the desired format
+                        price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
+                        break;
+                    }
+                case ShareType.Certificate:
+                    {
+                        // get the current bid price
+                        var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                        price = Regex.Match(priceMath.Value, RegexHelper.REGEX_SharePrice).Value;
 
-            return Convert.ToDouble(sharePrice, CultureInfo.GetCultureInfo("de-DE"));
+                        break;
+                    }
+                default: return 0.0;
+            }
+
+            return Convert.ToDouble(price, CultureInfo.GetCultureInfo("de-DE"));
         }
  
         /// <summary>
@@ -322,11 +348,11 @@ namespace StockMarket
 
         public static bool IsShareTypeShare(string website)
         {            
-            if (Regex.Match(website, REGEX_IsShare).Success)
+            if (Regex.Match(website, "aktien").Success)
             {
                 return true;
             }
-            else if (Regex.Match(website, REGEX_IsCertificate).Success)
+            else if (Regex.Match(website, "optionsscheine").Success)
             {
                 return false;
             }

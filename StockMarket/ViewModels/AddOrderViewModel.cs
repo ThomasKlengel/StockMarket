@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Net;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 
@@ -148,8 +149,9 @@ namespace StockMarket.ViewModels
         {
             if (SelectedShare != null)
             {
+                double price = 0.0;
                 var content = await WebHelper.getWebContent(SelectedShare.WebSite);
-                var price = RegexHelper.GetSharPrice(content);
+                price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
                 ActPrice = price;
             }
         }

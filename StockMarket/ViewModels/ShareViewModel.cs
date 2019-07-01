@@ -97,7 +97,7 @@ namespace StockMarket.ViewModels
             }
         }
 
-        private bool _shareTypeIsShare;
+        private bool _shareTypeIsShare=true;
         public bool IsShare
         {
             get { return _shareTypeIsShare; }
@@ -105,7 +105,7 @@ namespace StockMarket.ViewModels
             {
                 if (value)
                 {
-                    _shareTypeIsShare = _shareTypeIsShare ? !_shareTypeIsShare : true;
+                    _shareTypeIsShare = true;
                 }
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
             }
@@ -118,7 +118,7 @@ namespace StockMarket.ViewModels
             {
                 if (value)
                 {
-                    _shareTypeIsShare = _shareTypeIsShare ? !_shareTypeIsShare : true;
+                    _shareTypeIsShare = false;
                 }
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
             }
@@ -150,29 +150,73 @@ namespace StockMarket.ViewModels
         /// <param name="o">A parameter for this method</param>
         private async void AutofillAsync(object o)
         {
+            // get the webcontent
             string webContent = await WebHelper.getWebContent(WebSite);
 
-            //id">WKN: 623100 / ISIN: DE0006231004</span>
-            //var test= "nbsp;<span class=\"instrument - id\">WKN: 623100 / ISIN: DE0006231004</span></h1><div"
-            // get values of WKN and ISIN
-            var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
-            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
-            var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
-            string wkn = wknMatch.Value.Substring(5);
-            string isin = isinMatch.Value.Substring(6);
+            //check the share type
+            if (RegexHelper.IsShareTypeShare(WebSite))
+            {
+                IsShare = true;
+            }
+            else
+            {
+                IsCertificate = true;
+            }
 
-            //< h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
-            // get name of SHARE
-            var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
-            var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
-            var name = nameM2.Value.Substring(10).Trim().Replace(" in", "");
 
-            // set values of the share
+            //set empty values
+            string wkn = string.Empty, isin = string.Empty, name = string.Empty;
+            double price = 0.0;
+
+            // set values if it is a share
+            if (IsShare)
+            {
+                // get values of WKN and ISIN
+                var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
+                var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
+                var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
+                wkn = wknMatch.Value.Substring(5);
+                isin = isinMatch.Value.Substring(6);
+
+                //< h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
+                // get name of SHARE
+                var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
+                var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
+                name = nameM2.Value.Substring(10).Trim().Replace(" in", "");
+                //Factor for Shares is always 1
+                Factor = 1;
+                //get the current price
+                price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
+            }
+
+
+            //set values if it is a certificate
+            if (IsCertificate)
+            {
+                // get values of WKN and ISIN
+                var title = Regex.Match(webContent, RegexHelper.REGEX_CertificateTitle);
+                var wknMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertWKN);
+                var isinMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertISIN);
+                wkn = wknMatch.Value.Replace("|","").Trim();
+                isin = isinMatch.Value.Replace("|", "").Trim();
+                                
+                // get the certificate factor
+                var factorMatch = Regex.Match(title.Value,RegexHelper.REGEX_Group_CertFactor);
+                Factor = Convert.ToByte(factorMatch.Value.Substring(6));
+                // get the current bid price
+                var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
+                // get name of SHARE certificate
+                var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
+                name = nameMatch.Value.Substring(4).Replace(" von", "").Trim() + " Certificate "+factorMatch.Value+"x";
+            }
+
+            // write values to viewmodel
             ISIN = isin;
             ShareName = name;
             WKN = wkn;
-            ActualPrice = RegexHelper.GetSharPrice(webContent);
-            IsShare = RegexHelper.IsShareTypeShare(WebSite);
+            ActualPrice = price;
+
             //DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = ActualPrice });
 
         }
