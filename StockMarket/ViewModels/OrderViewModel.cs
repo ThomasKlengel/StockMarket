@@ -49,8 +49,11 @@ namespace StockMarket.ViewModels
             get { return _sharePrice; }
             set
             {
-                _sharePrice = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SharePrice)));
+                if (_sharePrice != value)
+                {
+                    _sharePrice = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SharePrice)));
+                }
             }
         }
 
@@ -63,13 +66,16 @@ namespace StockMarket.ViewModels
             get { return _actPrice; }
             set
             {
-                _actPrice = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
-                if (OrderType == OrderType.buy)
+                if (_actPrice != value)
                 {
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                    _actPrice = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
+                    if (OrderType == OrderType.buy)
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                    }
                 }
             }
         }
@@ -84,8 +90,11 @@ namespace StockMarket.ViewModels
             get { return _amount*(int)OrderType; }
             set
             {
-                _amount = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+                if (_amount != value)
+                {
+                    _amount = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+                }
             }
         }
 
@@ -144,8 +153,11 @@ namespace StockMarket.ViewModels
             get { return _date.Date; }
             set
             {
-                _date = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Date)));
+                if (_date != value)
+                {
+                    _date = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Date)));
+                }
             }
         }
 
@@ -325,8 +337,11 @@ namespace StockMarket.ViewModels
             get { return _orderExpenses; }
             set
             {
-                _orderExpenses = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderExpenses)));
+                if (_orderExpenses != value)
+                {
+                    _orderExpenses = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderExpenses)));
+                }
             }
         }
 
@@ -339,8 +354,11 @@ namespace StockMarket.ViewModels
             get { return _orderType; }
             set
             {
-                _orderType = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
+                if (_orderType != value)
+                {
+                    _orderType = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
+                }
             }
         }
 

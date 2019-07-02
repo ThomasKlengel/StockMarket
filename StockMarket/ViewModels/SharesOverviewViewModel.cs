@@ -14,6 +14,7 @@ namespace StockMarket.ViewModels
     class SharesOverviewViewModel : ViewModelBase
     {
 
+        #region ctor
         public SharesOverviewViewModel()
         {
             Shares = new List<ShareOverviewViewModel>();
@@ -22,13 +23,15 @@ namespace StockMarket.ViewModels
             {
                 Shares.Add(new ShareOverviewViewModel(share));
             }
+            // create a thimer that refreshers the price once after 10 s
             Timer = new DispatcherTimer();
             Timer.Interval = new TimeSpan(0,0,10);
             Timer.Tick += Timer_Tick;
             Timer.Start();
-
         }
+        #endregion
 
+        #region event handler
         private void Timer_Tick(object sender, EventArgs e)
         {
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
@@ -37,8 +40,13 @@ namespace StockMarket.ViewModels
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
             Timer.Stop();
         }
+        #endregion
 
+        #region fields
         private DispatcherTimer Timer;
+        #endregion
+
+        #region Properties
         public List<ShareOverviewViewModel> Shares { get; private set; }
 
         /// <summary>
@@ -109,6 +117,8 @@ namespace StockMarket.ViewModels
         {
             get { return SumNow / SumBuy - 1.0; }
         }
+
+        #endregion
     }
 
 }

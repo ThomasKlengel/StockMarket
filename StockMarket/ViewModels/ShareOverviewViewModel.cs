@@ -13,8 +13,7 @@ namespace StockMarket.ViewModels
     /// </summary>
     class ShareOverviewViewModel : ViewModelBase
     {
-        #region Properties
-
+        #region ctor
         public ShareOverviewViewModel()
         {
 
@@ -30,9 +29,12 @@ namespace StockMarket.ViewModels
             ShareType = share.ShareType;
             GetOrders();
             RefreshPriceAsync();
-            
-        }
 
+        }
+        #endregion
+
+
+        #region Properties               
         private List<OrderViewModel> Orders;
         public ShareType ShareType { get; private set; }
 
@@ -45,8 +47,11 @@ namespace StockMarket.ViewModels
             get { return _shareName; }
             set
             {
-                _shareName = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
+                if (_shareName != value)
+                {
+                    _shareName = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
+                }
             }
         }
 
@@ -59,8 +64,11 @@ namespace StockMarket.ViewModels
             get { return _webSite; }
             set
             {
-                _webSite = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                if (_webSite != value)
+                {
+                    _webSite = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                }
             }
         }
 
@@ -73,8 +81,11 @@ namespace StockMarket.ViewModels
             get { return _wkn; }
             set
             {
-                _wkn = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                if (_wkn != value)
+                {
+                    _wkn = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                }
             }
         }
 
@@ -87,8 +98,11 @@ namespace StockMarket.ViewModels
             get { return _isin; }
             set
             {
-                _isin = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                if (_isin != value)
+                {
+                    _isin = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                }
             }
         }
 
@@ -101,15 +115,18 @@ namespace StockMarket.ViewModels
             get { return _actPrice; }
             set
             {
-                _actPrice = value;
-                foreach(var o in Orders)
+                if (_actPrice != value)
                 {
-                    o.ActPrice = _actPrice;
+                    _actPrice = value;
+                    foreach (var o in Orders)
+                    {
+                        o.ActPrice = _actPrice;
+                    }
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                 }
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
             }
         }
 
@@ -121,18 +138,9 @@ namespace StockMarket.ViewModels
             get
             {
                 int amount = 0;
-
                 foreach (var o in Orders)
                 {
                     amount += o.Amount;
-                    //if (o.OrderType == OrderType.buy)
-                    //{
-                    //    amount += o.Amount;
-                    //}
-                    //else
-                    //{
-                    //    amount -= o.Amount;
-                    //}
                 }
                 return amount;
             }
@@ -219,11 +227,6 @@ namespace StockMarket.ViewModels
             //set the price for the UI
             this.ActualPrice = price;
         }
-
-        //public void refreshPrice()
-        //{
-        //    RefreshPriceAsync();
-        //}
 
         private void GetOrders()
         {
