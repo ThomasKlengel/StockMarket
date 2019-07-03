@@ -262,6 +262,7 @@ namespace StockMarket.ViewModels
             // Add the share to the database
             switch (DataBaseHelper.AddShareToDB(this))
             {
+                case 1: WebSite = String.Empty; break;
                 case 0: // Message if it already exist
                     MessageBox.Show($"You already have a share with an ISIN matching ISIN={ISIN}.");
                     break;
