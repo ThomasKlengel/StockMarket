@@ -13,8 +13,7 @@ namespace StockMarket.ViewModels
     /// </summary>
     class OrderOverviewViewModel : ViewModelBase
     {
-        #region Properties
-
+        #region ctor
         public OrderOverviewViewModel()
         {
             Shares = DataBaseHelper.GetSharesFromDB();
@@ -26,6 +25,9 @@ namespace StockMarket.ViewModels
             refrehTimer.Start();
         }
 
+        #endregion
+        
+        #region Properties
         /// <summary>
         /// The average share price for the orders
         /// </summary>
@@ -40,7 +42,6 @@ namespace StockMarket.ViewModels
                 };
                 return sum / Orders.Count;
             }
-
         }
 
         private double _actPrice;
@@ -53,17 +54,20 @@ namespace StockMarket.ViewModels
             get { return _actPrice; }
             set
             {
-                _actPrice = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
-
-                foreach (var order in Orders)
+                if (_actPrice != value)
                 {
-                    order.ActPrice = (ActPrice);
-                }
+                    _actPrice = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
 
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));                
+                    foreach (var order in Orders)
+                    {
+                        order.ActPrice = (ActPrice);
+                    }
+
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                }
             }
         }
 
@@ -192,13 +196,16 @@ namespace StockMarket.ViewModels
             get { return _selectedShare; }
             set
             {
-                _selectedShare = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
+                if (_selectedShare != value)
+                {
+                    _selectedShare = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
 
-                // refresh the orders list
-                selectOrders();
-                // refresh the prices for the orders
-                RefreshPriceAsync();
+                    // refresh the orders list
+                    selectOrders();
+                    // refresh the prices for the orders
+                    RefreshPriceAsync();
+                }
             }
         }
 

@@ -25,8 +25,8 @@ namespace StockMarket.ViewModels
 
         #endregion
 
-        #region Properties
-               
+        #region Properties                  
+
         private string _shareName;
         /// <summary>
         /// The name of the stock company
@@ -36,8 +36,11 @@ namespace StockMarket.ViewModels
             get { return _shareName; }
             set
             {
-                _shareName = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
+                if (_shareName != value)
+                {
+                    _shareName = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
+                }
             }
         }
 
@@ -50,8 +53,11 @@ namespace StockMarket.ViewModels
             get { return _webSite; }
             set
             {
-                _webSite = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                if (_webSite != value)
+                {
+                    _webSite = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                }
             }
         }
 
@@ -64,8 +70,11 @@ namespace StockMarket.ViewModels
             get { return _wkn; }
             set
             {
-                _wkn = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                if (_wkn != value)
+                {
+                    _wkn = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                }
             }
         }
 
@@ -78,8 +87,11 @@ namespace StockMarket.ViewModels
             get { return _isin; }
             set
             {
-                _isin = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                if (_isin != value)
+                {
+                    _isin = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                }
             }
         }
 
@@ -92,8 +104,11 @@ namespace StockMarket.ViewModels
             get { return _actPrice; }
             set
             {
-                _actPrice = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
+                if (_actPrice != value)
+                {
+                    _actPrice = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
+                }
             }
         }
 

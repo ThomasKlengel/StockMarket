@@ -28,17 +28,21 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The <see cref="Page"/> to display in the main frame
         /// </summary>
-        public Page DisplayPage {
+        public Page DisplayPage
+        {
             get
             {
                 return _displayPage;
             }
             private set
             {
-                _displayPage = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayPage)));
-            }
+                if (_displayPage != value)
+                {
+                    _displayPage = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayPage)));
                 }
+            }
+        }
         #endregion
 
         #region Commands             

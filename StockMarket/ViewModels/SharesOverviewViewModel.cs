@@ -13,32 +13,45 @@ namespace StockMarket.ViewModels
     /// </summary>
     class SharesOverviewViewModel : ViewModelBase
     {
-
+        #region ctor
         public SharesOverviewViewModel()
         {
             Shares = new List<ShareOverviewViewModel>();
             var shares = DataBaseHelper.GetSharesFromDB();
             foreach (var share in shares)
             {
-                Shares.Add(new ShareOverviewViewModel(share));
+                ShareOverviewViewModel svm = new ShareOverviewViewModel(share);
+                Shares.Add(svm);
+                svm.PropertyChanged += Share_RelevantPropertyChanged;
             }
-            Timer = new DispatcherTimer();
-            Timer.Interval = new TimeSpan(0,0,10);
-            Timer.Tick += Timer_Tick;
-            Timer.Start();
-
         }
+        #endregion
 
-        private void Timer_Tick(object sender, EventArgs e)
+        #region Eventhandler
+        private void Share_RelevantPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
-            Timer.Stop();
+            switch (e.PropertyName)
+            {
+                case "SumNow":
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
+                        break;
+                    }
+                case "SumBuy":
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
+                        break;
+                    }
+                default: break;
+            }
         }
+        #endregion
 
-        private DispatcherTimer Timer;
+        #region Properties
         public List<ShareOverviewViewModel> Shares { get; private set; }
 
         /// <summary>
@@ -109,6 +122,8 @@ namespace StockMarket.ViewModels
         {
             get { return SumNow / SumBuy - 1.0; }
         }
+
+        #endregion
     }
 
 }

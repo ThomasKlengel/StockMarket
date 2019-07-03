@@ -26,8 +26,11 @@ namespace StockMarket.ViewModels
             get { return _price; }
             set
             {
-                _price = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Price)));
+                if (_price != value)
+                {
+                    _price = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Price)));
+                }
             }
         }
 
@@ -41,8 +44,11 @@ namespace StockMarket.ViewModels
             get { return _date; }
             set
             {
-                _date = value;
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(Date)));
+                if (_date != value)
+                {
+                    _date = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Date)));
+                }
             }
         }
 
