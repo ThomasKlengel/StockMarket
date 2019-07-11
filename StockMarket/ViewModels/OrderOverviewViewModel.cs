@@ -11,7 +11,7 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>
     /// </summary>
-    class OrderOverviewViewModel : ViewModelBase
+    class OrderOverviewViewModel : CollectionViewModel
     {
         #region ctor
         public OrderOverviewViewModel()
@@ -66,7 +66,7 @@ namespace StockMarket.ViewModels
 
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Backgropund)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                 }
             }
         }
@@ -74,7 +74,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of shares in all orders
         /// </summary>
-        public int Amount
+        override public int Amount
         {
             get
             {
@@ -88,12 +88,13 @@ namespace StockMarket.ViewModels
                 };
                 return sum;
             }
+            set { return; }
         }
 
         /// <summary>
         /// The amount of shares sold over all orders
         /// </summary>
-        public int AmountSold
+        override public int AmountSold
         {
             get
             {
@@ -102,8 +103,7 @@ namespace StockMarket.ViewModels
                 {
                     if (order.OrderType == OrderType.sell)
                     {
-                        // Amount is already negative for sell orders
-                        sum -= order.Amount;
+                        sum += order.Amount;
                     }
                 };
                 return sum;
@@ -121,7 +121,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The summed up price for all orders on the date of purchase
         /// </summary>
-        public double SumBuy
+        override public double SumBuy
         {
             get
             {
@@ -138,7 +138,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The current summed up price for all orders 
         /// </summary>
-        public double SumNow
+        override public double SumNow
         {            
             get
             {
@@ -151,31 +151,31 @@ namespace StockMarket.ViewModels
             }
         }
 
-        /// <summary>
-        /// The background color for the overview determined by 
-        /// a positive or negative development of share prices
-        /// </summary>
-        public Brush Backgropund
-        {
-            get
-            {
-                var paleRed = Color.FromRgb(255, 127, 127);
-                var paleGreen = Color.FromRgb(222, 255, 209);
-                var color = Percentage >= 0 ? paleGreen : paleRed;
-                Brush solidBack = new SolidColorBrush(color);
-                Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
+        ///// <summary>
+        ///// The background color for the overview determined by 
+        ///// a positive or negative development of share prices
+        ///// </summary>
+        //public Brush Backgropund
+        //{
+        //    get
+        //    {
+        //        var paleRed = Color.FromRgb(255, 127, 127);
+        //        var paleGreen = Color.FromRgb(222, 255, 209);
+        //        var color = Percentage >= 0 ? paleGreen : paleRed;
+        //        Brush solidBack = new SolidColorBrush(color);
+        //        Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
 
-                return Amount-AmountSold > 0 ? solidBack : gradientBack;
-            }
-        }
+        //        return Amount-AmountSold > 0 ? solidBack : gradientBack;
+        //    }
+        //}
 
-        /// <summary>
-        /// The development of share prices in percent
-        /// </summary>
-        public double Percentage
-        {
-            get { return SumNow / SumBuy - 1.0; }
-        }
+        ///// <summary>
+        ///// The development of share prices in percent
+        ///// </summary>
+        //public double Percentage
+        //{
+        //    get { return SumNow / SumBuy - 1.0; }
+        //}
 
         /// <summary>
         /// All orders of the selected share

@@ -11,7 +11,7 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for all <see cref="Shares"/> in the <see cref="Pages.SharesOverviewPage"/>
     /// </summary>
-    class SharesOverviewViewModel : ViewModelBase
+    class SharesOverviewViewModel : CollectionViewModel
     {
         #region ctor
         public SharesOverviewViewModel()
@@ -57,7 +57,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The summed up price for all orders on the date of purchase
         /// </summary>
-        public double SumBuy
+        override public double SumBuy
         {
             get
             {
@@ -74,7 +74,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The current summed up price for all orders 
         /// </summary>
-        public double SumNow
+        override public double SumNow
         {
             get
             {
@@ -88,7 +88,7 @@ namespace StockMarket.ViewModels
             }
         }
 
-        public int Amount
+        override public int Amount
         {
             get
             {
@@ -100,28 +100,43 @@ namespace StockMarket.ViewModels
 
                 return amount;
             }
+            set { return; }
         }
 
-        /// <summary>
-        /// The background color for the overview determined by 
-        /// a positive or negative development of share prices
-        /// </summary>
-        public SolidColorBrush Background
+        public override int AmountSold
         {
             get
             {
-                return Percentage > 0.0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209))
-                                           : new SolidColorBrush(Color.FromRgb(255, 127, 127));
+                int amount = 0;
+                foreach (var share in Shares)
+                {
+                    amount += share.AmountSold;
+                }
+
+                return amount;
             }
         }
 
-        /// <summary>
-        /// The development of share prices in percent
-        /// </summary>
-        public double Percentage
-        {
-            get { return SumNow / SumBuy - 1.0; }
-        }
+        ///// <summary>
+        ///// The background color for the overview determined by 
+        ///// a positive or negative development of share prices
+        ///// </summary>
+        //public SolidColorBrush Background
+        //{
+        //    get
+        //    {
+        //        return Percentage > 0.0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209))
+        //                                   : new SolidColorBrush(Color.FromRgb(255, 127, 127));
+        //    }
+        //}
+
+        ///// <summary>
+        ///// The development of share prices in percent
+        ///// </summary>
+        //public double Percentage
+        //{
+        //    get { return SumNow / SumBuy - 1.0; }
+        //}
 
         #endregion
     }

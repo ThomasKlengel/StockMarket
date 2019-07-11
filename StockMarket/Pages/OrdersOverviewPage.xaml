@@ -25,7 +25,7 @@
                 <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid Background="{Binding Path=Backgropund}" Margin="5,2.5,5,2.5" >
+                            <Grid Background="{Binding Path=Background}" Margin="5,2.5,5,2.5" >
                                 <StackPanel Orientation="Horizontal">                                    
                                     <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
                                     <local:UserStackPanelList Height="60" HeaderText="Amount">
@@ -54,7 +54,7 @@
             </Grid>
             
             <!--Grid containing s summary infoprmation for the selected share-->
-            <Grid Background="{Binding Path=Backgropund}" Margin="15,5,30,2.5" Name="OverViewGrid">
+            <Grid Background="{Binding Path=Background}" Margin="15,5,30,2.5" Name="OverViewGrid">
 
                 <StackPanel Orientation="Horizontal">
                     <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>

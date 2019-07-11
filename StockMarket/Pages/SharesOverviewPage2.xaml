@@ -11,33 +11,21 @@
     <Page.DataContext>
         <view:SharesOverviewViewModel/>
     </Page.DataContext>
-    <!--
-    <Page.Resources>
-        <ResourceDictionary> 
-            <DataTemplate x:Key="GridCellTemplate">
-                <DockPanel Background="Red">
-                    <TextBlock Text="{Binding Path=ShareName}"/>
-                </DockPanel>
-            </DataTemplate>            
-        </ResourceDictionary>
-    </Page.Resources>
-    -->
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
-
 
             <Grid Margin="5" Height="270">
 
                 <!--ListView containing information about all orders of the selected share-->
                 <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
                     <ListView.Resources>
-                        <Style TargetType="{x:Type ListViewItem}">                            
+                        <Style TargetType="{x:Type ListViewItem}">
                             <Setter Property="Background" Value="{Binding Background}" />
                             <Setter Property="Height" Value="30"/>
                         </Style>
                     </ListView.Resources>
                     <ListView.View>
-                        <GridView AllowsColumnReorder="True">                            
+                        <GridView AllowsColumnReorder="True">
                             <GridViewColumn DisplayMemberBinding="{Binding Path=ShareName}" Header="Name" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Amount}" Header="Amount" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
@@ -46,11 +34,10 @@
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}" Header="Percentage" Width="100"/>
                         </GridView>
                     </ListView.View>
-                    
                 </ListView>
             </Grid>
-            <Grid Background="{Binding Path=Background}" Margin="15,5,30,2.5" Name="OverViewGrid">
 
+            <Grid Background="{Binding Path=Background}" Margin="15,5,30,2.5" Name="OverViewGrid">
                 <StackPanel Orientation="Horizontal">
                     <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
                     <local:UserStackPanelList Height="60" Width=" 200"/>
@@ -61,7 +48,7 @@
                     <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
                 </StackPanel>
             </Grid>
+            
         </StackPanel>
-
     </Grid>
 </Page>

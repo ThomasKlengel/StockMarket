@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="DataModels\Share.cs" />
     <Compile Include="ViewModels\AddOrderViewModel.cs" />
+    <Compile Include="ViewModels\Base\CollectionViewModel.cs" />
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\DayValueViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
@@ -103,7 +104,7 @@
     <Compile Include="ViewModels\OrderOverviewViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
-    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="ViewModels\Base\ViewModelBase.cs" />
     <Compile Include="Helper.cs" />
     <Page Include="Pages\SharesOverviewPage.xaml">
       <SubType>Designer</SubType>
