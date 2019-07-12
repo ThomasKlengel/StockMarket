@@ -78,9 +78,6 @@
     <Compile Include="Pages\SharesOverviewPage.xaml.cs">
       <DependentUpon>SharesOverviewPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SharesOverviewPage2.xaml.cs">
-      <DependentUpon>SharesOverviewPage2.xaml</DependentUpon>
-    </Compile>
     <Compile Include="UserControls\UserStackPanelList.xaml.cs">
       <DependentUpon>UserStackPanelList.xaml</DependentUpon>
     </Compile>
@@ -107,10 +104,6 @@
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
     <Compile Include="Helper.cs" />
     <Page Include="Pages\SharesOverviewPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\SharesOverviewPage2.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

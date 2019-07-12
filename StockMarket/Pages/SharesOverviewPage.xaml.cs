@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace StockMarket.Pages
 {
     /// <summary>
-    /// Interaktionslogik für SharesOverviewPage.xaml
+    /// Interaktionslogik für SharesOverviewPage2.xaml
     /// </summary>
     public partial class SharesOverviewPage : Page
     {

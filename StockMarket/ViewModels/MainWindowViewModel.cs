@@ -117,7 +117,7 @@ namespace StockMarket.ViewModels
 
         private void DisplayShareOverview(object o)
         {
-            DisplayPage = new Pages.SharesOverviewPage2();
+            DisplayPage = new Pages.SharesOverviewPage();
         }
 
         private bool CanDisplayShareOverview(object o)

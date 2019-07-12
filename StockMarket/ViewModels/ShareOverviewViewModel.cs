@@ -139,7 +139,10 @@ namespace StockMarket.ViewModels
                 int amount = 0;
                 foreach (var o in Orders)
                 {
-                    amount += o.Amount;
+                    if (o.OrderType == OrderType.buy)
+                    {
+                        amount += o.Amount;
+                    }
                 }
                 return amount;
             }
@@ -153,7 +156,10 @@ namespace StockMarket.ViewModels
                 int amount = 0;
                 foreach (var o in Orders)
                 {
-                    amount += o.AmountSold;
+                    if (o.OrderType == OrderType.sell)
+                    {
+                        amount += o.AmountSold;
+                    }
                 }
                 return amount;
             }
@@ -199,32 +205,7 @@ namespace StockMarket.ViewModels
                 return sum;
             }
         }
-
-        ///// <summary>
-        ///// The background color for the overview determined by 
-        ///// a positive or negative development of share prices
-        ///// </summary>
-        //public Brush Background
-        //{
-        //    get
-        //    {
-        //        var paleRed = Color.FromRgb(255, 127, 127);
-        //        var paleGreen = Color.FromRgb(222, 255, 209);
-        //        var color = Percentage > 0.0 ? paleGreen : paleRed;
-        //        Brush solidBack = new SolidColorBrush(color);
-        //        Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
-
-        //        return Amount > 0 ? solidBack : gradientBack;
-        //    }
-        //}
-
-        ///// <summary>
-        ///// The development of share prices in percent (as a fraction of 1.0)
-        ///// </summary>
-        //public double Percentage
-        //{
-        //    get { return SumNow / SumBuy - 1.0; }
-        //}
+  
         #endregion
 
         #region Methods

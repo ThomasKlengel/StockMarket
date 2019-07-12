@@ -117,27 +117,6 @@ namespace StockMarket.ViewModels
             }
         }
 
-        ///// <summary>
-        ///// The background color for the overview determined by 
-        ///// a positive or negative development of share prices
-        ///// </summary>
-        //public SolidColorBrush Background
-        //{
-        //    get
-        //    {
-        //        return Percentage > 0.0 ? new SolidColorBrush(Color.FromRgb(222, 255, 209))
-        //                                   : new SolidColorBrush(Color.FromRgb(255, 127, 127));
-        //    }
-        //}
-
-        ///// <summary>
-        ///// The development of share prices in percent
-        ///// </summary>
-        //public double Percentage
-        //{
-        //    get { return SumNow / SumBuy - 1.0; }
-        //}
-
         #endregion
     }
 
