@@ -3,10 +3,6 @@ using StockMarket.DataModels;
 using StockMarket.ViewModels;
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Linq;
 
 namespace StockMarket
@@ -78,7 +74,7 @@ namespace StockMarket
 
                     }
                 }
-            }            
+            }
         }
 
         /// <summary>
@@ -90,7 +86,7 @@ namespace StockMarket
         {
             // create a new datamodel
             SharesDataModel model = new SharesDataModel();
-            
+
             // connect to the database
             using (SQLiteConnection con = new SQLiteConnection(path))
             {
@@ -158,9 +154,9 @@ namespace StockMarket
                 using (SQLiteConnection con = new SQLiteConnection(path))
                 {
                     // get the required tables of the database
-                    con.CreateTable<Order>();         
+                    con.CreateTable<Order>();
                     // insert the order
-                    con.Insert(order);                    
+                    con.Insert(order);
                 }
                 return 1;
             }
@@ -197,7 +193,7 @@ namespace StockMarket
                     // get the required tables of the database
                     con.CreateTable<Order>();
                     // retrun the orders matching the ISIN
-                    return con.Table<Order>().ToList().FindAll((order)=> { return order.ISIN == isin; });
+                    return con.Table<Order>().ToList().FindAll((order) => { return order.ISIN == isin; });
                 }
             }
             catch (Exception ex)
@@ -233,7 +229,7 @@ namespace StockMarket
                     // get the required tables of the database
                     con.CreateTable<ShareValue>();
                     // insert the order
-                    return con.Table<ShareValue>().ToList().FindAll((val)=> { return val.ISIN == share.ISIN; });
+                    return con.Table<ShareValue>().ToList().FindAll((val) => { return val.ISIN == share.ISIN; });
                 }
             }
             catch (Exception ex)
@@ -250,7 +246,7 @@ namespace StockMarket
                 {
                     // get the required tables of the database
                     con.CreateTable<ShareValue>();
-                    // insert the order
+                    // get the values
                     return con.Table<ShareValue>().ToList().FindAll((val) => { return val.ISIN == isin; });
                 }
             }
@@ -260,126 +256,29 @@ namespace StockMarket
             }
         }
 
-    }
-
-    /// <summary>
-    /// A helper class for Regex expressions
-    /// </summary>
-    public static class RegexHelper
-    {
-        #region Regex strings
-        public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
-
-        public const string REGEX_SharePrice = "\\d*\\.?\\d*,\\d*";
-        public const string REGEX_Group_SharePrice = "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span";
-        public const string REGEX_Group_IDs = "instrument-id\"\\>.{40}";
-        public const string REGEX_ISIN = "ISIN: \\S{12}";
-        public const string REGEX_WKN = "WKN: .{6}";
-        public const string REGEX_Group_ShareName = "box-headline\"\\>Aktienkurs.{50}";
-        public const string REGEX_ShareName = "Aktienkurs .* in";
-        public const string REGEX_ISIN_Valid = "^\\S{12}$";
-
-        public const string REGEX_CertificateFactor = "\\bFaktor\\b .+ \\bZertifikat\\b";
-        public const string REGEX_CertificateTitle = "<title>.*<\\/title>";
-        public const string REGEX_Group_CertWKN = ".{6} \\|";
-        public const string REGEX_Group_CertISIN = "\\| \\S{12}  *\\|";
-        public const string REGEX_Group_CertName = "\\bauf .* von\\b";
-        public const string REGEX_Group_CertFactor = "Faktor \\d{1,2}";
-        public const string REGEX_Group_CertPrice = "<div .*data-template=\"Bid\".* data-animation.*<\\/span><\\/div>";
-
-        #endregion
-
         /// <summary>
-        /// Gets the price of a share from a string
+        /// Adds an <see cref="Order"/> to the database
         /// </summary>
-        /// <param name="webContent">the string to check for the price</param>
-        /// <returns>the price of the share</returns>
-        public static double GetSharePrice (string webContent, ShareType type)
+        /// <param name="order">The <see cref="Order"/> to add</param>
+        /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
+        /// <returns>True if successful</returns>
+        public static short AddShareValueToDB(ShareValue share, string path = DEFAULTPATH)
         {
-            string price = "";
-            switch (type)
-            {
-                case ShareType.Share:
-                    {
-                        // get the section of the website which contains the SharePrice
-                        //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-                        var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_SharePrice);
-                        if (!priceMatch.Success)
-                        {
-                            return 0.0;
-                        }
-                        // get the SharePrice in the desired format
-                        price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
-                        break;
-                    }
-                case ShareType.Certificate:
-                    {
-                        // get the current bid price
-                        var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                        price = Regex.Match(priceMath.Value, RegexHelper.REGEX_SharePrice).Value;
-
-                        break;
-                    }
-                default: return 0.0;
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<ShareValue>();
+                    // insert the order
+                    con.Insert(share);
+                }
+                return 1;
             }
-
-            return Convert.ToDouble(price, CultureInfo.GetCultureInfo("de-DE"));
-        }
- 
-        /// <summary>
-        /// Checks if a website is valid for handling by this programm
-        /// </summary>
-        /// <param name="website">the website to check</param>
-        /// <returns>true if the website is valid</returns>
-        public static bool WebsiteIsValid(string website)
-        {            
-            return Regex.Match(website, REGEX_Website_Valid).Success;
-        }
-
-        /// <summary>
-        /// Checks if an ISIN is valid for handling by this programm
-        /// </summary>
-        /// <param name="website">the ISIN to check</param>
-        /// <returns>true if the ISIN is valid</returns>
-        public static bool IsinIsValid(string isin)
-        {            
-            return Regex.Match(isin, REGEX_ISIN_Valid).Success;
-        }
-
-        public static bool IsShareTypeShare(string website)
-        {            
-            if (Regex.Match(website, "aktien").Success)
+            catch (Exception ex)
             {
-                return true;
+                return -1;
             }
-            else if (Regex.Match(website, "optionsscheine").Success)
-            {
-                return false;
-            }
-            return true;
         }
-
-    }
-
-    /// <summary>
-    /// A helper class for web access
-    /// </summary>
-    public static class WebHelper
-    {
-        /// <summary>
-        /// get the content of a website
-        /// </summary>
-        /// <param name="webSite">the website to get the content from</param>
-        /// <returns>the content of the website</returns>
-        public static async Task<string> getWebContent (string webSite)
-        {
-            string webContent=string.Empty;
-            using (WebClient client = new WebClient())
-            {
-                webContent = await client.DownloadStringTaskAsync(webSite);
-                return webContent;
-            }            
-        }
-
     }
 }

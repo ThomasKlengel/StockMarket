@@ -1,5 +1,8 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Windows.Controls;
+using System.Windows.Threading;
+using System.Linq;
 
 namespace StockMarket.ViewModels
 {
@@ -21,7 +24,58 @@ namespace StockMarket.ViewModels
             AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
             DisplayOrderOverviewCommand = new RelayCommand(DisplayOrderOverview, CanDisplayOrderOverview);
             DisplayShareOverviewCommand = new RelayCommand(DisplayShareOverview, CanDisplayShareOverview);
+
+            // create a timer for updating the Sharevalues in the database
+            DispatcherTimer t = new DispatcherTimer();
+            t.Interval = new System.TimeSpan(0, 20, 0);
+            t.Tick += TimerTick;
+            t.Start();
         }
+
+        #region events
+        /// <summary>
+        /// Eventhandler for updating the Sharevalues in the database
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private async void TimerTick(object sender, System.EventArgs e)
+        {                  
+            // if its a friday night...
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.Hour==22)
+            {
+                //... get all shares in the portfolio
+                var shares = DataBaseHelper.GetSharesFromDB();
+
+                // for each of these shares...
+                foreach (var share in shares)
+                {
+                    // ...get the latest value in the database
+                    var latestValue = DataBaseHelper.GetShareValuesFromDB(share).OrderByDescending((v) => v.Date).First();
+                    // if it is from today...
+                    if (latestValue.Date.Date == DateTime.Today)
+                    {   //... we can ignore the following and continue with the next share
+                        continue;
+                    }
+
+                    //... if it is not from today get the current price of the share
+                    var webcontent = await WebHelper.getWebContent(share.WebSite);
+                    var price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
+
+                    // create a new sharevalue
+                    ShareValue s = new ShareValue()
+                    {
+                        Date = DateTime.Today,
+                        ISIN = share.ISIN,
+                        Price = price                    
+                    };
+
+                    // and add it to the database
+                    DataBaseHelper.AddShareValueToDB(s);                  
+
+                }
+            }
+        }
+        #endregion
 
         #region Properties
         private Page _displayPage;

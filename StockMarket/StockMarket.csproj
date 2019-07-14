@@ -75,6 +75,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataModels\SharesDataModel.cs" />
+    <Compile Include="Helper\DataBaseHelper.cs" />
+    <Compile Include="Helper\RegexHelper.cs" />
+    <Compile Include="Helper\WebHelper.cs" />
     <Compile Include="Pages\SharesOverviewPage.xaml.cs">
       <DependentUpon>SharesOverviewPage.xaml</DependentUpon>
     </Compile>
@@ -102,7 +105,6 @@
     <Compile Include="ViewModels\OrderViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
-    <Compile Include="Helper.cs" />
     <Page Include="Pages\SharesOverviewPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
