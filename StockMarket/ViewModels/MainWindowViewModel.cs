@@ -30,6 +30,9 @@ namespace StockMarket.ViewModels
             t.Interval = new System.TimeSpan(0, 20, 0);
             t.Tick += TimerTick;
             t.Start();
+
+            // try to update share values once at program start
+            TimerTick(null, null);
         }
 
         #region events
@@ -41,7 +44,11 @@ namespace StockMarket.ViewModels
         private async void TimerTick(object sender, System.EventArgs e)
         {                  
             // if its a friday night...
-            if (DateTime.Now.DayOfWeek == DayOfWeek.Friday && DateTime.Now.Hour==22)
+            if (/*DateTime.Now.DayOfWeek == DayOfWeek.Friday*/ 
+                DateTime.Now.DayOfWeek != DayOfWeek.Saturday &&
+                DateTime.Now.DayOfWeek != DayOfWeek.Sunday &&
+                DateTime.Now.Hour==22 ||
+                sender==null)
             {
                 //... get all shares in the portfolio
                 var shares = DataBaseHelper.GetSharesFromDB();
@@ -50,13 +57,17 @@ namespace StockMarket.ViewModels
                 foreach (var share in shares)
                 {
                     // ...get the latest value in the database
-                    var latestValue = DataBaseHelper.GetShareValuesFromDB(share).OrderByDescending((v) => v.Date).First();
-                    // if it is from today...
-                    if (latestValue.Date.Date == DateTime.Today)
-                    {   //... we can ignore the following and continue with the next share
-                        continue;
+                    var latestValues = DataBaseHelper.GetShareValuesFromDB(share)?.OrderByDescending((v) => v.Date);
+                    if (latestValues.Count() > 0)
+                    {
+                        var latestValue = latestValues.First();
+                        // if it is from today...
+                        if (latestValue?.Date.Date == DateTime.Today)
+                        {   //... we can ignore the following and continue with the next share
+                            continue;
+                        }
                     }
-
+                
                     //... if it is not from today get the current price of the share
                     var webcontent = await WebHelper.getWebContent(share.WebSite);
                     var price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
