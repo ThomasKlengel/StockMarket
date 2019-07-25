@@ -16,6 +16,12 @@ namespace StockMarket.ViewModels
         /// </summary>
         public MainWindowViewModel()
         {
+
+            // TODO: add current price difference
+            // TODO: ShareOverview add tile sold, shares, certificates
+            // TODO: single share Graph
+
+
             // set the start page to an empty page
             DisplayPage = new Pages.BlankPage();
 
@@ -47,8 +53,7 @@ namespace StockMarket.ViewModels
             if (/*DateTime.Now.DayOfWeek == DayOfWeek.Friday*/ 
                 DateTime.Now.DayOfWeek != DayOfWeek.Saturday &&
                 DateTime.Now.DayOfWeek != DayOfWeek.Sunday &&
-                DateTime.Now.Hour==22 ||
-                sender==null)
+                DateTime.Now.Hour>=22)
             {
                 //... get all shares in the portfolio
                 var shares = DataBaseHelper.GetSharesFromDB();
