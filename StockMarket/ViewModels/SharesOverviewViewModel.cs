@@ -35,6 +35,7 @@ namespace StockMarket.ViewModels
                 case "SumNow":
                     {
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                         break;
@@ -42,6 +43,7 @@ namespace StockMarket.ViewModels
                 case "SumBuy":
                     {
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                         break;

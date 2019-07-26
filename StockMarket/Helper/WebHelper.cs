@@ -16,10 +16,18 @@ namespace StockMarket
         public static async Task<string> getWebContent(string webSite)
         {
             string webContent = string.Empty;
-            using (WebClient client = new WebClient())
+            try
             {
-                webContent = await client.DownloadStringTaskAsync(webSite);
-                return webContent;
+                using (WebClient client = new WebClient())
+                {
+                    webContent = await client.DownloadStringTaskAsync(webSite);
+                    return webContent;
+                }
+            }
+            catch (WebException WebEx)
+            {
+                System.Windows.MessageBox.Show(WebEx.Message);
+                return string.Empty;
             }
         }
 

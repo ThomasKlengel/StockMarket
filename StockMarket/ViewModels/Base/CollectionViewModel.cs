@@ -25,6 +25,14 @@ namespace StockMarket.ViewModels
             get; 
         }
 
+        public double Difference
+        {
+            get
+            {
+                return SumNow - SumBuy;
+            }
+        }
+
         public Brush Background
         {
             get

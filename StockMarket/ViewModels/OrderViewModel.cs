@@ -73,6 +73,7 @@ namespace StockMarket.ViewModels
                     if (OrderType == OrderType.buy)
                     {
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                     }

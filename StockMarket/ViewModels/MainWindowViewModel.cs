@@ -17,8 +17,7 @@ namespace StockMarket.ViewModels
         public MainWindowViewModel()
         {
 
-            // TODO: add current price difference
-            // TODO: ShareOverview add tile sold, shares, certificates
+            // TODO: ShareOverview add overview tiles sold, shares, certificates
             // TODO: single share Graph
 
 
