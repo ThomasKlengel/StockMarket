@@ -29,6 +29,7 @@ namespace StockMarket.ViewModels
             AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
             DisplayOrderOverviewCommand = new RelayCommand(DisplayOrderOverview, CanDisplayOrderOverview);
             DisplayShareOverviewCommand = new RelayCommand(DisplayShareOverview, CanDisplayShareOverview);
+            DisplayShareDetailCommand = new RelayCommand(DisplayShareDetail, CanDisplayShareDetail);
 
             // create a timer for updating the Sharevalues in the database
             DispatcherTimer t = new DispatcherTimer();
@@ -150,7 +151,33 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
-        #region Display Order Overview Command
+        #region Display Share Detail Command
+        public RelayCommand DisplayShareDetailCommand { get; private set; }
+
+        private void DisplayShareDetail(object o)
+        {
+            DisplayPage = new Pages.ShareDetailPage();
+        }
+
+        private bool CanDisplayShareDetail(object o)
+        {
+            int count = 0;
+            // try-catch only for UI generator
+            try
+            {
+                count = DataBaseHelper.GetSharesFromDB().Count;
+            }
+            catch
+            {
+                return true;
+            }
+            // execute only when we have at least one share
+            return count > 0;
+        }
+        #endregion
+
+
+        #region Display Order Gain Command
         public RelayCommand DisplayOrderOverviewCommand { get; private set; }
 
         private void DisplayOrderOverview(object o)
@@ -181,7 +208,7 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
-        #region Display Share Overview Command
+        #region Display Share Gain Command
         public RelayCommand DisplayShareOverviewCommand { get; private set; }
 
         private void DisplayShareOverview(object o)

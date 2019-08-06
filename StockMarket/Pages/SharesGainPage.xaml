@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="Overview">
     <Page.DataContext>
-        <view:SharesOverviewViewModel/>
+        <view:SharesGainViewModel/>
     </Page.DataContext>
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">

@@ -10,10 +10,10 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>
     /// </summary>
-    class OrderOverviewViewModel : CollectionViewModel
+    class OrderGainViewModel : CollectionViewModel
     {
         #region ctor
-        public OrderOverviewViewModel()
+        public OrderGainViewModel()
         {
             Shares = DataBaseHelper.GetSharesFromDB();
             SelectedShare = Shares.First();

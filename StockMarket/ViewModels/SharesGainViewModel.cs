@@ -11,16 +11,16 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for all <see cref="Shares"/> in the <see cref="Pages.SharesOverviewPage"/>
     /// </summary>
-    class SharesOverviewViewModel : CollectionViewModel
+    class SharesGainViewModel : CollectionViewModel
     {
         #region ctor
-        public SharesOverviewViewModel()
+        public SharesGainViewModel()
         {
-            Shares = new List<ShareOverviewViewModel>();
+            Shares = new List<ShareGainViewModel>();
             var shares = DataBaseHelper.GetSharesFromDB();
             foreach (var share in shares)
             {
-                ShareOverviewViewModel svm = new ShareOverviewViewModel(share);
+                ShareGainViewModel svm = new ShareGainViewModel(share);
                 Shares.Add(svm);
                 svm.PropertyChanged += Share_RelevantPropertyChanged;
             }
@@ -54,7 +54,7 @@ namespace StockMarket.ViewModels
         #endregion
 
         #region Properties
-        public List<ShareOverviewViewModel> Shares { get; private set; }
+        public List<ShareGainViewModel> Shares { get; private set; }
 
         /// <summary>
         /// The summed up price for all orders on the date of purchase

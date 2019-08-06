@@ -16,8 +16,9 @@
             <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,5">
                 <Button Height="20" Width="100" Command="{Binding AddShareCommand}">Add share</Button>
                 <Button Height="20" Width="100" Command="{Binding AddOrderCommand}">Add order</Button>
-                <Button Height="20" Width="100" Command="{Binding DisplayOrderOverviewCommand}">Order cverview</Button>
-                <Button Height="20" Width="100" Command="{Binding DisplayShareOverviewCommand}">Share cverview</Button>
+                <Button Height="20" Width="100" Command="{Binding DisplayShareDetailCommand}">Share details</Button>
+                <Button Height="20" Width="100" Command="{Binding DisplayOrderOverviewCommand}">Order gain/Loss</Button>
+                <Button Height="20" Width="100" Command="{Binding DisplayShareOverviewCommand}">Share gain/loss</Button>
             </StackPanel>
 
             <!--The Frame containing the content selected by the navigation-->

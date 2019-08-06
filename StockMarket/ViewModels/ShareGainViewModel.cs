@@ -11,15 +11,15 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for a single <see cref="Share"/> in the <see cref="Pages.SharesOverviewPage"/>
     /// </summary>
-    class ShareOverviewViewModel : CollectionViewModel
+    class ShareGainViewModel : CollectionViewModel
     {
         #region ctor
-        public ShareOverviewViewModel()
+        public ShareGainViewModel()
         {
 
         }
 
-        public ShareOverviewViewModel(Share share)
+        public ShareGainViewModel(Share share)
         {
             ShareName = share.ShareName;
             WebSite = share.WebSite;
