@@ -11,9 +11,13 @@
         <Grid.DataContext>
             <view:MainWindowViewModel/>
         </Grid.DataContext>
-        <StackPanel Orientation="Vertical">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
             <!-- the StackPanel containing the navigation Buttons-->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,5">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,5" Grid.Row="0">
                 <Button Height="20" Width="100" Command="{Binding AddShareCommand}">Add share</Button>
                 <Button Height="20" Width="100" Command="{Binding AddOrderCommand}">Add order</Button>
                 <Button Height="20" Width="100" Command="{Binding DisplayShareDetailCommand}">Share details</Button>
@@ -23,8 +27,8 @@
 
             <!--The Frame containing the content selected by the navigation-->
             <Frame Name="MainFrame" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage}"
-                   HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" />
-        </StackPanel>
+                   HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1" />
+        
 
     </Grid>
 </Window>

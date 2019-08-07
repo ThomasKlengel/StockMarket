@@ -16,6 +16,7 @@ namespace StockMarket.ViewModels
         {
             Shares = DataBaseHelper.GetSharesFromDB();
             SelectedShare = Shares.First();
+            CopyCommand = new RelayCommand(Copy, CanCopy);
         }
         #endregion
 
@@ -61,6 +62,30 @@ namespace StockMarket.ViewModels
             }
         }
 
+
+        #endregion
+
+        #region Commands
+        public RelayCommand CopyCommand { get; private set; }
+
+        private void Copy(object input)
+        {
+            if (input != null)
+            {
+                string text = input.ToString();
+                Clipboard.SetText(text);
+            }
+        }
+
+        private bool CanCopy(object input)
+        {
+            if (input != null)
+            {
+                string copyFrom = input.ToString();
+                return copyFrom != string.Empty;
+            }
+            return false;
+        }
 
         #endregion
     }

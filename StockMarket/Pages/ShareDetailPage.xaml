@@ -33,8 +33,9 @@
         <!--inner grid for user information-->
         <Grid  Margin="10" VerticalAlignment="Top" Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
-                <ColumnDefinition Width="*"></ColumnDefinition>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="50"/>
             </Grid.ColumnDefinitions>
             
             <!--StackPanel for labeling the input-->
@@ -50,16 +51,16 @@
             <!--StackPanel for the actual input-->
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,10">
                 <!-- the website to look for information about the share-->
-                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite}" IsReadOnly="True"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite}" IsReadOnly="True" Name="Website_TB"/>
                 
                 <!--the wkn of the share-->
-                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WKN}" IsReadOnly="True"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WKN}" IsReadOnly="True" Name="WKN_TB"/>
                 
                 <!--the isin of the share-->
-                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ISIN}" IsReadOnly="True"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ISIN}" IsReadOnly="True" Name="ISIN_TB"/>
                 
                 <!--the name of the stock company-->
-                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ShareName}" IsReadOnly="True"/>
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding ShareName}" IsReadOnly="True" Name="ShareName_TB"/>
 
                 <StackPanel Orientation="Horizontal" Height="30" Margin="0,5,0,0">
                     <RadioButton IsChecked="{Binding IsShare}" Margin="5"  VerticalAlignment="Center">Share</RadioButton>
@@ -70,7 +71,24 @@
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding Factor}" IsReadOnly="True"/>
           
             </StackPanel>
-            
+
+            <!--StackPanel for labeling the input-->
+            <StackPanel Orientation="Vertical" Grid.Column="2" Margin="10,10">
+                <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding WebSite}">
+                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                </Button>
+                <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding WKN}">
+                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                </Button>
+                <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding ISIN}">
+                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                </Button>
+                <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding ShareName}">
+                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                </Button>
+            </StackPanel>
+
+
         </Grid>
     </Grid>
 </Page>

@@ -37,7 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>graph.ico</ApplicationIcon>
+    <ApplicationIcon>ImagesIcons\graph.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SQLite-net, Version=1.5.231.0, Culture=neutral, processorArchitecture=MSIL">
@@ -57,6 +57,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -106,7 +107,7 @@
     <Compile Include="ViewModels\SharesGainViewModel.cs" />
     <Compile Include="ViewModels\OrderGainViewModel.cs" />
     <Compile Include="ViewModels\OrderViewModel.cs" />
-    <Compile Include="ViewModels\ShareDateilViewModel.cs" />
+    <Compile Include="ViewModels\ShareDetailViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
     <Page Include="Pages\ShareDetailPage.xaml">
@@ -185,7 +186,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="graph.ico" />
+    <Resource Include="ImagesIcons\graph.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="ImagesIcons\CopyIcon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />

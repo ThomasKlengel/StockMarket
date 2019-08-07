@@ -12,9 +12,13 @@
         <view:SharesGainViewModel/>
     </Page.DataContext>
     <Grid>
-        <StackPanel Orientation="Vertical" Margin="5">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="100"/>
+        </Grid.RowDefinitions>      
+               
 
-            <Grid Margin="5" Height="270">
+            <Grid Margin="5" Grid.Row="0">
 
                 <!--ListView containing information about all orders of the selected share-->
                 <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
@@ -45,7 +49,7 @@
                 </ListView>
             </Grid>
 
-            <Grid Background="{Binding Path=Background}" Margin="15,5,30,2.5" Name="OverViewGrid">
+            <Grid Background="{Binding Path=Background}" Margin="15,5,30,2.5" Name="OverViewGrid" Grid.Row="1">
                 <StackPanel Orientation="Horizontal">
                     <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
                     <local:UserStackPanelList Height="60" Width="100"/>
@@ -65,6 +69,6 @@
                 </StackPanel>
             </Grid>
             
-        </StackPanel>
+        
     </Grid>
 </Page>
