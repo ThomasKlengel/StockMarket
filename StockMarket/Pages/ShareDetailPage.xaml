@@ -75,16 +75,16 @@
             <!--StackPanel for labeling the input-->
             <StackPanel Orientation="Vertical" Grid.Column="2" Margin="10,10">
                 <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding WebSite}">
-                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                    <Image Source="/Stockmarket;component/ImagesIcons/CopyIcon.png"/>
                 </Button>
                 <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding WKN}">
-                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                    <Image Source="/Stockmarket;component/ImagesIcons/CopyIcon.png"/>
                 </Button>
                 <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding ISIN}">
-                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                    <Image Source="/Stockmarket;component/ImagesIcons/CopyIcon.png"/>
                 </Button>
                 <Button Style="{StaticResource StandardSpacer}" Command="{Binding CopyCommand}" CommandParameter="{Binding ShareName}">
-                    <Image Source="/Stockmarket;component/CopyIcon.png"/>
+                    <Image Source="/Stockmarket;component/ImagesIcons/CopyIcon.png"/>
                 </Button>
             </StackPanel>
 

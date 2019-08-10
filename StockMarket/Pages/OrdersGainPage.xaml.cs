@@ -18,6 +18,7 @@ namespace StockMarket.Pages
         public OrdersOverviewPage()
         {
             InitializeComponent();              
-        } 
+        }
+
     }
 }

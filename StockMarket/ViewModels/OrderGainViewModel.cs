@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Threading;
 
 namespace StockMarket.ViewModels
@@ -17,6 +20,8 @@ namespace StockMarket.ViewModels
         {
             Shares = DataBaseHelper.GetSharesFromDB();
             SelectedShare = Shares.First();
+
+            SortCommand = new RelayCommand(SortOrders);
 
             var refrehTimer = new DispatcherTimer();
             refrehTimer.Interval = new TimeSpan(0, 10, 0);
@@ -244,5 +249,37 @@ namespace StockMarket.ViewModels
         }
 
         #endregion
+
+        public RelayCommand SortCommand { get; private set; }
+
+        private void SortOrders(object o)
+        {
+            if (Orders.Count > 1)
+            {
+                // check if clicked item is a column header
+                if (o.GetType() == typeof(GridViewColumnHeader))
+                {
+                    var header = o as GridViewColumnHeader;
+
+                    var headerClicked = "";
+                    // if the binding is a binding...
+                    if (header.Column.DisplayMemberBinding.GetType() == typeof(Binding))
+                    { //... set the header to the bound path
+                        var content = header.Column.DisplayMemberBinding as Binding;
+                        headerClicked = content.Path.Path;
+                    }
+                    else
+                    { //... otherwise it's amount (which is a multibinding)
+                        headerClicked = "Amount";
+                    }
+
+                    // TODO: create Sort by method
+                    // maybe use select orders
+
+                }
+            }
+        }
+
+        
     }
 }

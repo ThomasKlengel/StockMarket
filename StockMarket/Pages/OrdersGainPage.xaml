@@ -28,27 +28,31 @@
 
                 <!--ListView containing information about all orders of the selected share-->
                 <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
-                    <ListView.Resources>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Background" Value="{Binding Background}" />
-                            <Setter Property="Height" Value="30"/>
-                        </Style>
-                    </ListView.Resources>
-                    <ListView.View>
-                        <GridView AllowsColumnReorder="True">
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}" Header="Date" Width="100"/>
-                            <GridViewColumn Header="Amount" Width="100">
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Background" Value="{Binding Background}" />
+                        <Setter Property="Height" Value="30"/>
+                    </Style>
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="Command" Value="{Binding SortCommand}"/>
+                        <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Self}}"/>
+                    </Style>
+                </ListView.Resources>
+                <ListView.View>                        
+                        <GridView AllowsColumnReorder="True">                            
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}" Header="Date" Width="80"/>                            
+                            <GridViewColumn Header="Amount" Width="80">                                
                                 <GridViewColumn.DisplayMemberBinding>
                                     <MultiBinding StringFormat="{}{0} (-{1})">
                                         <Binding Path="Amount"/>
-                                        <Binding Path="AmountSold"/>
+                                        <Binding Path="AmountSold"/>                                    
                                     </MultiBinding>
                                 </GridViewColumn.DisplayMemberBinding>
                             </GridViewColumn>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Share Price" Width="100"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Buy Price" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Current Price" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="buy" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="now" Width="100"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="current" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="diff" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}" Header="Percentage" Width="100"/>
                         </GridView>
@@ -57,7 +61,7 @@
             </Grid>         
             
             <!--Grid containing s summary infoprmation for the selected share-->
-            <Grid Background="{Binding Path=Background}" Margin="5,10" Name="OverViewGrid" Grid.Row="2">
+            <Grid Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid" Grid.Row="2">
 
                 <StackPanel Orientation="Horizontal">
                     <local:UserStackPanelList Height="60" HeaderText="Date" ValueText="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}"/>
