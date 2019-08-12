@@ -15,6 +15,9 @@ namespace StockMarket.ViewModels
     /// </summary>
     class OrderGainViewModel : CollectionViewModel
     {
+        private string lastSortedBy = "Date";
+        private bool lastSortAscending = false;
+
         #region ctor
         public OrderGainViewModel()
         {
@@ -30,7 +33,7 @@ namespace StockMarket.ViewModels
         }
 
         #endregion
-        
+
         #region Properties
         /// <summary>
         /// The average share price for the orders
@@ -114,7 +117,7 @@ namespace StockMarket.ViewModels
                 return sum;
             }
         }
-                     
+
         /// <summary>
         /// The current date
         /// </summary>
@@ -142,12 +145,12 @@ namespace StockMarket.ViewModels
                 return sum;
             }
         }
-                
+
         /// <summary>
         /// The current summed up price for all orders 
         /// </summary>
         override public double SumNow
-        {            
+        {
             get
             {
                 double sum = 0;
@@ -187,33 +190,33 @@ namespace StockMarket.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
 
                     // refresh the orders list
-                    selectOrders();
+                    SetOrdersInitially();
                     // refresh the prices for the orders
                     RefreshPriceAsync();
                 }
             }
         }
 
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Selects the <see cref="Orders"/> associated to the selected <see cref="Share"/>
         /// and add them to the <see cref="Orders"/> property
         /// </summary>
-        private void selectOrders()
+        private void SetOrdersInitially()
         {
-            // get the orders from the databse
-            var sortedOrders = DataBaseHelper.GetOrdersFromDB(SelectedShare.ISIN).OrderByDescending((o) => { return o.Date; });
-            
             // create or clear the list of Orders
-            if (Orders==null)
+            if (Orders == null)
             {
                 Orders = new ObservableCollection<OrderViewModel>();
             }
             Orders.Clear();
 
             // add the orders from the database
-            foreach (var order in sortedOrders)
+            foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare.ISIN).OrderByDescending((o) => { return o.Date; }))
             {
-                Orders.Add(new OrderViewModel(order));                    
+                Orders.Add(new OrderViewModel(order));
             }
 
             // notify UI of changes
@@ -232,10 +235,13 @@ namespace StockMarket.ViewModels
             // get the website content
             var content = await WebHelper.getWebContent(SelectedShare.WebSite);
             //get the price
-            var price=  RegexHelper.GetSharePrice(content,SelectedShare.ShareType);
+            var price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
             //set the price for the UI
             ActPrice = price;
         }
+        #endregion
+
+        #region Handler
 
         /// <summary>
         /// Eventhandler that refreshes the current price
@@ -273,13 +279,54 @@ namespace StockMarket.ViewModels
                         headerClicked = "Amount";
                     }
 
-                    // TODO: create Sort by method
-                    // maybe use select orders
+                    //get the sort Direction
+                    if (lastSortedBy == headerClicked)
+                    {
+                        lastSortAscending = !lastSortAscending;
+                    }
+                    else
+                    {
+                        lastSortAscending = false;
+                    }
+
+                    #region actual sorting
+                    // create a copy of the orders
+                    var tempOrders = new OrderViewModel[Orders.Count];
+                    Orders.CopyTo(tempOrders, 0);
+
+                    // create an empty collection
+                    IOrderedEnumerable<OrderViewModel> sortedOrders = null;
+
+                    // get the property to sort by
+                    System.Reflection.PropertyInfo property = typeof(OrderViewModel).GetProperty(headerClicked);
+
+                    // sort by property descending or ascending
+                    if (!lastSortAscending) //desceding
+                    {
+                        sortedOrders = tempOrders.OrderByDescending((order) => { return property.GetValue(order); });
+                    }
+                    else //ascending
+                    {
+                        sortedOrders = tempOrders.OrderBy((order) => { return property.GetValue(order); });
+                    }
+
+                    // clear the old orders collection
+                    Orders.Clear();
+
+                    // add the orders from the sorted collection
+                    foreach (var order in sortedOrders)
+                    {
+                        Orders.Add(order);
+                    }
+                    #endregion
+
+                    // set the last sorted by for next sort
+                    lastSortedBy = headerClicked;
 
                 }
             }
         }
 
-        
+
     }
 }
