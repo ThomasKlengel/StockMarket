@@ -23,18 +23,20 @@
     <Grid>
         <StackPanel Orientation="Vertical" Margin="5">
             
-            <!-- ComboBox to the select the a for which to add an order-->
+            <!-- ComboBox to the select the share for which to add an order-->
             <ComboBox x:Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}" SelectedItem="{Binding SelectedShare}"
                       DisplayMemberPath="ShareName" >
             </ComboBox>
 
+            <!--grid containing information about the order-->
             <Grid Margin="5">
+                <!--defining grid columns-->
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>    
                 
-                <!-- Panel showing information about the items an the right side-->
+                <!-- Panel for labeling the items on grid column 1-->
                 <StackPanel Orientation="Vertical" Grid.Column="0">
                     <Label Style="{StaticResource StandardSpacer}">Price</Label>
                     <Label Style="{StaticResource StandardSpacer}">Expenses</Label>
@@ -43,7 +45,7 @@
                     <Label Style="{StaticResource StandardSpacer}">Order type</Label>
                 </StackPanel>
 
-                <!--Panel containg information that may be given by the user-->
+                <!--Panel containg information about the order that may be given by the user on grid column 2-->
                 <StackPanel Orientation="Vertical" Grid.Column="1" Width="100" HorizontalAlignment="Left">
                     
                     <!--the price for which the shares are purchesed/sold-->
@@ -68,9 +70,7 @@
                 </StackPanel>
             </Grid>
             
-            <!--StackPanel for price information (auto initialized when selection of CB is changed)-->
-            
-            <!-- Button to add the order with the given values to the list-->
+            <!-- Button to add an order with the given values to the database-->
             <Button x:Name="B_AddOrder" Margin="5" Command="{Binding AddOrderCommand}" CommandParameter="{Binding ElementName=B_AddOrder}">Add</Button>
         </StackPanel>
 

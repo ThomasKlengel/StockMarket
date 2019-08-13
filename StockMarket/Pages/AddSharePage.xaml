@@ -18,21 +18,23 @@
     <Page.DataContext>
         <view:ShareViewModel/>
     </Page.DataContext>
-    <!-- outer grid-->
+    
+    <!-- define grid rows-->
     <Grid Name="ContentGrid">
         <Grid.RowDefinitions>
             <RowDefinition Height="290"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
-        <!--inner grid for user information-->
+        <!--grid for user information on grid row 1-->
         <Grid  Margin="10" VerticalAlignment="Top" Grid.Row="0">
+            <!-- define grid columns-->
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="100"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             
-            <!--StackPanel for labeling the input-->
+            <!--StackPanel for labeling the input on grid column 1-->
             <StackPanel Orientation="Vertical" Grid.Column="0" Margin="0,10">
                 <Label Style="{StaticResource StandardSpacer}">Website:</Label>
                 <Label Style="{StaticResource StandardSpacer}">WKN:</Label>
@@ -43,7 +45,7 @@
                 <Label Style="{StaticResource StandardSpacer}">Purchase price:</Label>                
             </StackPanel>
             
-            <!--StackPanel for the actual input-->
+            <!--StackPanel for the actual input on grid column 2-->
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,10">
                 <!-- the website to look for information about the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite}"/>
@@ -70,6 +72,8 @@
             </StackPanel>
             
         </Grid>
+        
+        <!--grid with buttons handling the data on grid row 2-->
         <UniformGrid Grid.Row="1">
             
             <!--Button to auto fill the input when a website is set-->

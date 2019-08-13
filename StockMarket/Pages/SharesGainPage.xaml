@@ -12,23 +12,32 @@
         <view:SharesGainViewModel/>
     </Page.DataContext>
     <Grid>
+        <!--define grid rows-->
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="100"/>
-        </Grid.RowDefinitions>      
-               
+        </Grid.RowDefinitions>
 
+        <!--Grid containing information about each share handled by the program on grid row 1-->
             <Grid Margin="5" Grid.Row="0">
 
-                <!--ListView containing information about all orders of the selected share-->
+                <!--ListView containing information about each share handled by the program-->
                 <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
-                    <ListView.Resources>
-                        <Style TargetType="{x:Type ListViewItem}">
-                            <Setter Property="Background" Value="{Binding Background}" />
-                            <Setter Property="Height" Value="30"/>
-                        </Style>
-                    </ListView.Resources>
-                    <ListView.View>
+                <ListView.Resources>
+                    <!--create style for item background color-->
+                    <Style TargetType="{x:Type ListViewItem}">
+                        <Setter Property="Background" Value="{Binding Background}" />
+                        <Setter Property="Height" Value="30"/>
+                    </Style>
+                    <!--create style to sort rows on column header click-->
+                    <!--(columnheaders a buttons by default)-->
+                    <Style TargetType="{x:Type GridViewColumnHeader}">
+                        <Setter Property="Command" Value="{Binding SortCommand}"/>
+                        <Setter Property="CommandParameter" Value="{Binding RelativeSource = {RelativeSource Self}}"/>
+                    </Style>
+                </ListView.Resources>                    
+                <ListView.View>
+                    <!-- add items to the view-->
                         <GridView AllowsColumnReorder="True">
                             <GridViewColumn DisplayMemberBinding="{Binding Path=ShareName}" Header="Name" Width="100"/>
                             <GridViewColumn Header="Amount" Width="100">
@@ -49,7 +58,9 @@
                 </ListView>
             </Grid>
 
+        <!--Grid containing information about all shares handled by the program on grid row 2-->
             <Grid Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid" Grid.Row="1">
+                <!--StackPanel containing information about all shares handled by the program-->
                 <StackPanel Orientation="Horizontal">
                     <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
                     <local:UserStackPanelList Height="60" Width="100"/>

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -15,17 +14,19 @@ namespace StockMarket.ViewModels
     /// </summary>
     class OrderGainViewModel : CollectionViewModel
     {
-        private string lastSortedBy = "Date";
-        private bool lastSortAscending = false;
 
-        #region ctor
+        #region Constructors
         public OrderGainViewModel()
         {
+            // get all shares from DB
             Shares = DataBaseHelper.GetSharesFromDB();
+            // set the selected share for initially creating the view model
             SelectedShare = Shares.First();
 
+            // set the command for sorting the Orders
             SortCommand = new RelayCommand(SortOrders);
 
+            // create a timer for refreshing the shown prices
             var refrehTimer = new DispatcherTimer();
             refrehTimer.Interval = new TimeSpan(0, 10, 0);
             refrehTimer.Tick += RefrehTimer_Tick;
@@ -66,11 +67,13 @@ namespace StockMarket.ViewModels
                     _actPrice = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
 
+                    // refresh the price for all orders
                     foreach (var order in Orders)
                     {
                         order.ActPrice = (ActPrice);
                     }
 
+                    // update the ui
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
@@ -256,7 +259,7 @@ namespace StockMarket.ViewModels
 
         #endregion
 
-        public RelayCommand SortCommand { get; private set; }
+        #region Commands
 
         private void SortOrders(object o)
         {
@@ -273,6 +276,10 @@ namespace StockMarket.ViewModels
                     { //... set the header to the bound path
                         var content = header.Column.DisplayMemberBinding as Binding;
                         headerClicked = content.Path.Path;
+                        if (headerClicked.Contains("Date"))
+                        {
+                            headerClicked = "Date";
+                        }
                     }
                     else
                     { //... otherwise it's amount (which is a multibinding)
@@ -289,37 +296,9 @@ namespace StockMarket.ViewModels
                         lastSortAscending = false;
                     }
 
-                    #region actual sorting
-                    // create a copy of the orders
-                    var tempOrders = new OrderViewModel[Orders.Count];
-                    Orders.CopyTo(tempOrders, 0);
-
-                    // create an empty collection
-                    IOrderedEnumerable<OrderViewModel> sortedOrders = null;
-
-                    // get the property to sort by
-                    System.Reflection.PropertyInfo property = typeof(OrderViewModel).GetProperty(headerClicked);
-
-                    // sort by property descending or ascending
-                    if (!lastSortAscending) //desceding
-                    {
-                        sortedOrders = tempOrders.OrderByDescending((order) => { return property.GetValue(order); });
-                    }
-                    else //ascending
-                    {
-                        sortedOrders = tempOrders.OrderBy((order) => { return property.GetValue(order); });
-                    }
-
-                    // clear the old orders collection
-                    Orders.Clear();
-
-                    // add the orders from the sorted collection
-                    foreach (var order in sortedOrders)
-                    {
-                        Orders.Add(order);
-                    }
-                    #endregion
-
+                    //sort the orders
+                    Orders = SortCollection<OrderViewModel>(Orders, headerClicked, lastSortAscending);
+                   
                     // set the last sorted by for next sort
                     lastSortedBy = headerClicked;
 
@@ -327,6 +306,7 @@ namespace StockMarket.ViewModels
             }
         }
 
+        #endregion
 
     }
 }

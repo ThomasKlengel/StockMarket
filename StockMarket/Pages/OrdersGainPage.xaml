@@ -13,33 +13,39 @@
     </Page.DataContext>   
  
     <Grid>
+        <!--define grid rows-->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="100"/>
         </Grid.RowDefinitions>
 
-        <!--Combobox containing the shares in the database-->
+        <!--Combobox containing the shares in the database on grid row 1-->
             <ComboBox Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}"
                       DisplayMemberPath="ShareName" SelectedItem="{Binding SelectedShare}" Grid.Row="0">
             </ComboBox>
 
+        <!--Grid containing orders of the selected share on grid row 2 -->
             <Grid Margin="5" Grid.Row="1">
 
                 <!--ListView containing information about all orders of the selected share-->
                 <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
                 <ListView.Resources>
+                    <!--create style for item background color-->
                     <Style TargetType="{x:Type ListViewItem}">
                         <Setter Property="Background" Value="{Binding Background}" />
                         <Setter Property="Height" Value="30"/>
                     </Style>
+                    <!--create style to sort rows on column header click-->
+                    <!--(columnheaders a buttons by default)-->
                     <Style TargetType="{x:Type GridViewColumnHeader}">
                         <Setter Property="Command" Value="{Binding SortCommand}"/>
                         <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Self}}"/>
                     </Style>
                 </ListView.Resources>
-                <ListView.View>                        
-                        <GridView AllowsColumnReorder="True">                            
+                <ListView.View>
+                    <!-- add items to the view-->
+                    <GridView AllowsColumnReorder="True">                            
                         <GridViewColumn DisplayMemberBinding="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}" Header="Date" Width="80"/>                            
                             <GridViewColumn Header="Amount" Width="80">                                
                                 <GridViewColumn.DisplayMemberBinding>
@@ -60,7 +66,7 @@
                 </ListView>
             </Grid>         
             
-            <!--Grid containing s summary infoprmation for the selected share-->
+       <!--Grid containing summary information for the selected share on grid row 3-->
             <Grid Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid" Grid.Row="2">
 
                 <StackPanel Orientation="Horizontal">

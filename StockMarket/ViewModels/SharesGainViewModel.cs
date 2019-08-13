@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Windows.Media;
-using System.Linq;
-using System.Windows.Threading;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace StockMarket.ViewModels
 {
@@ -13,20 +10,28 @@ namespace StockMarket.ViewModels
     /// </summary>
     class SharesGainViewModel : CollectionViewModel
     {
-        #region ctor
+        #region Constructors
         public SharesGainViewModel()
         {
-            Shares = new List<ShareGainViewModel>();
+            // create an empty collection
+            Shares = new ObservableCollection<ShareGainViewModel>();
+            // get the all shares from the database
             var shares = DataBaseHelper.GetSharesFromDB();
+
+            // add the shares from the database to the collection
             foreach (var share in shares)
             {
                 ShareGainViewModel svm = new ShareGainViewModel(share);
                 Shares.Add(svm);
+                // add a handler for updating the ui in relevant cases
                 svm.PropertyChanged += Share_RelevantPropertyChanged;
             }
+
+            // create a command for sorting the shares
+            SortCommand = new RelayCommand(SortShares);
         }
         #endregion
-
+               
         #region Eventhandler
         private void Share_RelevantPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -54,7 +59,10 @@ namespace StockMarket.ViewModels
         #endregion
 
         #region Properties
-        public List<ShareGainViewModel> Shares { get; private set; }
+        /// <summary>
+        /// All shares managed by this program
+        /// </summary>
+        public ObservableCollection<ShareGainViewModel> Shares { get; private set; }
 
         /// <summary>
         /// The summed up price for all orders on the date of purchase
@@ -90,6 +98,9 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The amount of bought shares
+        /// </summary>
         override public int Amount
         {
             get
@@ -105,6 +116,9 @@ namespace StockMarket.ViewModels
             set { return; }
         }
 
+        /// <summary>
+        /// The amount of sold shares
+        /// </summary>
         public override int AmountSold
         {
             get
@@ -116,6 +130,56 @@ namespace StockMarket.ViewModels
                 }
 
                 return amount;
+            }
+        }
+
+        #endregion
+
+        #region Commands
+
+        /// <summary>
+        /// The command to execute 
+        /// </summary>
+        /// <param name="o">should be a <see cref="GridViewColumnHeader"/> which has been clicked</param>
+        private void SortShares (object o)
+        {
+            if (Shares.Count > 1)
+            {
+                // check if clicked item is a column header
+                if (o.GetType() == typeof(GridViewColumnHeader))
+                {
+                    var header = o as GridViewColumnHeader;
+
+                    var headerClicked = "";
+                    // get the propery name to sort by
+                    // if the binding is a binding...
+                    if (header.Column.DisplayMemberBinding.GetType() == typeof(Binding))
+                    { //... set the header to the bound path
+                        var content = header.Column.DisplayMemberBinding as Binding;
+                        headerClicked = content.Path.Path;
+                    }
+                    else
+                    { //... otherwise it's amount (which is a multibinding)
+                        headerClicked = "Amount";
+                    }
+
+                    //get the sort Direction
+                    if (lastSortedBy == headerClicked)
+                    {
+                        lastSortAscending = !lastSortAscending;
+                    }
+                    else
+                    {
+                        lastSortAscending = true;
+                    }
+
+                    // Sort the shares
+                    Shares = SortCollection<ShareGainViewModel>(Shares, headerClicked, lastSortAscending);   
+
+                    // set the last sorted by for next sort
+                    lastSortedBy = headerClicked;
+
+                }
             }
         }
 
