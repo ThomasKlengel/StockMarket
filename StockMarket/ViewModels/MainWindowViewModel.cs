@@ -39,6 +39,7 @@ namespace StockMarket.ViewModels
 
             // try to update share values once at program start
             TimerTick(null, null);
+            
         }
 
         #region events

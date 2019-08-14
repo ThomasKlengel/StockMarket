@@ -1,4 +1,6 @@
-﻿using System;
+﻿using IronOcr;
+using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace StockMarket.ViewModels
         public AddOrderViewModel()
         {
             AddOrderCommand = new RelayCommand(AddOrder, CanAddOrder);
+            AddInputViaPdfCommand = new RelayCommand(AddInputViaPdf);
             Shares = new ObservableCollection<Share>();
             foreach (var share in  DataBaseHelper.GetSharesFromDB() )
             {
@@ -175,6 +178,8 @@ namespace StockMarket.ViewModels
         #region Commands
         public RelayCommand AddOrderCommand { get; private set; }
 
+        public RelayCommand AddInputViaPdfCommand { get; private set; }
+
         private void AddOrder(object o)
         {
             // create a new order
@@ -195,7 +200,83 @@ namespace StockMarket.ViewModels
         private bool CanAddOrder(object o)
         {
             return Amount > 0 ? true : false;
-        }        
+        }
+
+        private void AddInputViaPdf(object o)
+        {
+
+            //TODO: OCR on PDF
+
+            //create the OCR reader
+            AdvancedOcr Ocr = new AdvancedOcr()
+            {
+                CleanBackgroundNoise = false,
+                ColorDepth = 4,
+                ColorSpace = AdvancedOcr.OcrColorSpace.Color,
+                EnhanceContrast = false,
+                DetectWhiteTextOnDarkBackgrounds = false,
+                RotateAndStraighten = false,
+                Language = IronOcr.Languages.German.OcrLanguagePack,
+                EnhanceResolution = false,
+                InputImageType = AdvancedOcr.InputTypes.Document,
+                ReadBarCodes = false,
+                Strategy = AdvancedOcr.OcrStrategy.Fast
+            };
+
+            // create a file dialog
+            OpenFileDialog ofd = new OpenFileDialog
+            {
+                CheckFileExists = true,
+                CheckPathExists = true,
+                Multiselect = false,
+                Filter = "PDFs|*.pdf",
+                InitialDirectory = @"C:\"
+            };
+
+            if (ofd.ShowDialog() == true)
+            {
+                
+                var pdfToRead = ofd.FileName;
+
+                // create a rectangle from which to read (dont set for complete page)
+                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 0, 2400, 800);
+                var t1 = DateTime.Now;
+                var Results = Ocr.ReadPdf(pdfToRead, area, 1);                
+                var Words = Results.Pages[0].Words;
+                var t2 = DateTime.Now;
+                var lines = Results.Pages[0].LinesOfText;
+                var completeText = Results.Pages[0].Text;
+
+                var dt = t2 - t1; // ~8s ... animation für busy einbauen?
+
+                //< Style >
+                //    < Style.Triggers >
+                //        < DataTrigger Binding = "{Binding IsAnimationRunning}" Value = "True" >
+   
+                //               < DataTrigger.EnterActions >
+   
+                //                   < BeginStoryboard >
+   
+                //                       < Storyboard >
+   
+                //                           < SomeAnimation />
+   
+                //                       </ Storyboard >
+   
+                //                   </ BeginStoryboard >
+   
+                //               </ DataTrigger.EnterActions >
+   
+                //           </ DataTrigger >
+   
+                //       </ Style.Triggers >
+                //   </ Style >
+
+                //TODO: search relevant parts of text 
+
+
+            }
+        }
         #endregion
     }
 }
