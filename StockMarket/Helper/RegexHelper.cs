@@ -38,7 +38,7 @@ namespace StockMarket
         /// <returns>the price of the share</returns>
         public static double GetSharePrice(string webContent, ShareType type)
         {
-            string price = "";
+            string price = "0.0";
             switch (type)
             {
                 case ShareType.Share:
@@ -64,6 +64,7 @@ namespace StockMarket
                     }
                 default: return 0.0;
             }
+            price = price == string.Empty ? "0.0" : price;
 
             return Convert.ToDouble(price, CultureInfo.GetCultureInfo("de-DE"));
         }
