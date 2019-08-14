@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Linq;
+using IronOcr;
 
 namespace StockMarket.ViewModels
 {
@@ -39,6 +40,31 @@ namespace StockMarket.ViewModels
 
             // try to update share values once at program start
             TimerTick(null, null);
+
+            //TODO: OCR on PDF
+            //var Ocr = new AdvancedOcr()
+            //{
+            //    CleanBackgroundNoise = false,
+            //    ColorDepth = 4,
+            //    ColorSpace = AdvancedOcr.OcrColorSpace.Color,
+            //    EnhanceContrast = false,
+            //    DetectWhiteTextOnDarkBackgrounds = false,
+            //    RotateAndStraighten = false,
+            //    Language = IronOcr.Languages.German.OcrLanguagePack,
+            //    EnhanceResolution = false,
+            //    InputImageType = AdvancedOcr.InputTypes.Document,
+            //    ReadBarCodes = false,
+            //    Strategy = AdvancedOcr.OcrStrategy.Fast
+            //};
+
+            //System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 0, 2400, 800);
+            //var testImage = @"C:\Users\vm_user\Downloads\datasheet.pdf";
+            //var Results = Ocr.ReadPdf(testImage,area,1);
+            //var Pages = Results.Pages;
+            //var FullPdfText = Results.Text;
+
+            //Console.WriteLine(Results.Text);
+
         }
 
         #region events
