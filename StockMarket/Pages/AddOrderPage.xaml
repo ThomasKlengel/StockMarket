@@ -34,6 +34,7 @@
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="70"/>
                 </Grid.ColumnDefinitions>    
                 
                 <!-- Panel for labeling the items on grid column 1-->
@@ -68,6 +69,12 @@
                     </StackPanel>
                     
                 </StackPanel>
+
+                <Button Grid.Column="2" Command="{Binding AddInputViaPdfCommand}" >
+                    <TextBlock TextAlignment="Center">
+                        Read<LineBreak/>from<LineBreak/>PDF
+                    </TextBlock>
+                </Button>
             </Grid>
             
             <!-- Button to add an order with the given values to the database-->
