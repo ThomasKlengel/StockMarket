@@ -211,16 +211,16 @@ namespace StockMarket.ViewModels
             AdvancedOcr Ocr = new AdvancedOcr()
             {
                 CleanBackgroundNoise = false,
-                ColorDepth = 4,
+                ColorDepth = 8,
                 ColorSpace = AdvancedOcr.OcrColorSpace.Color,
-                EnhanceContrast = false,
+                EnhanceContrast = true,
                 DetectWhiteTextOnDarkBackgrounds = false,
                 RotateAndStraighten = false,
                 Language = IronOcr.Languages.German.OcrLanguagePack,
-                EnhanceResolution = false,
+                EnhanceResolution = true,
                 InputImageType = AdvancedOcr.InputTypes.Document,
                 ReadBarCodes = false,
-                Strategy = AdvancedOcr.OcrStrategy.Fast
+                Strategy = AdvancedOcr.OcrStrategy.Advanced
             };
 
             // create a file dialog
@@ -239,12 +239,53 @@ namespace StockMarket.ViewModels
                 var pdfToRead = ofd.FileName;
 
                 // create a rectangle from which to read (dont set for complete page)
-                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 0, 2400, 800);
+                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
                 var t1 = DateTime.Now;
                 var Results = Ocr.ReadPdf(pdfToRead, area, 1);                
                 var Words = Results.Pages[0].Words;
                 var t2 = DateTime.Now;
                 var lines = Results.Pages[0].LinesOfText;
+
+                //Wertpapier Abrechnung Kauf
+                //Nominale Wertpapierbezeichnung ISIN(WKN)                
+                //Stück 80 UBS AG(LONDON BRANCH) DEOOOUFOAA67(UFOAA6)  --> replace  "O" durch "0" wkn,isin match share by isin -> nomatch: wkn
+                //FAKTL O.END AMAZON                
+                //Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
+                //Börsensegment FRAB                
+                //Market - Order                
+                //Limit billigst
+                //Schlusstagl - Zeit 23.05.201919:46:13 Auftraggeber Thomas Klengel
+                //  Ausführungskurs 6,15 EUR Auftragserteilung/ -ort Online - Banking                
+                //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck —                
+                //Kurswert 492,00 - EUR
+                //Provision 10,00 - EUR
+                //Ausmachender Betrag 502,00 - EUR                
+                //Den Gegenwert buchen wir mit Valuta 27.05.2019 zu Lasten des Kontos 1050904604
+                //(IBAN DE77 1203 0000 1050 9046 04), BLZ 12030000(BIC BYLADEM1001).
+                //Die Wertpapiere schreiben wir Ihrem Depotkonto gut.
+
+                //Wertpapier Abrechnung Verkauf
+                //Nominale Wertpapierbezeichnung ISIN (WKN)
+                //Stück 10 UBISOFT ENTERTAINMENT S.A. FR0000054470 (901581)
+                //ACTIONS PORT. EO 0,0775                
+                //Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
+                //Börsensegment FRAB                
+                //Market - Order                
+                //Limit bestens
+                //Schlusstagl - Zeit 26.04.2019 12:46:53 Auftraggeber Thomas Klengel
+                //Ausführungskurs 83,70 EUR Auftragserteilung/ -ort Online—Banking                
+                //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck -                
+                //Kurswert 837,00 EUR
+                //Provision 10,00 - EUR
+                //Transaktionsentgeltßörse 0,71 - EUR
+                //Ubertragungs -/ Liefergebühr 0,13 - EUR
+                //Handelsentgelt 3,00 - EUR
+                //Ermittlung steuerrelevante Erträge                
+                //Veräußerungsverlust 164,99 - EUR                
+                //Eingebuchte Aktienverluste 164,99 EUR                
+                //Ausmachender Betraa 823.16 EUR
+
+
                 var completeText = Results.Pages[0].Text;
 
                 var dt = t2 - t1; // ~8s ... animation für busy einbauen?
