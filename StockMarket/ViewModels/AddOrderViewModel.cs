@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace StockMarket.ViewModels
 {
@@ -12,6 +13,8 @@ namespace StockMarket.ViewModels
     /// </summary>
     public class AddOrderViewModel : ViewModelBase
     {
+        bool ignoreUpdate = false;
+
         #region ctor
         public AddOrderViewModel()
         {
@@ -75,7 +78,15 @@ namespace StockMarket.ViewModels
                 {
                     _selectedShare = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
-                    RefreshPriceAsync();
+                    if (!ignoreUpdate)
+                    {
+                        RefreshPriceAsync();
+                        Expenses = 10;
+                        Amount = 0;
+                        OrderDate = DateTime.Today;
+                        OrderType = OrderType.buy;
+                    }
+                    ignoreUpdate = false;
                 }
                 
             }
@@ -112,7 +123,7 @@ namespace StockMarket.ViewModels
                     _orderType = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsBuy)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsSell)));
                 }
             }
         }
@@ -246,8 +257,8 @@ namespace StockMarket.ViewModels
                 {
                     if (line.Text.StartsWith("Wertpapier Abrechnung"))
                     {
-                        var buySell = lines.First().Words.Last().Text;
-                        OrderIsBuy = buySell == "Verkauf" ? false : true;
+                        var buySell = line.Words.Last().Text;
+                        OrderType = buySell == "Verkauf" ? OrderType.sell : OrderType.sell;
                         break;
                     }
                 }
@@ -267,28 +278,29 @@ namespace StockMarket.ViewModels
                         var isin = line.Words[(line.WordCount - 2)].Text;
                         var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
 
+                        ignoreUpdate = true;
                         var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));  
                         if (sharesByIsin.Count() != 0)
                         {
-                            _selectedShare = sharesByIsin.First();
+                            SelectedShare = sharesByIsin.First();
                             break;
                         }
                         var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
                         if (sharesByWkn.Count() != 0)
                         {
-                            _selectedShare = sharesByWkn.First();
+                            SelectedShare = sharesByWkn.First();
                             break;
                         }
                         var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
                         if (sharesByIsin0.Count() != 0)
                         {
-                            _selectedShare = sharesByIsin0.First();
+                            SelectedShare = sharesByIsin0.First();
                             break;
                         }
                         var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
                         if (sharesByWkn0.Count() != 0)
                         {
-                            _selectedShare = sharesByWkn0.First();
+                            SelectedShare = sharesByWkn0.First();
                             break;
                         }
                         break;
@@ -309,19 +321,37 @@ namespace StockMarket.ViewModels
                     }
                 }
 
-                // get expenses
-                int lineIndex = 0;
+                //get orderdate
                 foreach (var line in lines)
                 {
-                    int provisionLineIndex = 1000;
+                    if (line.Text.StartsWith("Schluss"))
+                    {
+
+                        var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
+                        // get share price
+                        var strDate = match.Value;
+                        DateTime Date;
+                        DateTime.TryParse(strDate, out Date );                        
+                        OrderDate = Date;
+                        break;
+                    }
+                }
+
+                // get expenses
+                int lineIndex = 0;
+                int provisionLineIndex = 1000;
+                foreach (var line in lines)                {
+                    
                     if (line.Text.StartsWith("Provision"))
                     {
                         provisionLineIndex = lineIndex;
                         // get order expenses
-                        var strExpense = line.Words[1].Text;
+                        var strExpense = line.Words[1].Text.Replace("-","");
                         double doubleExpense = 0.0;
                         Double.TryParse(strExpense, out doubleExpense);
                         Expenses = doubleExpense;
+                        lineIndex++;
+                        continue;
                     }
 
                     if (provisionLineIndex<100)
@@ -331,10 +361,10 @@ namespace StockMarket.ViewModels
                             break;
                         }
 
-                        if (line.Words[line.Words.Count()-2].Text=="-")
+                        if (line.Words[line.Words.Count()-2].Text.EndsWith("-"))
                         {
                             // get additional expenses
-                            var strExpense = line.Words[line.Words.Count() - 3].Text;
+                            var strExpense = line.Words[line.Words.Count() - 2].Text.Replace("-","");
                             double doubleExpense = 0.0;
                             Double.TryParse(strExpense, out doubleExpense);
                             Expenses += doubleExpense;
