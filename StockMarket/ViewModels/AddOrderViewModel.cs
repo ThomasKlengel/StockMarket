@@ -267,27 +267,30 @@ namespace StockMarket.ViewModels
                         var isin = line.Words[(line.WordCount - 2)].Text;
                         var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
 
-                        var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));
-                        var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
-                        var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
-                        var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
+                        var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));  
                         if (sharesByIsin.Count() != 0)
                         {
-                            SelectedShare = sharesByIsin.First();
+                            _selectedShare = sharesByIsin.First();
+                            break;
                         }
-                        else if (sharesByWkn.Count() != 0)
+                        var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
+                        if (sharesByWkn.Count() != 0)
                         {
-                            SelectedShare = sharesByWkn.First();
+                            _selectedShare = sharesByWkn.First();
+                            break;
                         }
-                        else if (sharesByIsin0.Count() != 0)
+                        var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
+                        if (sharesByIsin0.Count() != 0)
                         {
-                            SelectedShare = sharesByIsin0.First();
+                            _selectedShare = sharesByIsin0.First();
+                            break;
                         }
-                        else if (sharesByWkn0.Count() != 0)
+                        var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
+                        if (sharesByWkn0.Count() != 0)
                         {
-                            SelectedShare = sharesByWkn0.First();
+                            _selectedShare = sharesByWkn0.First();
+                            break;
                         }
-
                         break;
                     }
                 }
@@ -307,19 +310,38 @@ namespace StockMarket.ViewModels
                 }
 
                 // get expenses
+                int lineIndex = 0;
                 foreach (var line in lines)
                 {
+                    int provisionLineIndex = 1000;
                     if (line.Text.StartsWith("Provision"))
                     {
+                        provisionLineIndex = lineIndex;
                         // get order expenses
                         var strExpense = line.Words[1].Text;
                         double doubleExpense = 0.0;
                         Double.TryParse(strExpense, out doubleExpense);
                         Expenses = doubleExpense;
-
-                        //TODO : get other expenses and add them
-                        break;
                     }
+
+                    if (provisionLineIndex<100)
+                    {
+                        if (line.Text.StartsWith("Ausmachender") || line.Text.StartsWith("Ermittlung"))
+                        {
+                            break;
+                        }
+
+                        if (line.Words[line.Words.Count()-2].Text=="-")
+                        {
+                            // get additional expenses
+                            var strExpense = line.Words[line.Words.Count() - 3].Text;
+                            double doubleExpense = 0.0;
+                            Double.TryParse(strExpense, out doubleExpense);
+                            Expenses += doubleExpense;
+                        }
+
+                    }
+                    lineIndex++;
                 }
 
 
@@ -332,14 +354,14 @@ namespace StockMarket.ViewModels
                 //Börsensegment FRAB                
                 //Market - Order                
                 //Limit billigst
-                //Schlusstagl - Zeit 23.05.201919:46:13 Auftraggeber Thomas Klengel
+                //Schlusstagl - Zeit 23.05.201919:46:13 Auftraggeber Vorname Nachname
                 //Ausführungskurs 6,15 EUR Auftragserteilung/ -ort Online - Banking                
                 //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck —                
                 //Kurswert 492,00 - EUR
                 //Provision 10,00 - EUR
                 //Ausmachender Betrag 502,00 - EUR                
-                //Den Gegenwert buchen wir mit Valuta 27.05.2019 zu Lasten des Kontos 1050904604
-                //(IBAN DE77 1203 0000 1050 9046 04), BLZ 12030000(BIC BYLADEM1001).
+                //Den Gegenwert buchen wir mit Valuta 27.05.2019 zu Lasten des Kontos xxxxxxxx04
+                //(IBAN DE77 xxxx xxxx xxxx xxxx 04), BLZ xxxxxxxx(BIC xxxxxxxxx).
                 //Die Wertpapiere schreiben wir Ihrem Depotkonto gut.
 
                 //Wertpapier Abrechnung Verkauf
@@ -350,7 +372,7 @@ namespace StockMarket.ViewModels
                 //Börsensegment FRAB                
                 //Market - Order                
                 //Limit bestens
-                //Schlusstagl - Zeit 26.04.2019 12:46:53 Auftraggeber Thomas Klengel
+                //Schlusstagl - Zeit 26.04.2019 12:46:53 Auftraggeber Vorname Nachname
                 //Ausführungskurs 83,70 EUR Auftragserteilung/ -ort Online—Banking                
                 //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck -                
                 //Kurswert 837,00 EUR
