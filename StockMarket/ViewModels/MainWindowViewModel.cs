@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Linq;
+using System.Collections.ObjectModel;
 
 namespace StockMarket.ViewModels
 {
@@ -20,7 +21,19 @@ namespace StockMarket.ViewModels
             // TODO: ShareOverview add overview tiles sold, shares, certificates
             // TODO: single share Graph
 
+            //DataBaseHelper.AddUserToDB(new User("Thoms"));
+            //DataBaseHelper.AddUserToDB(new User("Test"));
+            //DataBaseHelper.AddUserToDB(new User("T2"));
 
+            if (Users==null)
+            {
+                Users = new ObservableCollection<User>();
+            }
+            foreach (var user in DataBaseHelper.GetUsersFromDB())
+            {
+                Users.Add(user);
+            }
+                       
             // set the start page to an empty page
             DisplayPage = new Pages.BlankPage();
 
@@ -113,6 +126,11 @@ namespace StockMarket.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayPage)));
                 }
             }
+        }
+
+        public ObservableCollection<User> Users
+        {
+            get; private set;
         }
         #endregion
 

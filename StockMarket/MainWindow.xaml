@@ -16,19 +16,35 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-            <!-- the StackPanel containing the navigation Buttons-->
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="10,5" Grid.Row="0">
-                <Button Height="20" Width="100" Command="{Binding AddShareCommand}">Add share</Button>
-                <Button Height="20" Width="100" Command="{Binding AddOrderCommand}">Add order</Button>
-                <Button Height="20" Width="100" Command="{Binding DisplayShareDetailCommand}">Share details</Button>
-                <Button Height="20" Width="100" Command="{Binding DisplayOrderOverviewCommand}">Order gain/Loss</Button>
-                <Button Height="20" Width="100" Command="{Binding DisplayShareOverviewCommand}">Share gain/loss</Button>
-            </StackPanel>
+        <Grid Grid.Row="0">
+            <!-- the Menu for navigation -->
+            <Menu Margin="0">
+                <MenuItem Header="User" Margin="5">
+                    <MenuItem Header="Select User" ItemsSource="{Binding Users}">
+                        <MenuItem.ItemContainerStyle>
+                            <Style>
+                                <Setter Property="MenuItem.Header" Value="{Binding UserName}"/>
+                            </Style>
+                        </MenuItem.ItemContainerStyle>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="Share" Margin="5">
+                    <MenuItem Header="AddShare" Command="{Binding AddShareCommand}"/>
+                    <MenuItem Header="View Details" Command="{Binding DisplayShareDetailCommand}"/>
+                    <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplayShareOverviewCommand}"/>
+                </MenuItem>
+                <MenuItem Header="Order" Margin="5">
+                    <MenuItem Header="Add Order" Command="{Binding AddOrderCommand}"/>
+                    <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplayOrderOverviewCommand}"/>
+                </MenuItem>
+            </Menu>
+        </Grid>
 
-            <!--The Frame containing the content selected by the navigation-->
-            <Frame Name="MainFrame" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage}"
+
+        <!--The Frame containing the content selected by the navigation-->
+        <Frame Name="MainFrame" NavigationUIVisibility="Hidden" Content="{Binding DisplayPage}"
                    HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1" />
-        
+
 
     </Grid>
 </Window>

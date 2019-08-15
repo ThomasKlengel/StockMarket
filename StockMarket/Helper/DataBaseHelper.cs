@@ -141,6 +141,37 @@ namespace StockMarket
             }
         }
 
+        public static short AddUserToDB(User user, string path = DEFAULTPATH)
+        {
+            if( string.IsNullOrEmpty(user.UserName) && string.IsNullOrWhiteSpace(user.UserName))
+            {
+                return 0;
+            }
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<User>();
+
+                    // check if the share is lready in the database...
+                    if (con.Table<User>().ToList().Find((u)=> { return u.UserName == user.UserName; })==null)
+                    {   //... if not, add it to the tables                       
+                        con.Insert(user);
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
         /// <summary>
         /// Adds an <see cref="Order"/> to the database
         /// </summary>
@@ -248,6 +279,24 @@ namespace StockMarket
                     con.CreateTable<ShareValue>();
                     // get the values
                     return con.Table<ShareValue>().ToList().FindAll((val) => { return val.ISIN == isin; });
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static List<User> GetUsersFromDB(string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<User>();
+                    // insert the order
+                    return con.Table<User>().ToList();
                 }
             }
             catch (Exception ex)
