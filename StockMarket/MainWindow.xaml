@@ -20,12 +20,8 @@
             <!-- the Menu for navigation -->
             <Menu Margin="0">
                 <MenuItem Header="User" Margin="5">
-                    <MenuItem Header="Select User" ItemsSource="{Binding Users}">
-                        <MenuItem.ItemContainerStyle>
-                            <Style>
-                                <Setter Property="MenuItem.Header" Value="{Binding UserName}"/>
-                            </Style>
-                        </MenuItem.ItemContainerStyle>
+                    <MenuItem Header="Select User">
+                        <ComboBox ItemsSource="{Binding Users}" SelectedItem="{Binding CurrentUser}" Width="100"/>
                     </MenuItem>
                 </MenuItem>
                 <MenuItem Header="Share" Margin="5">

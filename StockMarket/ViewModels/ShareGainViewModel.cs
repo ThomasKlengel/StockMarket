@@ -10,8 +10,9 @@ namespace StockMarket.ViewModels
     /// </summary>
     class ShareGainViewModel : CollectionViewModel
     {
+
         #region Constructors
-        public ShareGainViewModel()
+        public ShareGainViewModel():base()
         {
 
         }
@@ -20,7 +21,7 @@ namespace StockMarket.ViewModels
         /// Creates a <see cref="ShareGainViewModel"/> for a given <see cref="Share"/>
         /// </summary>
         /// <param name="share">The <see cref="Share"/> to create the view model for</param>
-        public ShareGainViewModel(Share share)
+        public ShareGainViewModel(Share share):base()
         {
             ShareName = share.ShareName;
             WebSite = share.WebSite;
@@ -30,7 +31,6 @@ namespace StockMarket.ViewModels
             ShareType = share.ShareType;
             GetOrders();
             RefreshPriceAsync();
-
         }
         #endregion
 
@@ -38,7 +38,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// All orders of this share
         /// </summary>
-        private ObservableCollection<OrderViewModel> Orders;
+        public ObservableCollection<OrderViewModel> Orders { get; private set; }
         public ShareType ShareType { get; private set; }
 
         private string _shareName;

@@ -10,6 +10,8 @@ namespace StockMarket.ViewModels
     /// </summary>
     public abstract class CollectionViewModel: ViewModelBase
     {
+        
+
         #region Fields
         /// <summary>
         /// used for determining the sortdirection when sorting the collection
@@ -19,7 +21,16 @@ namespace StockMarket.ViewModels
         /// whether the last sort direction was ascending or decending
         /// </summary>
         public bool lastSortAscending;
+        /// <summary>
+        /// The user currently selected in the main window
+        /// </summary>
+        public User CurrentUser = User.Default;
         #endregion
+
+        public CollectionViewModel()
+        {
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((u) => { CurrentUser = u; });
+        }
 
         #region Properties
         /// <summary>

@@ -1,5 +1,6 @@
 ﻿using IronOcr;
 using Microsoft.Win32;
+using Prism.Events;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -14,6 +15,7 @@ namespace StockMarket.ViewModels
     public class AddOrderViewModel : ViewModelBase
     {
         bool ignoreUpdate = false;
+        protected readonly IEventAggregator _eventAggregator;
 
         #region ctor
         public AddOrderViewModel()
@@ -26,11 +28,27 @@ namespace StockMarket.ViewModels
                 Shares.Add(share);
             }
             SelectedShare = Shares.First();
+
+            this._eventAggregator = ApplicationService.Instance.EventAggregator;
+            this._eventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { User = user; });
         }
 
         #endregion
 
         #region Properties
+
+        private User _user;
+        public User User
+        {
+            get
+            {
+                return _user;
+            }
+            set
+            {
+                _user = value;
+            }
+        }
 
         public ObservableCollection<Share> Shares { get; set; }
 

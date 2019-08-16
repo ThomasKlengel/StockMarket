@@ -67,6 +67,11 @@ namespace StockMarket
             }
             return false;
         }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
         #endregion
 
     }
@@ -77,7 +82,7 @@ namespace StockMarket
     public class Order
     {
         #region ctors
-        public Order() { }
+        public Order() { UserName = new User().ToString(); }
         #endregion
 
         #region Properties
@@ -118,6 +123,8 @@ namespace StockMarket
         /// The ISIN of the order to link to a share
         /// </summary>
         public string ISIN { get; set; }
+
+        public string UserName { get; set; }
 
         #endregion
     }

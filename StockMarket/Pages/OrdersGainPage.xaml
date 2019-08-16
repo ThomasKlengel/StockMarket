@@ -9,7 +9,7 @@
       d:DesignHeight="450" d:DesignWidth="800"
       Title="OrdersOverviewPage">
     <Page.DataContext>
-        <view:OrderGainViewModel></view:OrderGainViewModel>
+        <view:OrderGainViewModel/>
     </Page.DataContext>   
  
     <Grid>

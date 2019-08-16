@@ -4,6 +4,7 @@ using System.Windows.Controls;
 using System.Windows.Threading;
 using System.Linq;
 using System.Collections.ObjectModel;
+using Prism.Events;
 
 namespace StockMarket.ViewModels
 {
@@ -11,7 +12,7 @@ namespace StockMarket.ViewModels
     /// a view model for the main window
     /// </summary>
     class MainWindowViewModel: ViewModels.ViewModelBase
-    {          
+    {
         /// <summary>
         /// creates a new instance of a ViewModel for the MainWindow
         /// </summary>
@@ -21,19 +22,6 @@ namespace StockMarket.ViewModels
             // TODO: ShareOverview add overview tiles sold, shares, certificates
             // TODO: single share Graph
 
-            //DataBaseHelper.AddUserToDB(new User("Thoms"));
-            //DataBaseHelper.AddUserToDB(new User("Test"));
-            //DataBaseHelper.AddUserToDB(new User("T2"));
-
-            if (Users==null)
-            {
-                Users = new ObservableCollection<User>();
-            }
-            foreach (var user in DataBaseHelper.GetUsersFromDB())
-            {
-                Users.Add(user);
-            }
-                       
             // set the start page to an empty page
             DisplayPage = new Pages.BlankPage();
 
@@ -52,10 +40,28 @@ namespace StockMarket.ViewModels
 
             // try to update share values once at program start
             TimerTick(null, null);
+
+            //DataBaseHelper.RemoveTable<User>();
+            var u1 = new User("Thomas", "Klengel");
+            var u2 = new User("Test", "User");
+
+            DataBaseHelper.AddUserToDB(u1);
+            DataBaseHelper.AddUserToDB(u2);
+            DataBaseHelper.AddUserToDB(User.Default);
             
+            // set the initial Users
+            if (Users == null)
+            {
+                Users = new ObservableCollection<User>();
+            }
+            foreach (var user in DataBaseHelper.GetUsersFromDB())
+            {
+                Users.Add(user);
+            }
+            CurrentUser = Users.First((u) => { return u.Equals(User.Default); });
         }
 
-        #region events
+        #region EventHandler
         /// <summary>
         /// Eventhandler for updating the Sharevalues in the database
         /// </summary>
@@ -132,6 +138,24 @@ namespace StockMarket.ViewModels
         {
             get; private set;
         }
+
+        private User _currentUser;
+        public User CurrentUser
+        {
+            get
+            {
+                return _currentUser;
+            }
+            set
+            {
+                if (_currentUser!=value)
+                {
+                    _currentUser = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(CurrentUser)));
+                    ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+                }
+            }
+        }
         #endregion
 
         #region Commands             
@@ -142,6 +166,7 @@ namespace StockMarket.ViewModels
         private void AddShare(object o)
         {
             DisplayPage = new Pages.AddSharePage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
         #endregion
 
@@ -151,6 +176,7 @@ namespace StockMarket.ViewModels
         private void AddOrder(object o)
         {
             DisplayPage = new Pages.AddOrderPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
 
         private bool CanAddOrder(object o)
@@ -176,6 +202,7 @@ namespace StockMarket.ViewModels
         private void DisplayShareDetail(object o)
         {
             DisplayPage = new Pages.ShareDetailPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
 
         private bool CanDisplayShareDetail(object o)
@@ -195,13 +222,13 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
-
         #region Display Order Gain Command
         public RelayCommand DisplayOrderOverviewCommand { get; private set; }
 
         private void DisplayOrderOverview(object o)
         {
             DisplayPage = new Pages.OrdersOverviewPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
 
         private bool CanDisplayOrderOverview(object o)
@@ -233,6 +260,7 @@ namespace StockMarket.ViewModels
         private void DisplayShareOverview(object o)
         {
             DisplayPage = new Pages.SharesOverviewPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
 
         private bool CanDisplayShareOverview(object o)

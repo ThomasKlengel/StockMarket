@@ -10,8 +10,9 @@ namespace StockMarket.ViewModels
     /// </summary>
     class SharesGainViewModel : CollectionViewModel
     {
+
         #region Constructors
-        public SharesGainViewModel()
+        public SharesGainViewModel() : base()
         {
             // create an empty collection
             Shares = new ObservableCollection<ShareGainViewModel>();
@@ -26,6 +27,15 @@ namespace StockMarket.ViewModels
                 // add a handler for updating the ui in relevant cases
                 svm.PropertyChanged += Share_RelevantPropertyChanged;
             }
+
+            // TODO: remove shares which the user does not have any Order for
+            //for (int i= Shares.Count-1;i>=0;i--)
+            //{
+            //    if (Shares[i].Orders[0].Amount==0)
+            //    {
+            //        Shares.RemoveAt(i);
+            //    }
+            //}
 
             // create a command for sorting the shares
             SortCommand = new RelayCommand(SortShares);
@@ -143,6 +153,9 @@ namespace StockMarket.ViewModels
         /// <param name="o">should be a <see cref="GridViewColumnHeader"/> which has been clicked</param>
         private void SortShares (object o)
         {
+
+            var a = CurrentUser;
+
             if (Shares.Count > 1)
             {
                 // check if clicked item is a column header

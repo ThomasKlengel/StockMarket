@@ -12,11 +12,12 @@ namespace StockMarket.ViewModels
     /// </summary>
     public class OrderViewModel : CollectionViewModel
     {
+
         #region ctor
         /// <summary>
         /// Creates a ViewModel for an order with an AddOrderCommand 
         /// </summary>
-        public OrderViewModel()
+        public OrderViewModel() : base()
         {
             AddOrderCommand = new RelayCommand(AddOrder, CanAddOrder);
         }
@@ -25,19 +26,23 @@ namespace StockMarket.ViewModels
         /// Creates a ViewModel for an order from an order 
         /// </summary>
         /// <param name="order">The <see cref="Order"/> to create a ViewModel for</param>
-        public OrderViewModel(Order order)
+        public OrderViewModel(Order order):base()
         {
             this.Amount = order.Amount;
             this.Date = order.Date;
             this.OrderExpenses = order.OrderExpenses;
             this.OrderType = order.OrderType;
             this.SharePrice = order.SharePrice;
-            this.ISIN = order.ISIN;          
+            this.ISIN = order.ISIN;
+            this.UserName = order.UserName;
         }
 
         #endregion
 
         #region Properties
+
+        public string UserName { get; private set; }
+
         private string ISIN;
 
         private double _sharePrice;

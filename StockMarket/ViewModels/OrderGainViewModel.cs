@@ -16,8 +16,11 @@ namespace StockMarket.ViewModels
     {
 
         #region Constructors
-        public OrderGainViewModel()
+        public OrderGainViewModel():base()
         {
+
+            //get all Orders of current user
+            var a = DataBaseHelper.GetAllOrdersFromDB().Where((o)=> {return o.UserName == CurrentUser.ToString(); });
             // get all shares from DB
             Shares = DataBaseHelper.GetSharesFromDB();
             // set the selected share for initially creating the view model
@@ -217,7 +220,7 @@ namespace StockMarket.ViewModels
             Orders.Clear();
 
             // add the orders from the database
-            foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare.ISIN).OrderByDescending((o) => { return o.Date; }))
+            foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare).OrderByDescending((o) => { return o.Date; }))
             {
                 Orders.Add(new OrderViewModel(order));
             }

@@ -143,7 +143,7 @@ namespace StockMarket
 
         public static short AddUserToDB(User user, string path = DEFAULTPATH)
         {
-            if( string.IsNullOrEmpty(user.UserName) && string.IsNullOrWhiteSpace(user.UserName))
+            if( string.IsNullOrEmpty(user.ToString()) && string.IsNullOrWhiteSpace(user.ToString()))
             {
                 return 0;
             }
@@ -151,11 +151,13 @@ namespace StockMarket
             {   // connect to the database
                 using (SQLiteConnection con = new SQLiteConnection(path))
                 {
+                    //con.DropTable<User>();
+
                     // get the required tables of the database
                     con.CreateTable<User>();
 
                     // check if the share is lready in the database...
-                    if (con.Table<User>().ToList().Find((u)=> { return u.UserName == user.UserName; })==null)
+                    if (con.Table<User>().ToList().Find((u)=> { return u.ToString() == user.ToString(); })==null)
                     {   //... if not, add it to the tables                       
                         con.Insert(user);
                     }
@@ -225,6 +227,26 @@ namespace StockMarket
                     con.CreateTable<Order>();
                     // retrun the orders matching the ISIN
                     return con.Table<Order>().ToList().FindAll((order) => { return order.ISIN == isin; });
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public static List<Order> GetAllOrdersFromDB(string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Order>();
+
+                    var a = con.Table<Order>().ToList();
+                    // retrun the orders matching the ISIN
+                    return con.Table<Order>().ToList();
                 }
             }
             catch (Exception ex)
@@ -329,5 +351,6 @@ namespace StockMarket
                 return -1;
             }
         }
+
     }
 }
