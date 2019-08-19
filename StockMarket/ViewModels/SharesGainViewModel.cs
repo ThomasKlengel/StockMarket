@@ -16,6 +16,11 @@ namespace StockMarket.ViewModels
         {
             // create an empty collection
             Shares = new ObservableCollection<ShareGainViewModel>();
+            SortCommand = new RelayCommand(SortShares);
+        }
+
+        public override void UserChanged()
+        {
             // get the all shares from the database
             var shares = DataBaseHelper.GetSharesFromDB();
 
@@ -38,10 +43,9 @@ namespace StockMarket.ViewModels
             //}
 
             // create a command for sorting the shares
-            SortCommand = new RelayCommand(SortShares);
         }
         #endregion
-               
+
         #region Eventhandler
         private void Share_RelevantPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -153,8 +157,6 @@ namespace StockMarket.ViewModels
         /// <param name="o">should be a <see cref="GridViewColumnHeader"/> which has been clicked</param>
         private void SortShares (object o)
         {
-
-            var a = CurrentUser;
 
             if (Shares.Count > 1)
             {

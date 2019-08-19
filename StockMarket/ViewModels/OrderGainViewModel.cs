@@ -18,22 +18,40 @@ namespace StockMarket.ViewModels
         #region Constructors
         public OrderGainViewModel():base()
         {
+            Shares = new ObservableCollection<Share>();
+            Orders = new ObservableCollection<OrderViewModel>();
+        }
 
+        public override void UserChanged()
+        {
             //get all Orders of current user
-            var a = DataBaseHelper.GetAllOrdersFromDB().Where((o)=> {return o.UserName == CurrentUser.ToString(); });
-            // get all shares from DB
-            Shares = DataBaseHelper.GetSharesFromDB();
-            // set the selected share for initially creating the view model
-            SelectedShare = Shares.First();
+            var a = DataBaseHelper.GetAllOrdersFromDB().Where((o) => { return o.UserName == User.ToString(); });
+            var unique = new HashSet<string>();
+            foreach (var order in a)
+            {
+                unique.Add(order.ISIN);
+            }
+            Shares.Clear();
+            Orders.Clear();
+            foreach (var isin in unique)
+            {
+                Shares.Add(DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }).First());
+            }
 
-            // set the command for sorting the Orders
-            SortCommand = new RelayCommand(SortOrders);
+            if (Shares.Count > 0)
+            {
+                // set the selected share for initially creating the view model
+                SelectedShare = Shares.First();
 
-            // create a timer for refreshing the shown prices
-            var refrehTimer = new DispatcherTimer();
-            refrehTimer.Interval = new TimeSpan(0, 10, 0);
-            refrehTimer.Tick += RefrehTimer_Tick;
-            refrehTimer.Start();
+                // set the command for sorting the Orders
+                SortCommand = new RelayCommand(SortOrders);
+
+                // create a timer for refreshing the shown prices
+                var refrehTimer = new DispatcherTimer();
+                refrehTimer.Interval = new TimeSpan(0, 10, 0);
+                refrehTimer.Tick += RefrehTimer_Tick;
+                refrehTimer.Start();
+            }
         }
 
         #endregion
@@ -179,7 +197,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The <see cref="Share"/>s that are currently managed in the database
         /// </summary>
-        public List<Share> Shares { get; private set; }
+        public ObservableCollection<Share> Shares { get; private set; }
 
         private Share _selectedShare;
         /// <summary>
@@ -195,10 +213,13 @@ namespace StockMarket.ViewModels
                     _selectedShare = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
 
-                    // refresh the orders list
-                    SetOrdersInitially();
-                    // refresh the prices for the orders
-                    RefreshPriceAsync();
+                    if (SelectedShare != null)
+                    {
+                        // refresh the orders list
+                        SetOrdersInitially();
+                        // refresh the prices for the orders
+                        RefreshPriceAsync();
+                    }
                 }
             }
         }
@@ -219,8 +240,11 @@ namespace StockMarket.ViewModels
             }
             Orders.Clear();
 
+
             // add the orders from the database
-            foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare).OrderByDescending((o) => { return o.Date; }))
+            foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare)
+                .Where((o)=> { return o.UserName == User.ToString(); })
+                .OrderByDescending((o) => { return o.Date; }))
             {
                 Orders.Add(new OrderViewModel(order));
             }

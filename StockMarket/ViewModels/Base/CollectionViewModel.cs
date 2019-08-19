@@ -9,8 +9,7 @@ namespace StockMarket.ViewModels
     /// a base class for share related collections
     /// </summary>
     public abstract class CollectionViewModel: ViewModelBase
-    {
-        
+    {      
 
         #region Fields
         /// <summary>
@@ -21,15 +20,13 @@ namespace StockMarket.ViewModels
         /// whether the last sort direction was ascending or decending
         /// </summary>
         public bool lastSortAscending;
-        /// <summary>
-        /// The user currently selected in the main window
-        /// </summary>
-        public User CurrentUser = User.Default;
+
+        public User User;
         #endregion
 
         public CollectionViewModel()
         {
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((u) => { CurrentUser = u; });
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe(new Action<User>(UserChanging));
         }
 
         #region Properties
@@ -145,6 +142,15 @@ namespace StockMarket.ViewModels
 
             return origCollection;
         }
+
+        private void UserChanging(User u)
+        {
+            User = u;
+            UserChanged();
+        }
+
+        public virtual void UserChanged() { }
+
         #endregion
 
         #region Commands
