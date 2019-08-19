@@ -1,5 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
 
@@ -21,11 +23,25 @@ namespace StockMarket.ViewModels
 
         public override void UserChanged()
         {
-            // get the all shares from the database
-            var shares = DataBaseHelper.GetSharesFromDB();
+            // get all orders of the current user
+            var ordersbyUser = DataBaseHelper.GetAllOrdersFromDB().Where(o => (SelectOrderByUser(o)));
+            // add the ISINs for these orders (HashSet only allows uniques -> duplicates are not added)
+            var unique = new HashSet<string>();
+            foreach (var order in ordersbyUser)
+            {
+                unique.Add(order.ISIN);
+            }
+            // clear the collection
+            Shares.Clear();
+            // get all shares for the current user
+            var unsortedShares = new ObservableCollection<Share>();
+            foreach (var isin in unique)
+            {
+                unsortedShares.Add(DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }).First());
+            }
 
-            // add the shares from the database to the collection
-            foreach (var share in shares)
+            // add the shares from the database to the collection (oderd by the name)
+            foreach (var share in unsortedShares.OrderBy((s) => { return s.ShareName; }))
             {
                 ShareGainViewModel svm = new ShareGainViewModel(share);
                 Shares.Add(svm);
@@ -33,16 +49,6 @@ namespace StockMarket.ViewModels
                 svm.PropertyChanged += Share_RelevantPropertyChanged;
             }
 
-            // TODO: remove shares which the user does not have any Order for
-            //for (int i= Shares.Count-1;i>=0;i--)
-            //{
-            //    if (Shares[i].Orders[0].Amount==0)
-            //    {
-            //        Shares.RemoveAt(i);
-            //    }
-            //}
-
-            // create a command for sorting the shares
         }
         #endregion
 
@@ -157,7 +163,6 @@ namespace StockMarket.ViewModels
         /// <param name="o">should be a <see cref="GridViewColumnHeader"/> which has been clicked</param>
         private void SortShares (object o)
         {
-
             if (Shares.Count > 1)
             {
                 // check if clicked item is a column header

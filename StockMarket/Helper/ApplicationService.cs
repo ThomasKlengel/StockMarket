@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Prism;
-using Prism.Events;
+﻿using Prism.Events;
 
 namespace StockMarket
-{     
+{
     internal sealed class ApplicationService
     {
         private ApplicationService() { }

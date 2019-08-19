@@ -9,7 +9,10 @@ namespace StockMarket.ViewModels
     /// a base class for share related collections
     /// </summary>
     public abstract class CollectionViewModel: ViewModelBase
-    {      
+    {
+        #region Delegates
+        public delegate bool OrderSelector(Order o);
+        #endregion
 
         #region Fields
         /// <summary>
@@ -20,14 +23,56 @@ namespace StockMarket.ViewModels
         /// whether the last sort direction was ascending or decending
         /// </summary>
         public bool lastSortAscending;
+        /// <summary>
+        /// Gets the orders of the <see cref="CurrentUser"/> (all if DefaultUser)
+        /// </summary>
+        public OrderSelector SelectOrderByUser;
 
-        public User User;
+        private User _currentUser;
+        /// <summary>
+        /// The user currently selected in the MainWindow
+        /// </summary>
+        public User CurrentUser
+        {
+            get
+            {
+                if (_currentUser!= null)
+                {
+                    return _currentUser;
+                }
+                return User.Default();
+            }
+
+            private set
+            {
+                if (CurrentUser != value)
+                {
+                    _currentUser = value;
+
+                    //Set the delegate to get all Orders of current user
+                    if (CurrentUser.Equals(User.Default()))
+                    {
+                        SelectOrderByUser = (o) => { return true; };
+                    }
+                    else
+                    {                        
+                        SelectOrderByUser = (o) => { return o.UserName == CurrentUser.ToString(); };
+                    }
+
+                    // Call the method thats ViewModel specific
+                    UserChanged();
+                }
+            }
+        }
         #endregion
 
+        #region Contructors
         public CollectionViewModel()
-        {
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe(new Action<User>(UserChanging));
+        {            
+            // set the current user as selected in MainWindow
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user)=> { CurrentUser = user; });
         }
+        #endregion
 
         #region Properties
         /// <summary>
@@ -143,12 +188,9 @@ namespace StockMarket.ViewModels
             return origCollection;
         }
 
-        private void UserChanging(User u)
-        {
-            User = u;
-            UserChanged();
-        }
-
+        /// <summary>
+        /// Any action that should be taken when the <see cref="CurrentUser"/> has changed
+        /// </summary>
         public virtual void UserChanged() { }
 
         #endregion

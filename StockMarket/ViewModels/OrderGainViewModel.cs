@@ -14,7 +14,6 @@ namespace StockMarket.ViewModels
     /// </summary>
     class OrderGainViewModel : CollectionViewModel
     {
-
         #region Constructors
         public OrderGainViewModel():base()
         {
@@ -24,18 +23,27 @@ namespace StockMarket.ViewModels
 
         public override void UserChanged()
         {
-            //get all Orders of current user
-            var a = DataBaseHelper.GetAllOrdersFromDB().Where((o) => { return o.UserName == User.ToString(); });
+            // gets all orders for the current user
+            var ordersByUser = DataBaseHelper.GetAllOrdersFromDB().Where(o=>(SelectOrderByUser(o)));
+            // add any isin of these orders (HashSet only allows uniques -> duplicates are not added)
             var unique = new HashSet<string>();
-            foreach (var order in a)
+            foreach (var order in ordersByUser)
             {
                 unique.Add(order.ISIN);
             }
+            // clear the colections
             Shares.Clear();
             Orders.Clear();
+            var unsortedShares = new ObservableCollection<Share>();
+            // get all shares for the user
             foreach (var isin in unique)
             {
-                Shares.Add(DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }).First());
+                unsortedShares.Add(DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }).First());
+            }
+            // sort the shares by name
+            foreach (var share in unsortedShares.OrderBy((s) => { return s.ShareName; }))
+            {
+                Shares.Add(share);
             }
 
             if (Shares.Count > 0)
@@ -241,9 +249,9 @@ namespace StockMarket.ViewModels
             Orders.Clear();
 
 
-            // add the orders from the database
+            // add the orders from the database for this user  
             foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare)
-                .Where((o)=> { return o.UserName == User.ToString(); })
+                .Where(o => SelectOrderByUser(o))
                 .OrderByDescending((o) => { return o.Date; }))
             {
                 Orders.Add(new OrderViewModel(order));

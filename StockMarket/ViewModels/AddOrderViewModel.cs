@@ -15,7 +15,6 @@ namespace StockMarket.ViewModels
     public class AddOrderViewModel : ViewModelBase
     {
         bool ignoreUpdate = false;
-        protected readonly IEventAggregator _eventAggregator;
 
         #region ctor
         public AddOrderViewModel()
@@ -29,24 +28,30 @@ namespace StockMarket.ViewModels
             }
             SelectedShare = Shares.First();
 
-            this._eventAggregator = ApplicationService.Instance.EventAggregator;
-            this._eventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { User = user; });
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { CurrentUser = user; });
         }
 
         #endregion
 
         #region Properties
 
-        private User _user;
-        public User User
+        private User _currentUser;
+        public User CurrentUser
         {
             get
             {
-                return _user;
+                if (_currentUser != null)
+                {
+                    return _currentUser;
+                }
+                return User.Default();
             }
             set
             {
-                _user = value;
+                if (CurrentUser != value)
+                {
+                    _currentUser = value;
+                }
             }
         }
 
@@ -211,6 +216,12 @@ namespace StockMarket.ViewModels
 
         private void AddOrder(object o)
         {
+            if (CurrentUser.Equals(User.Default()))
+            {
+                System.Windows.MessageBox.Show("There is no valid user selected");
+                return;
+            }
+
             // create a new order
             Order order = new Order();
             order.Amount = Amount;
@@ -219,6 +230,7 @@ namespace StockMarket.ViewModels
             order.SharePrice = ActPrice;
             order.Date = OrderDate;
             order.ISIN = SelectedShare.ISIN;
+            order.UserName = CurrentUser.ToString();
 
             // add the order to the matching share
             DataBaseHelper.AddOrderToDB(order);
@@ -261,8 +273,7 @@ namespace StockMarket.ViewModels
             };
 
             if (ofd.ShowDialog() == true)
-            {
-                
+            {                
                 var pdfToRead = ofd.FileName;
 
                 // create a rectangle from which to read (dont set for complete page)

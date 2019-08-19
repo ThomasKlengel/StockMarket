@@ -40,14 +40,6 @@ namespace StockMarket.ViewModels
 
             // try to update share values once at program start
             TimerTick(null, null);
-
-            //DataBaseHelper.RemoveTable<User>();
-            var u1 = new User("Thomas", "Klengel");
-            var u2 = new User("Test", "User");
-
-            DataBaseHelper.AddUserToDB(u1);
-            DataBaseHelper.AddUserToDB(u2);
-            DataBaseHelper.AddUserToDB(User.Default);
             
             // set the initial Users
             if (Users == null)
@@ -58,7 +50,7 @@ namespace StockMarket.ViewModels
             {
                 Users.Add(user);
             }
-            CurrentUser = Users.First((u) => { return u.Equals(User.Default); });
+            CurrentUser = Users.First((u) => { return u.Equals(User.Default()); });
         }
 
         #region EventHandler
