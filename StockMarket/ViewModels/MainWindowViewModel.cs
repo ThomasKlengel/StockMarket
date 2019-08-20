@@ -88,6 +88,16 @@ namespace StockMarket.ViewModels
                     //... if it is not from today get the current price of the share
                     var webcontent = await WebHelper.getWebContent(share.WebSite);
                     var price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
+                    if (price == 0.0)
+                    {
+                        webcontent = await WebHelper.getWebContent(share.WebSite2);
+                        price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
+                    }
+                    if (price == 0.0)
+                    {
+                        webcontent = await WebHelper.getWebContent(share.WebSite3);
+                        price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
+                    }
 
                     // create a new sharevalue
                     ShareValue s = new ShareValue()

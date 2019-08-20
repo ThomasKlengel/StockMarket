@@ -57,6 +57,40 @@ namespace StockMarket.ViewModels
             }
         }
 
+        private string _webSite2;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite2
+        {
+            get { return _webSite2; }
+            set
+            {
+                if (_webSite2 != value)
+                {
+                    _webSite2 = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite2)));
+                }
+            }
+        }
+
+        private string _webSite3;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite3
+        {
+            get { return _webSite3; }
+            set
+            {
+                if (_webSite3 != value)
+                {
+                    _webSite3 = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite3)));
+                }
+            }
+        }
+
         private string _wkn;
         /// <summary>
         /// Thw WKN of the <see cref="Share"/>

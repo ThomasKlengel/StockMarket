@@ -74,7 +74,8 @@ namespace StockMarket
   
 
         #region Regex strings
-        public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
+        public const string REGEX_Website_Valid1 = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
+        public const string REGEX_Website_Valid2 = "^https:\\/{2}kurse\\.boerse\\.ard\\.de.+$";
 
         public const string REGEX_SharePrice = "\\d*\\.?\\d*,\\d*";
         public const string REGEX_Group_SharePrice = "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span";
@@ -93,6 +94,9 @@ namespace StockMarket
         public const string REGEX_Group_CertFactor = "Faktor \\d{1,2}";
         public const string REGEX_Group_CertPrice = "<div .*data-template=\"Bid\".* data-animation.*<\\/span><\\/div>";
 
+        public const string REGEX_ARD = "<title>.*boerse.ARD.de<\\/title>";
+        public const string REGEX_Group_ARD_Price = "<td headers=\"aktueller_kurs.*<\\/td>"; // headers = \"aktueller_kurs.*<\\/td>
+
         #endregion
 
         /// <summary>
@@ -103,34 +107,49 @@ namespace StockMarket
         public static double GetSharePrice(string webContent, ShareType type)
         {
             string price = "0.0";
-            switch (type)
+            var ARD = Regex.Match(webContent, REGEX_ARD).Success;
+            if (ARD)
             {
-                case ShareType.Share:
-                    {
-                        // get the section of the website which contains the SharePrice
-                        //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
-                        var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_SharePrice);
-                        if (!priceMatch.Success)
-                        {
-                            return 0.0;
-                        }
-                        // get the SharePrice in the desired format
-                        price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
-                        break;
-                    }
-                case ShareType.Certificate:
-                    {
-                        // get the current bid price
-                        var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                        price = Regex.Match(priceMath.Value, RegexHelper.REGEX_SharePrice).Value;
-
-                        break;
-                    }
-                default: return 0.0;
+                var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ARD_Price);
+                if (!priceMatch.Success)
+                {
+                    return 0.0;
+                }
+                // get the SharePrice in the desired format
+                price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
+                price = price == string.Empty ? "0.0" : price;
             }
-            price = price == string.Empty ? "0.0" : price;
+            else
+            {
+                switch (type)
+                {
+                    case ShareType.Share:
+                        {
+                            // get the section of the website which contains the SharePrice
+                            //<tr><td class="font-bold">Kurs</td><td colspan="4">18,25 EUR<span
+                            var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_SharePrice);
+                            if (!priceMatch.Success)
+                            {
+                                return 0.0;
+                            }
+                            // get the SharePrice in the desired format
+                            price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value.Replace(".", "");
+                            break;
+                        }
+                    case ShareType.Certificate:
+                        {
+                            // get the current bid price
+                            var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                            price = Regex.Match(priceMath.Value, RegexHelper.REGEX_SharePrice).Value;
 
+                            break;
+                        }
+                    default: return 0.0;
+                }
+                price = price == string.Empty ? "0.0" : price;
+            }
             return Convert.ToDouble(price, CultureInfo.GetCultureInfo("de-DE"));
+
         }
 
         /// <summary>
@@ -140,7 +159,15 @@ namespace StockMarket
         /// <returns>true if the website is valid</returns>
         public static bool WebsiteIsValid(string website)
         {
-            return Regex.Match(website, REGEX_Website_Valid).Success;
+            if (website != null)
+            {
+                if (Regex.Match(website, REGEX_Website_Valid1).Success ||
+                        Regex.Match(website, REGEX_Website_Valid2).Success)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>

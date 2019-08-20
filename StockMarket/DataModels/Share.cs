@@ -12,10 +12,12 @@ namespace StockMarket
         #region ctors
         public Share() { }
 
-        public Share(string name, string website, string wkn, string isin, ShareType shareType= ShareType.Share)
+        public Share(string name, string website, string wkn, string isin, ShareType shareType= ShareType.Share, string website2 = "", string website3 = "")
         {
             ShareName = name;
             WebSite = website;
+            WebSite2 = website2;
+            WebSite3 = website3;
             WKN = wkn;
             ISIN = isin;
             ShareType = shareType;
@@ -31,9 +33,19 @@ namespace StockMarket
         public string ShareName { get; set; }
 
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// A website from which to get the data for the <see cref="Share"/>
         /// </summary>
         public string WebSite { get; set; }
+
+        /// <summary>
+        /// A website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite2 { get; set; }
+
+        /// <summary>
+        /// A website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite3 { get; set; }
 
         /// <summary>
         /// Thw WKN of the <see cref="Share"/>

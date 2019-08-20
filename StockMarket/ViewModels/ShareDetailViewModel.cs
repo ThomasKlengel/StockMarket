@@ -17,9 +17,11 @@ namespace StockMarket.ViewModels
             Shares = DataBaseHelper.GetSharesFromDB();
             SelectedShare = Shares.First();
             CopyCommand = new RelayCommand(Copy, CanCopy);
+            ModifyShareCommand = new RelayCommand(ModifyShare, CanModifiyShare);
         }
         #endregion
 
+        bool PropChanged = false;
 
         #region Properties
         /// <summary>
@@ -44,8 +46,10 @@ namespace StockMarket.ViewModels
                     // refresh the details
 
                     var share = DataBaseHelper.GetSharesFromDB().Find((s) => { return s.ISIN == SelectedShare.ISIN; });
-
+                                        
                     WebSite = share.WebSite;
+                    WebSite2 = share.WebSite2;
+                    WebSite3 = share.WebSite3;
                     WKN = share.WKN;
                     ISIN = share.ISIN;
                     ShareName = share.ShareName;
@@ -58,7 +62,26 @@ namespace StockMarket.ViewModels
                         namePart = namePart.Replace("x", "");
                         Factor = Convert.ToByte(namePart);
                     }
+
+                    this.PropertyChanged -= ShareDetailViewModel_PropertyChanged;
+                    this.PropertyChanged += ShareDetailViewModel_PropertyChanged;
                 }
+            }
+        }
+
+        private void ShareDetailViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var share = DataBaseHelper.GetSharesFromDB().Find((s) => { return s.ISIN == SelectedShare.ISIN; });
+
+            if (share.WebSite != WebSite ||
+                share.WebSite2 != WebSite2 ||
+                share.WebSite3 != WebSite3)
+            {
+                PropChanged = true;
+            }
+            else
+            {
+                PropChanged = false;
             }
         }
 
@@ -66,6 +89,7 @@ namespace StockMarket.ViewModels
         #endregion
 
         #region Commands
+        #region CopyCommand
         public RelayCommand CopyCommand { get; private set; }
 
         private void Copy(object input)
@@ -86,7 +110,33 @@ namespace StockMarket.ViewModels
             }
             return false;
         }
+        #endregion
 
+        #region ModifyShareCommand
+        public RelayCommand ModifyShareCommand { get; private set; }
+
+        private void ModifyShare(object input)
+        {
+            PropChanged = false;
+            // TODO: Modifiy Share
+        }
+
+        private bool CanModifiyShare(object input)
+        { 
+            if (PropChanged)
+            {
+                if ((RegexHelper.WebsiteIsValid(WebSite) || WebSite.IsNullEmptyWhitespace() )&&
+                    (RegexHelper.WebsiteIsValid(WebSite2) || WebSite2.IsNullEmptyWhitespace()) &&
+                    (RegexHelper.WebsiteIsValid(WebSite3) || WebSite3.IsNullEmptyWhitespace()) &&
+                    (RegexHelper.WebsiteIsValid(WebSite) || RegexHelper.WebsiteIsValid(WebSite2) || RegexHelper.WebsiteIsValid(WebSite3))
+                    )
+                {
+                    return true;
+                }
+            }
+            return false;
+        } 
+        #endregion
         #endregion
     }
 

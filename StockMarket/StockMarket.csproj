@@ -103,6 +103,7 @@
     <Compile Include="DataModels\User.cs" />
     <Compile Include="Helper\ApplicationService.cs" />
     <Compile Include="Helper\DataBaseHelper.cs" />
+    <Compile Include="Helper\GeneralHelper.cs" />
     <Compile Include="Helper\RegexHelper.cs" />
     <Compile Include="Helper\Saver.cs" />
     <Compile Include="Helper\WebHelper.cs" />

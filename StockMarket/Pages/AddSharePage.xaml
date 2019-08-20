@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:StockMarket"
       xmlns:view ="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
-      d:DesignHeight="400" d:DesignWidth="400"
+      d:DesignHeight="450" d:DesignWidth="400"
       Title="AddSharePage">
     <Page.Resources>
         <ResourceDictionary>
@@ -22,7 +22,7 @@
     <!-- define grid rows-->
     <Grid Name="ContentGrid">
         <Grid.RowDefinitions>
-            <RowDefinition Height="290"></RowDefinition>
+            <RowDefinition Height="350"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
         </Grid.RowDefinitions>
         
@@ -36,7 +36,9 @@
             
             <!--StackPanel for labeling the input on grid column 1-->
             <StackPanel Orientation="Vertical" Grid.Column="0" Margin="0,10">
-                <Label Style="{StaticResource StandardSpacer}">Website:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Website1:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Website2:</Label>
+                <Label Style="{StaticResource StandardSpacer}">Website3:</Label>
                 <Label Style="{StaticResource StandardSpacer}">WKN:</Label>
                 <Label Style="{StaticResource StandardSpacer}">ISIN:</Label>
                 <Label Style="{StaticResource StandardSpacer}">Name:</Label>
@@ -49,7 +51,13 @@
             <StackPanel Orientation="Vertical" Grid.Column="1" Margin="0,10">
                 <!-- the website to look for information about the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite}"/>
+
+                <!-- the website to look for information about the share-->
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite2}"/>
                 
+                <!-- the website to look for information about the share-->
+                <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WebSite3}"/>
+
                 <!--the wkn of the share-->
                 <TextBox Style="{StaticResource StandardSpacer}" Text="{Binding WKN}"/>
                 

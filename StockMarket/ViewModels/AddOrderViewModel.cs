@@ -204,6 +204,16 @@ namespace StockMarket.ViewModels
                 double price = 0.0;
                 var content = await WebHelper.getWebContent(SelectedShare.WebSite);
                 price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
+                if (price == 0.0 && SelectedShare.WebSite2 != string.Empty)
+                {
+                    content = await WebHelper.getWebContent(SelectedShare.WebSite2);
+                    price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
+                }
+                if (price == 0.0 && SelectedShare.WebSite3 != string.Empty)
+                {
+                    content = await WebHelper.getWebContent(SelectedShare.WebSite3);
+                    price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
+                }
                 ActPrice = price;
             }
         }

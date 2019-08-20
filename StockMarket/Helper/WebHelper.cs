@@ -15,6 +15,9 @@ namespace StockMarket
         /// <returns>the content of the website</returns>
         public static async Task<string> getWebContent(string webSite)
         {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3 | SecurityProtocolType.Tls | SecurityProtocolType.Tls11 | SecurityProtocolType.Tls12;
+
             string webContent = string.Empty;
             try
             {

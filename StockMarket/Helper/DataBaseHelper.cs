@@ -125,7 +125,7 @@ namespace StockMarket
                     if (con.Find<Share>(share.ISIN) == null)
                     {   //... if not, add it to the tables
                         var shareType = share.IsShare ? ShareType.Share : ShareType.Certificate;
-                        con.Insert(new Share(share.ShareName, share.WebSite, share.WKN, share.ISIN, shareType));
+                        con.Insert(new Share(share.ShareName, share.WebSite, share.WKN, share.ISIN, shareType, share.WebSite2, share.WebSite3));
                         con.Insert(new ShareValue() { Date = DateTime.Now, ISIN = share.ISIN, Price = share.ActualPrice });
                     }
                     else
