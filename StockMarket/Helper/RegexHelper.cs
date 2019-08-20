@@ -9,6 +9,70 @@ namespace StockMarket
     /// </summary>
     public static class RegexHelper
     {
+        //TODO: add regex to get values from other pages like
+        //https://kurse.boerse.ard.de/ard/kurse_einzelkurs_uebersicht.htn?i=48310499
+
+        //<!DOCTYPE html>
+        //<html lang = "de" >
+        //< head >
+        //< title > UF0AA6 | DE000UF0AA67 | Amazon.com FaktorZert open end(UBS) aktuell | boerse.ARD.de</title>
+        //<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        //<meta name = "language" content="de" />
+        //<meta name = "apple-mobile-web-app-capable" content="yes"/>
+        //<meta name = "apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+        //<meta name = "viewport" content="width=device-width"/>
+        //<meta name = "description" content="Finden Sie Informationen zum Zertifikat Amazon.com FaktorZert  open end (UBS) (WKN UF0AA6, ISIN DE000UF0AA67), sowie den aktuellen Zertifikat-Kurs und Chart." />
+
+                    
+        //<table summary = "Die folgende Tabelle enth&auml;lt Kursinformationen zu Amazon.com FaktorZert  open end (UBS)." cellspacing="0" >
+        //  <tbody>
+        //    <tr class="gray_bg">
+        //      <th id = "aktueller_kurs" scope="row" class="tleft"><strong>Aktueller Kurs:</strong></th>
+        //      <td headers = "aktueller_kurs" class="tright">5,39&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="">
+        //      <th id = "tageshoch" scope="row" class="tleft"><strong>Tageshoch:</strong></th>
+        //      <td headers = "tageshoch" class="tright">5,39&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="gray_bg">
+        //      <th id = "tagestief" scope="row" class="tleft"><strong>Tagestief:</strong></th>
+        //      <td headers = "tagestief" class="tright">5,21&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="">
+        //      <th id = "eroeffnung" scope="row" class="tleft"><strong>Er&ouml;ffnung:</strong></th>
+        //      <td headers = "eroeffnung" class="tright">5,26&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="gray_bg">
+        //      <th id = "vortag" scope="row" class="tleft"><strong>Vortag:</strong> (16.08.19)</th>
+        //      <td headers = "vortag" class="tright">5,06&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="">
+        //      <th id = "wochenhoch" scope="row" class="tleft"><strong>52-Wochenhoch:</strong></th>
+        //      <td headers = "wochenhoch" class="tright">9,92&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="gray_bg">
+        //      <th id = "wochentief" scope="row" class="tleft"><strong>52-Wochentief:</strong></th>
+        //      <td headers = "wochentief" class="tright">3,55&nbsp;&euro;</td>
+        //    </tr>
+        //    <tr class="">
+        //      <th id = "boerse" scope="row" class="tleft"><strong>Börsenplatz:</strong></th>
+        //      <td headers = "boerse" class="tright">Stuttgart</td>
+        //    </tr>
+            
+        //    <tr class="gray_bg">
+        //      <th id = "gattung" scope="row" class="tleft"><strong>Gattung:</strong></th>
+        //      <td headers = "gattung" class="tright">Faktor</td>
+        //    </tr>
+            
+        //      <tr class="">
+        //        <th id = "emittent" scope="row" class="tleft"><strong>Emittent:</strong></th>
+        //        <td headers = "boerse" class="tright">UBS</td>
+        //      </tr>
+              
+        //  </tbody>
+        //</table>
+  
+
         #region Regex strings
         public const string REGEX_Website_Valid = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
 
