@@ -97,6 +97,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DataModels\Dividend.cs" />
     <Compile Include="DataModels\Order.cs" />
     <Compile Include="DataModels\SharesDataModel.cs" />
     <Compile Include="DataModels\ShareValue.cs" />

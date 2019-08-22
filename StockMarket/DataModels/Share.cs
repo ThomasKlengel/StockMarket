@@ -7,7 +7,6 @@ namespace StockMarket
     /// </summary>
     public class Share
     {
-        //TODO: add secondary, tertiary website (like https://kurse.boerse.ard.de/ard/kurse_einzelkurs_uebersicht.htn?i=48310499)
 
         #region ctors
         public Share() { }
