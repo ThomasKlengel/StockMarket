@@ -25,6 +25,8 @@ namespace StockMarket.ViewModels
         {
             ShareName = share.ShareName;
             WebSite = share.WebSite;
+            WebSite2 = share.WebSite2;
+            WebSite3 = share.WebSite3;
             WKN = share.WKN;
             ISIN = share.ISIN;
             ShareName = share.ShareName;
@@ -71,6 +73,40 @@ namespace StockMarket.ViewModels
                 {
                     _webSite = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                }
+            }
+        }
+
+        private string _webSite2;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite2
+        {
+            get { return _webSite2; }
+            set
+            {
+                if (_webSite2 != value)
+                {
+                    _webSite2 = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite2)));
+                }
+            }
+        }
+
+        private string _webSite3;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite3
+        {
+            get { return _webSite3; }
+            set
+            {
+                if (_webSite3 != value)
+                {
+                    _webSite3 = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite3)));
                 }
             }
         }
@@ -223,6 +259,19 @@ namespace StockMarket.ViewModels
             var content = await WebHelper.getWebContent(WebSite);
             //get the price
             var price = RegexHelper.GetSharePrice(content, ShareType);
+            if (price ==0.0)
+            {
+                 content = await WebHelper.getWebContent(WebSite2);
+                //get the price
+                 price = RegexHelper.GetSharePrice(content, ShareType);
+            }
+            if (price == 0.0)
+            {
+                content = await WebHelper.getWebContent(WebSite3);
+                //get the price
+                price = RegexHelper.GetSharePrice(content, ShareType);
+            }
+
             //set the price for the UI
             this.ActualPrice = price;
         }
