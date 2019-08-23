@@ -26,6 +26,7 @@ namespace StockMarket.ViewModels
             DisplayPage = new Pages.BlankPage();
 
             // define the commands for the buttons
+            AddUserCommand = new RelayCommand(AddUser);
             AddShareCommand = new RelayCommand(AddShare);
             AddDividendCommand = new RelayCommand(AddDividend);
             AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
@@ -163,6 +164,15 @@ namespace StockMarket.ViewModels
 
         #region Commands             
 
+        #region Add User Command        
+        public RelayCommand AddUserCommand { get; private set; }
+
+        private void AddUser(object o)
+        {
+            DisplayPage = new Pages.AddUserPage();
+        }
+        #endregion
+
         #region Add Share Command        
         public RelayCommand AddShareCommand { get; private set; }
 
@@ -173,7 +183,7 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
-        #region Add Share Command        
+        #region Add Dividend Command        
         public RelayCommand AddDividendCommand { get; private set; }
 
         private void AddDividend(object o)

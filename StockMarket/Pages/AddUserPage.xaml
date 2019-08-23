@@ -1,0 +1,58 @@
+﻿<Page x:Class="StockMarket.Pages.AddUserPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:StockMarket.Pages"
+      xmlns:view="clr-namespace:StockMarket.ViewModels"
+      mc:Ignorable="d" 
+      d:DesignHeight="450" d:DesignWidth="800"
+      Title="AddUserPage">
+    <Page.DataContext>
+        <view:AddUserViewModel/>
+    </Page.DataContext>
+    <Page.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Styles\GeneralStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <StackPanel Margin="5">
+
+        <!--grid containing information about the user to add-->
+        <Grid Margin="5">
+            <!--defining grid columns-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!--First Name-->
+            <Label Style="{StaticResource StandardSpacer}" Grid.Column="0" Grid.Row="0">First Name</Label>
+            <TextBox Text="{Binding FirstName, Mode=TwoWay}" Style="{StaticResource StandardSpacer}" Grid.Column="1" Grid.Row="0"/>
+
+            <!--Last Name-->
+            <Label Style="{StaticResource StandardSpacer}" Grid.Column="0" Grid.Row="1">Last Name</Label>
+            <TextBox Text="{Binding LastName, Mode=TwoWay}" Style="{StaticResource StandardSpacer}" Grid.Column="1" Grid.Row="1"/>
+        </Grid>
+
+        <!-- Button to add a user with the given values to the database-->
+        <Button Margin="5" Command="{Binding AddOrderCommand}">Add</Button>
+
+        <!-- Grid showing all users that currently exist within the database-->
+        <Grid Grid.Row="2" Margin="5,20">
+            <StackPanel Orientation="Vertical">
+                <Label >Current Users:</Label>
+                <ListBox ItemsSource="{Binding Users}" />
+            </StackPanel>
+        </Grid>
+    </StackPanel>
+</Page>
+
+

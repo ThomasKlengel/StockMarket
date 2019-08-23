@@ -14,72 +14,69 @@
     </Page.DataContext>
     <Page.Resources>
         <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>             
+            <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="..\Styles\GeneralStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Page.Resources>
-   
-    <Grid>
-        <StackPanel Orientation="Vertical" Margin="5">
 
-            <!-- ComboBox to the select the share for which to add an order-->
-            <ComboBox x:Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}" SelectedItem="{Binding SelectedShare}"
+    <StackPanel Orientation="Vertical" Margin="5">
+
+        <!-- ComboBox to the select the share for which to add an order-->
+        <ComboBox x:Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}" SelectedItem="{Binding SelectedShare}"
                       DisplayMemberPath="ShareName" >
-            </ComboBox>
+        </ComboBox>
 
-            <!--grid containing information about the order-->
-            <Grid Margin="5">
-                <!--defining grid columns-->
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="70"/>
-                </Grid.ColumnDefinitions>
+        <!--grid containing information about the order-->
+        <Grid Margin="5">
+            <!--defining grid columns-->
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
 
-                <!-- Panel for labeling the items on grid column 1-->
-                <StackPanel Orientation="Vertical" Grid.Column="0">
-                    <Label Style="{StaticResource StandardSpacer}">Price</Label>
-                    <Label Style="{StaticResource StandardSpacer}">Expenses</Label>
-                    <Label Style="{StaticResource StandardSpacer}">Amount</Label>
-                    <Label Style="{StaticResource StandardSpacer}">Order date</Label>
-                    <Label Style="{StaticResource StandardSpacer}">Order type</Label>
-                </StackPanel>
+            <!-- Panel for labeling the items on grid column 1-->
+            <StackPanel Orientation="Vertical" Grid.Column="0">
+                <Label Style="{StaticResource StandardSpacer}">Price</Label>
+                <Label Style="{StaticResource StandardSpacer}">Expenses</Label>
+                <Label Style="{StaticResource StandardSpacer}">Amount</Label>
+                <Label Style="{StaticResource StandardSpacer}">Order date</Label>
+                <Label Style="{StaticResource StandardSpacer}">Order type</Label>
+            </StackPanel>
 
-                <!--Panel containg information about the order that may be given by the user on grid column 2-->
-                <StackPanel Orientation="Vertical" Grid.Column="1" Width="100" HorizontalAlignment="Left">
+            <!--Panel containg information about the order that may be given by the user on grid column 2-->
+            <StackPanel Orientation="Vertical" Grid.Column="1" Width="100" HorizontalAlignment="Left">
 
-                    <!--the price for which the shares are purchesed/sold-->
-                    <TextBox Text="{Binding ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
+                <!--the price for which the shares are purchesed/sold-->
+                <TextBox Text="{Binding ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
 
-                    <!--additional expenses for this order (demanded by the bank)-->
-                    <TextBox Text="{Binding Expenses, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
+                <!--additional expenses for this order (demanded by the bank)-->
+                <TextBox Text="{Binding Expenses, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
 
-                    <!--the amount of shares purchased/sold-->
-                    <TextBox  Text="{Binding Amount}" Style="{StaticResource StandardSpacer}"/>
+                <!--the amount of shares purchased/sold-->
+                <TextBox  Text="{Binding Amount}" Style="{StaticResource StandardSpacer}"/>
 
-                    <!--the date of the order-->
-                    <DatePicker DisplayDateEnd="{Binding Source={x:Static sys:DateTime.Today}, Path=.}"
+                <!--the date of the order-->
+                <DatePicker DisplayDateEnd="{Binding Source={x:Static sys:DateTime.Today}, Path=.}"
                             SelectedDate="{Binding OrderDate}" Style="{StaticResource StandardSpacer}"/>
 
-                    <!--Panel to select the order type-->
-                    <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,0">
-                        <RadioButton IsChecked="{Binding OrderIsBuy}" Margin="5"  VerticalAlignment="Center">Buy</RadioButton>
-                        <RadioButton IsChecked="{Binding OrderIsSell}" Margin="5" VerticalAlignment="Center">Sell</RadioButton>
-                    </StackPanel>
-
+                <!--Panel to select the order type-->
+                <StackPanel Orientation="Horizontal" Height="25" Margin="0,5,0,0">
+                    <RadioButton IsChecked="{Binding OrderIsBuy}" Margin="5"  VerticalAlignment="Center">Buy</RadioButton>
+                    <RadioButton IsChecked="{Binding OrderIsSell}" Margin="5" VerticalAlignment="Center">Sell</RadioButton>
                 </StackPanel>
 
-                <Button Grid.Column="2" Command="{Binding AddInputViaPdfCommand}" >
-                    <TextBlock TextAlignment="Center">
+            </StackPanel>
+
+            <Button Grid.Column="2" Command="{Binding AddInputViaPdfCommand}" >
+                <TextBlock TextAlignment="Center">
                         Read<LineBreak/>from<LineBreak/>PDF
-                    </TextBlock>
-                </Button>
-            </Grid>
+                </TextBlock>
+            </Button>
+        </Grid>
 
-            <!-- Button to add an order with the given values to the database-->
-            <Button Margin="5" Command="{Binding AddOrderCommand}" >Add</Button>
-        </StackPanel>
-
-    </Grid>
+        <!-- Button to add an order with the given values to the database-->
+        <Button Margin="5" Command="{Binding AddOrderCommand}" >Add</Button>
+    </StackPanel>
 </Page>

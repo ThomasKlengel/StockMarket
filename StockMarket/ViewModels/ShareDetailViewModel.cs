@@ -118,7 +118,8 @@ namespace StockMarket.ViewModels
         private void ModifyShare(object input)
         {
             PropChanged = false;
-            // TODO: Modifiy Share
+            var modShare = new Share() { ISIN = this.ISIN, ShareName = this.ShareName, WKN = this.WKN, WebSite = this.WebSite, WebSite2 = this.WebSite2, WebSite3 = this.WebSite3 };
+            DataBaseHelper.ModifiyShare(modShare);
         }
 
         private bool CanModifiyShare(object input)

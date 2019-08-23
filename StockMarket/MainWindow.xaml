@@ -23,6 +23,7 @@
                     <MenuItem Header="Select User">
                         <ComboBox ItemsSource="{Binding Users}" SelectedItem="{Binding CurrentUser}" Width="100"/>
                     </MenuItem>
+                    <MenuItem Header="AddUser" Command="{Binding AddUserCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Share" Margin="5">
                     <MenuItem Header="AddShare" Command="{Binding AddShareCommand}"/>

@@ -109,7 +109,7 @@ namespace StockMarket
         /// </summary>
         /// <param name="share">The <see cref="Share"/> to add</param>
         /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
-        /// <returns>True if successful</returns>
+        /// <returns>1 if successful, 0 if a share matching the ISIN already exists, -1 if an error occured</returns>
         public static short AddShareToDB(ShareViewModel share, string path = DEFAULTPATH)
         {
             try
@@ -138,6 +138,49 @@ namespace StockMarket
             {
                 return -1;
             }
+        }
+
+        /// <summary>
+        /// Modifies the values Website/2/3 and ShareName of an existing <see cref="Share"/> within the database
+        /// </summary>
+        /// <param name="modify">The <see cref="Share"/> with the modified values</param>
+        /// <param name="path">The path to the database</param>
+        /// <returns>1 if successful, 0 if no share matching the ISIN existed, -1 if an error occured</returns>
+        public static short ModifiyShare(Share modify, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Share>();
+                    // get the according share from the database...
+                    var existingShare = con.Find<Share>(modify.ISIN);
+
+                    // set values
+                    if (existingShare != null)
+                    {
+                        existingShare.WebSite = modify.WebSite;
+                        existingShare.WebSite2= modify.WebSite2;
+                        existingShare.WebSite3= modify.WebSite3;
+                        existingShare.ShareName = modify.ShareName;
+                        // modify them in the database as well 
+                        con.RunInTransaction(() =>
+                        {
+                            con.Update(existingShare);
+                        });
+                    }
+                    else
+                    {
+                        return 0;
+                    }
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }           
         }
 
         public static short AddUserToDB(User user, string path = DEFAULTPATH)
