@@ -27,6 +27,7 @@ namespace StockMarket.ViewModels
 
             // define the commands for the buttons
             AddShareCommand = new RelayCommand(AddShare);
+            AddDividendCommand = new RelayCommand(AddDividend);
             AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
             DisplayOrderOverviewCommand = new RelayCommand(DisplayOrderOverview, CanDisplayOrderOverview);
             DisplayShareOverviewCommand = new RelayCommand(DisplayShareOverview, CanDisplayShareOverview);
@@ -168,6 +169,16 @@ namespace StockMarket.ViewModels
         private void AddShare(object o)
         {
             DisplayPage = new Pages.AddSharePage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+        }
+        #endregion
+
+        #region Add Share Command        
+        public RelayCommand AddDividendCommand { get; private set; }
+
+        private void AddDividend(object o)
+        {
+            DisplayPage = new Pages.AddDividendPage();
             ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
         #endregion

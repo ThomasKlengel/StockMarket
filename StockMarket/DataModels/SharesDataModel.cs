@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace StockMarket.DataModels
+namespace StockMarket
 {
     /// <summary>
     /// A datamodel for <see cref="Share"/>s containing lists for 

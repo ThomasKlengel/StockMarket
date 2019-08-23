@@ -2,7 +2,6 @@
 using System.Net;
 using System.Windows.Controls;
 using StockMarket.ViewModels;
-using StockMarket.DataModels;
 using System.Windows.Threading;
 using System.Linq;
 using System.Collections.Generic;

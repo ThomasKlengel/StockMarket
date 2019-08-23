@@ -108,6 +108,9 @@
     <Compile Include="Helper\RegexHelper.cs" />
     <Compile Include="Helper\Saver.cs" />
     <Compile Include="Helper\WebHelper.cs" />
+    <Compile Include="Pages\AddDividendPage.xaml.cs">
+      <DependentUpon>AddDividendPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\ShareDetailPage.xaml.cs">
       <DependentUpon>ShareDetailPage.xaml</DependentUpon>
     </Compile>
@@ -127,6 +130,7 @@
       <DependentUpon>OrdersGainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataModels\Share.cs" />
+    <Compile Include="ViewModels\AddDividendViewModel.cs" />
     <Compile Include="ViewModels\AddOrderViewModel.cs" />
     <Compile Include="ViewModels\Base\CollectionViewModel.cs" />
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
@@ -139,6 +143,10 @@
     <Compile Include="ViewModels\ShareDetailViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
+    <Page Include="Pages\AddDividendPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\ShareDetailPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

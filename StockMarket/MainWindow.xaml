@@ -26,6 +26,7 @@
                 </MenuItem>
                 <MenuItem Header="Share" Margin="5">
                     <MenuItem Header="AddShare" Command="{Binding AddShareCommand}"/>
+                    <MenuItem Header="AddDividend" Command="{Binding AddDividendCommand}"/>
                     <MenuItem Header="View Details" Command="{Binding DisplayShareDetailCommand}"/>
                     <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplayShareOverviewCommand}"/>
                 </MenuItem>

@@ -5,15 +5,15 @@ using System.Text;
 using System.Threading.Tasks;
 using SQLite;
 
-namespace StockMarket.DataModels
+namespace StockMarket
 {
     /// <summary>
     /// A class containing basic information about a dividend payment of a <see cref="Share"/>
     /// </summary>
-    class Dividend
+    public class Dividend
     {
 
-        public Dividend() { }
+        public Dividend() { UserName = new User().ToString(); }
 
         public Dividend(string isin, DateTime dayOfPayment, double paymentValue, int amountOfShares, DateTime dateRangeStart, DateTime dateRangeEnd)
         {
@@ -61,6 +61,8 @@ namespace StockMarket.DataModels
         /// The end date of the period of time for which the dividend is payed
         /// </summary>
         public DateTime DateRangeEnd { get; set; }
-        
+
+        public string UserName { get; set; }
+
     }
 }

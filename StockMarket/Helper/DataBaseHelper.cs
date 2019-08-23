@@ -1,5 +1,4 @@
 ﻿using SQLite;
-using StockMarket.DataModels;
 using StockMarket.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -178,7 +177,7 @@ namespace StockMarket
         /// Adds an <see cref="Order"/> to the database
         /// </summary>
         /// <param name="order">The <see cref="Order"/> to add</param>
-        /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
+        /// <param name="path">The path to the database to insert the <see cref="Order"/>into</param>
         /// <returns>True if successful</returns>
         public static short AddOrderToDB(Order order, string path = DEFAULTPATH)
         {
@@ -190,6 +189,31 @@ namespace StockMarket
                     con.CreateTable<Order>();
                     // insert the order
                     con.Insert(order);
+                }
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                return -1;
+            }
+        }
+
+        /// <summary>
+        /// Adds an <see cref="Dividend"/> to the database
+        /// </summary>
+        /// <param name="dividend">The <see cref="Dividend"/> to add</param>
+        /// <param name="path">The path to the database to insert the <see cref="Dividend"/>into</param>
+        /// <returns>True if successful</returns>
+        public static short AddDividendToDB(Dividend dividend, string path = DEFAULTPATH)
+        {
+            try
+            {   // connect to the database
+                using (SQLiteConnection con = new SQLiteConnection(path))
+                {
+                    // get the required tables of the database
+                    con.CreateTable<Dividend>();
+                    // insert the order
+                    con.Insert(dividend);
                 }
                 return 1;
             }
