@@ -35,8 +35,10 @@ namespace StockMarket.ViewModels
             DisplayShareDetailCommand = new RelayCommand(DisplayShareDetail, CanDisplayShareDetail);
 
             // create a timer for updating the Sharevalues in the database
-            DispatcherTimer t = new DispatcherTimer();
-            t.Interval = new System.TimeSpan(0, 20, 0);
+            DispatcherTimer t = new DispatcherTimer
+            {
+                Interval = new System.TimeSpan(0, 20, 0)
+            };
             t.Tick += TimerTick;
             t.Start();
 
