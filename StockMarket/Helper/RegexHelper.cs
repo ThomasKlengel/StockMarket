@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace StockMarket
 {
@@ -149,6 +150,29 @@ namespace StockMarket
                 price = price == string.Empty ? "0.0" : price;
             }
             return Convert.ToDouble(price, CultureInfo.GetCultureInfo("de-DE"));
+
+        }
+
+        public static async Task<double> GetSharePriceAsync(Share share)
+        {
+            // get the website content
+            var content = await WebHelper.getWebContent(share.WebSite);
+            //get the price
+            var price = RegexHelper.GetSharePrice(content, share.ShareType);
+            if (price == 0.0)
+            {
+                content = await WebHelper.getWebContent(share.WebSite2);
+                //get the price
+                price = RegexHelper.GetSharePrice(content, share.ShareType);
+            }
+            if (price == 0.0)
+            {
+                content = await WebHelper.getWebContent(share.WebSite3);
+                //get the price
+                price = RegexHelper.GetSharePrice(content, share.ShareType);
+            }
+
+            return price;
 
         }
 

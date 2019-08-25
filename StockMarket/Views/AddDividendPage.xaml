@@ -42,6 +42,7 @@
                     <Label Style="{StaticResource StandardSpacer}">Dividend</Label>
                     <Label Style="{StaticResource StandardSpacer}">Amount</Label>
                     <Label Style="{StaticResource StandardSpacer}">Dividend/Share</Label>
+                    <Label Style="{StaticResource StandardSpacer}">Dividend return</Label>
                     <Label Style="{StaticResource StandardSpacer}">Dividend date</Label>
                     <Label Style="{StaticResource StandardSpacer}">Dividend start</Label>
                     <Label Style="{StaticResource StandardSpacer}">Dividend end</Label>
@@ -59,6 +60,10 @@
                     <!--the dividend per share-->
                     <TextBox Text="{Binding DividendPerShare, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Style="{StaticResource StandardSpacer}"/>
 
+                    <!--the dividend return-->
+                    <TextBox Text="{Binding DividendReturn, ConverterCulture='de-DE' , StringFormat='{}{0:##0.000%}', Mode=OneWay}" Style="{StaticResource StandardSpacer}"/>
+                    <!--, StringFormat='{}{0:##0.000%}'-->
+                    
                     <!--the date of the dividend-->
                     <DatePicker DisplayDateEnd="{Binding Source={x:Static sys:DateTime.Today}, Path=.}"
                             SelectedDate="{Binding DividendPayDate}" Style="{StaticResource StandardSpacer}"/>

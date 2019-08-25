@@ -98,6 +98,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataModels\Dividend.cs" />
+    <Compile Include="DataModels\IShareComponent.cs" />
     <Compile Include="DataModels\Order.cs" />
     <Compile Include="DataModels\SharesDataModel.cs" />
     <Compile Include="DataModels\ShareValue.cs" />
@@ -108,28 +109,28 @@
     <Compile Include="Helper\RegexHelper.cs" />
     <Compile Include="Helper\Saver.cs" />
     <Compile Include="Helper\WebHelper.cs" />
-    <Compile Include="Pages\AddDividendPage.xaml.cs">
+    <Compile Include="Views\AddDividendPage.xaml.cs">
       <DependentUpon>AddDividendPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\AddUserPage.xaml.cs">
+    <Compile Include="Views\AddUserPage.xaml.cs">
       <DependentUpon>AddUserPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ShareDetailPage.xaml.cs">
+    <Compile Include="Views\ShareDetailPage.xaml.cs">
       <DependentUpon>ShareDetailPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\SharesGainPage.xaml.cs">
+    <Compile Include="Views\SharesGainPage.xaml.cs">
       <DependentUpon>SharesGainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="UserControls\UserStackPanelList.xaml.cs">
       <DependentUpon>UserStackPanelList.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\AddOrderPage.xaml.cs">
+    <Compile Include="Views\AddOrderPage.xaml.cs">
       <DependentUpon>AddOrderPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\BlankPage.xaml.cs">
+    <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\OrdersGainPage.xaml.cs">
+    <Compile Include="Views\OrdersGainPage.xaml.cs">
       <DependentUpon>OrdersGainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="DataModels\Share.cs" />
@@ -147,19 +148,19 @@
     <Compile Include="ViewModels\ShareDetailViewModel.cs" />
     <Compile Include="ViewModels\ShareViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
-    <Page Include="Pages\AddDividendPage.xaml">
+    <Page Include="Views\AddDividendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\AddUserPage.xaml">
+    <Page Include="Views\AddUserPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ShareDetailPage.xaml">
+    <Page Include="Views\ShareDetailPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\SharesGainPage.xaml">
+    <Page Include="Views\SharesGainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -167,11 +168,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\AddOrderPage.xaml">
+    <Page Include="Views\AddOrderPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\AddSharePage.xaml">
+    <Page Include="Views\AddSharePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -179,7 +180,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Compile Include="Pages\AddSharePage.xaml.cs">
+    <Compile Include="Views\AddSharePage.xaml.cs">
       <DependentUpon>AddSharePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="App.xaml.cs">
@@ -190,11 +191,11 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\BlankPage.xaml">
+    <Page Include="Views\BlankPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\OrdersGainPage.xaml">
+    <Page Include="Views\OrdersGainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

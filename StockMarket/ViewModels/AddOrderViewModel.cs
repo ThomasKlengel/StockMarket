@@ -103,7 +103,7 @@ namespace StockMarket.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
                     if (!ignoreUpdate)
                     {
-                        RefreshPriceAsync();
+                        GetPriceAsync();
                         Expenses = 10;
                         Amount = 0;
                         OrderDate = DateTime.Today;
@@ -113,6 +113,11 @@ namespace StockMarket.ViewModels
                 }
                 
             }
+        }
+
+        private async void GetPriceAsync ()
+        {
+            ActPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
         }
 
         private int _amount;

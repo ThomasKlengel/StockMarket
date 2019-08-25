@@ -32,6 +32,7 @@ namespace StockMarket
                 System.Windows.MessageBox.Show(WebEx.Message);
                 return string.Empty;
             }
+
         }
 
     }

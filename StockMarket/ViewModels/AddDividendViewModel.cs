@@ -21,7 +21,7 @@ namespace StockMarket.ViewModels
             AddDividendCommand = new RelayCommand(AddDividend, CanAddDividednd);
             AddInputViaPdfCommand = new RelayCommand(AddInputViaPdf);
             Shares = new ObservableCollection<Share>();
-            foreach (var share in  DataBaseHelper.GetSharesFromDB() )
+            foreach (var share in DataBaseHelper.GetSharesFromDB())
             {
                 Shares.Add(share);
             }
@@ -31,6 +31,9 @@ namespace StockMarket.ViewModels
         }
 
         #endregion
+
+        private bool DividendChanged = false;
+        private bool DPSChanged = false;
 
         #region Properties
 
@@ -69,10 +72,14 @@ namespace StockMarket.ViewModels
                 {
                     _dividend = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dividend)));
-                    if (Dividend / Amount != DividendPerShare)
+
+                    if (!DPSChanged)
                     {
+                        DividendChanged = true;
                         DividendPerShare = Dividend / Amount;
                     }
+                    DPSChanged = false;
+
                 }
             }
         }
@@ -87,14 +94,24 @@ namespace StockMarket.ViewModels
             get { return _dividendPerShare; }
             set
             {
-                if (_dividendPerShare!= value)
+                if (_dividendPerShare != value)
                 {
                     _dividendPerShare = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DividendPerShare)));
-                    if (Dividend / Amount != DividendPerShare)
+
+                    if (Amount != 0 && Dividend != 0.0)
                     {
-                        Dividend = DividendPerShare * Amount;
+                        GetDividendReturnAsync();
                     }
+                    if (!DividendChanged)
+                    {
+                        if (Dividend / Amount != DividendPerShare)
+                        {
+                            Dividend = DividendPerShare * Amount;
+                            DPSChanged = true;
+                        }
+                    }
+                    DividendChanged = false;
                 }
             }
         }
@@ -110,7 +127,7 @@ namespace StockMarket.ViewModels
                     _selectedShare = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
                 }
-                
+
             }
         }
 
@@ -130,7 +147,7 @@ namespace StockMarket.ViewModels
                     Dividend = DividendPerShare * Amount;
                 }
             }
-        }             
+        }
 
         private DateTime _dividendPayDate = DateTime.Today;
         public DateTime DividendPayDate
@@ -173,7 +190,35 @@ namespace StockMarket.ViewModels
             }
         }
 
+        private double currentPrice;
+        private double _dividendReturn;
+        public double DividendReturn
+        {
+            get
+            {
+                return _dividendReturn;
+            }
+            private set
+            {
+                if (_dividendReturn!=value)
+                {
+                    _dividendReturn = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DividendReturn)));
+                }
+            }
+
+        }
         #endregion
+
+        private async void GetDividendReturnAsync()
+        {
+            currentPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
+            if(currentPrice == 0.0)
+            {    
+                DividendReturn= 0.0;
+            }
+            DividendReturn =  DividendPerShare / currentPrice;
+        }
 
         #region Commands
         public RelayCommand AddDividendCommand { get; private set; }
@@ -191,10 +236,10 @@ namespace StockMarket.ViewModels
             // create a new dividend
             Dividend dividend = new Dividend
             {
+                ISIN = SelectedShare.ISIN,
                 Amount = Amount,
                 Value = Dividend,
-                DayOfPayment = DividendPayDate,
-                ISIN = SelectedShare.ISIN,
+                DayOfPayment = DividendPayDate,                
                 DateRangeStart = DateRangeStart,
                 DateRangeEnd = DateRangeEnd,
                 UserName = CurrentUser.ToString()
@@ -205,6 +250,8 @@ namespace StockMarket.ViewModels
 
             Amount = 0;
             Dividend = 0.0;
+            DividendPerShare = 0;
+            DividendReturn = 0;
         }
 
         private bool CanAddDividednd(object o)
@@ -245,85 +292,115 @@ namespace StockMarket.ViewModels
             {                
                 var pdfToRead = ofd.FileName;
 
-                // create a rectangle from which to read (dont set for complete page)
-                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);                
-                var Results = Ocr.ReadPdf(pdfToRead, area, 1);                
-                var lines = Results.Pages[0].LinesOfText;
-                
-                // get Amount, ISIN, WKN
-                foreach (var line in lines)
+                try
                 {
-                    if (line.Text.StartsWith("Stück"))
+                    // create a rectangle from which to read (dont set for complete page)
+                    System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
+                    var Results = Ocr.ReadPdf(pdfToRead, area, 1);
+                    var lines = Results.Pages[0].LinesOfText;
+
+                    // get Amount, ISIN, WKN
+                    foreach (var line in lines)
                     {
-                        // get ordered amount
-                        var strAmount = line.Words[1].Text;
-                        int intAmount = 0;
-                        Int32.TryParse(strAmount, out intAmount);
-                        Amount = intAmount;
+                        if (line.Text.StartsWith("Stück"))
+                        {
+                            // get ordered amount
+                            var strAmount = line.Words[1].Text;
+                            int intAmount = 0;
+                            Int32.TryParse(strAmount, out intAmount);
+                            Amount = intAmount;
 
-                        // Share by ISIN or WKN
-                        var isin = line.Words[(line.WordCount - 2)].Text;
-                        var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
+                            // Share by ISIN or WKN
+                            var isin = line.Words[(line.WordCount - 2)].Text;
+                            var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
 
-                        var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));  
-                        if (sharesByIsin.Count() != 0)
-                        {
-                            SelectedShare = sharesByIsin.First();
+                            var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));
+                            if (sharesByIsin.Count() != 0)
+                            {
+                                SelectedShare = sharesByIsin.First();
+                                break;
+                            }
+                            var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
+                            if (sharesByWkn.Count() != 0)
+                            {
+                                SelectedShare = sharesByWkn.First();
+                                break;
+                            }
+                            var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
+                            if (sharesByIsin0.Count() != 0)
+                            {
+                                SelectedShare = sharesByIsin0.First();
+                                break;
+                            }
+                            var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
+                            if (sharesByWkn0.Count() != 0)
+                            {
+                                SelectedShare = sharesByWkn0.First();
+                                break;
+                            }
                             break;
                         }
-                        var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
-                        if (sharesByWkn.Count() != 0)
-                        {
-                            SelectedShare = sharesByWkn.First();
-                            break;
-                        }
-                        var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
-                        if (sharesByIsin0.Count() != 0)
-                        {
-                            SelectedShare = sharesByIsin0.First();
-                            break;
-                        }
-                        var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
-                        if (sharesByWkn0.Count() != 0)
-                        {
-                            SelectedShare = sharesByWkn0.First();
-                            break;
-                        }
-                        break;
                     }
+
+                    //get dividend
+                    foreach (var line in lines)
+                    {
+                        if (line.Text.StartsWith("Ausmachender Betrag"))
+                        {
+                            // get share price
+                            var strPrice = line.Words[2].Text.Replace("+", "");
+                            double doublePrice = 0.0;
+                            Double.TryParse(strPrice, out doublePrice);
+                            DividendChanged = false;
+                            DPSChanged = false;
+                            Dividend = doublePrice;
+                            break;
+                        }
+                    }
+
+                    //get dividend pay date
+                    foreach (var line in lines)
+                    {
+                        if (line.Text.StartsWith("Bestandsstichtag"))
+                        {
+
+                            var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
+                            // get share price
+                            var strDate = match.Value;
+                            DateTime Date;
+                            DateTime.TryParse(strDate, out Date);
+                            DividendPayDate = Date;
+                            break;
+                        }
+                    }
+
+                    //get dividend Start Range Date and End Range Date
+                    foreach (var line in lines)
+                    {
+                        if (line.Text.StartsWith("Geschäftsjahr"))
+                        {
+                            var matches = Regex.Matches(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
+
+                            // get share price
+                            var strDate = matches[0].Value;
+                            DateTime Date;
+                            DateTime.TryParse(strDate, out Date);
+                            DateRangeStart = Date;
+
+                            strDate = matches[1].Value;
+                            DateTime.TryParse(strDate, out Date);
+                            DateRangeEnd = Date;
+
+                            break;
+                        }
+                    }
+
                 }
 
-                //get dividend
-                foreach (var line in lines)
+                catch (Exception ex)
                 {
-                    if (line.Text.StartsWith("Ausführungskurs"))
-                    {
-                        // get share price
-                        var strPrice = line.Words[1].Text;
-                        double doublePrice = 0.0;
-                        Double.TryParse(strPrice, out doublePrice);
-                        Dividend = doublePrice;
-                        break;
-                    }
+
                 }
-
-                //get dividend pay date
-                foreach (var line in lines)
-                {
-                    if (line.Text.StartsWith("Schluss"))
-                    {
-
-                        var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
-                        // get share price
-                        var strDate = match.Value;
-                        DateTime Date;
-                        DateTime.TryParse(strDate, out Date );                        
-                        DividendPayDate = Date;
-                        break;
-                    }
-                }
-
-
 
 
                 // time for OCR ~8s ... animation für busy einbauen?

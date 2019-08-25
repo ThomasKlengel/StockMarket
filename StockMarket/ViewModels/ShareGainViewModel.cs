@@ -32,7 +32,7 @@ namespace StockMarket.ViewModels
             ShareName = share.ShareName;
             ShareType = share.ShareType;
             GetOrders();
-            RefreshPriceAsync();
+            GetPriceAsync();
         }
         #endregion
 
@@ -253,27 +253,10 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// refreshes the actual <see cref="Share"/> price
         /// </summary>
-        private async void RefreshPriceAsync()
+        private async void GetPriceAsync()
         {
-            // get the website content
-            var content = await WebHelper.getWebContent(WebSite);
-            //get the price
-            var price = RegexHelper.GetSharePrice(content, ShareType);
-            if (price ==0.0)
-            {
-                 content = await WebHelper.getWebContent(WebSite2);
-                //get the price
-                 price = RegexHelper.GetSharePrice(content, ShareType);
-            }
-            if (price == 0.0)
-            {
-                content = await WebHelper.getWebContent(WebSite3);
-                //get the price
-                price = RegexHelper.GetSharePrice(content, ShareType);
-            }
-
             //set the price for the UI
-            this.ActualPrice = price;
+            ActualPrice = await RegexHelper.GetSharePriceAsync(new Share(ShareName, WebSite, WKN, ISIN, ShareType, WebSite2, WebSite3));
         }
 
         /// <summary>
