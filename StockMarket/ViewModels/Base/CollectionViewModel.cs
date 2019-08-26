@@ -69,6 +69,7 @@ namespace StockMarket.ViewModels
                 {
                     _singlePriceNow = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
                 }
             }
         }
@@ -237,7 +238,7 @@ namespace StockMarket.ViewModels
         /// <param name="sortBy">The name of a property of an item of the <see cref="ObservableCollection{T}"/></param>
         /// <param name="ascending">The sort direction (true=ascending, false=descending)</param>
         /// <returns>The sorted <see cref="ObservableCollection{T}"/></returns>
-        public ObservableCollection<T> SortCollection<T>(ObservableCollection<T> origCollection, string sortBy, bool ascending)
+        public ObservableCollection<T> SortCollection<T>(ObservableCollection<T> origCollection, string sortBy, bool ascending) where T: CollectionViewModel
         {
             #region actual sorting
             // create a copy of the orders
@@ -246,7 +247,7 @@ namespace StockMarket.ViewModels
 
             // create an empty collection
             IOrderedEnumerable<T> sortedCollection = null;
-
+            sortBy = sortBy == "Date" ? "BookingDate" : sortBy;
             // get the property to sort by
             System.Reflection.PropertyInfo property = typeof(T).GetProperty(sortBy);
 

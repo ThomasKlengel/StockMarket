@@ -59,7 +59,7 @@ namespace StockMarket.ViewModels
         {
             get
             {
-                return Amount * SinglePriceBuy;
+                return 0.0;
             }
         }
 
@@ -75,6 +75,10 @@ namespace StockMarket.ViewModels
             }
         }
 
+        public override double Percentage
+        {
+            get { return SumNow / Amount / SinglePriceNow; }
+        }
         #endregion
 
 
