@@ -13,6 +13,8 @@ namespace StockMarket
         /// <returns></returns>
         public static User Default() { return new User("All", "Users"); }
 
+        #region Constructors
+
         public User() { }
 
         public User(string firstName, string lastName)
@@ -20,6 +22,10 @@ namespace StockMarket
             FirstName = firstName;
             LastName = lastName;
         }
+
+        #endregion
+
+        #region Properties
 
         [PrimaryKey][AutoIncrement]
         public int DB_ID { get; set; }
@@ -32,6 +38,10 @@ namespace StockMarket
         /// The last name of the user
         /// </summary>
         public string LastName { get;  set; }
+
+        #endregion
+
+        #region Methods
 
         /// <summary>
         /// returns the first name and the last name sepereated by a white space
@@ -52,7 +62,7 @@ namespace StockMarket
             // check if it is a share to compare
             if (obj.GetType() == typeof(User))
             {
-                // compare the ISIN
+                // compare the string values (first+last name)
                 return this.ToString() == (obj as User).ToString();
             }
             return false;
@@ -62,5 +72,7 @@ namespace StockMarket
         {
             return base.GetHashCode();
         }
+
+        #endregion
     }
 }

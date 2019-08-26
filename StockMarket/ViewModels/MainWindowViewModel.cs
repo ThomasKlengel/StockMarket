@@ -78,7 +78,7 @@ namespace StockMarket.ViewModels
                 foreach (var share in shares)
                 {
                     // ...get the latest value in the database
-                    var latestValues = DataBaseHelper.GetShareValuesFromDB(share)?.OrderByDescending((v) => v.Date);
+                    var latestValues = DataBaseHelper.GetItemsFromDB<ShareValue>(share)?.OrderByDescending((v) => v.Date);
                     if (latestValues.Count() > 0)
                     {
                         var latestValue = latestValues.First();
@@ -266,7 +266,7 @@ namespace StockMarket.ViewModels
                 var shares = DataBaseHelper.GetSharesFromDB();
                 foreach (var share in shares)
                 {
-                    orders += DataBaseHelper.GetOrdersFromDB(share).Count;
+                    orders += DataBaseHelper.GetItemsFromDB<Order>(share).Count;
                 }
             }
             catch

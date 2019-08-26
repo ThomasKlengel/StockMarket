@@ -145,23 +145,23 @@ namespace StockMarket.ViewModels
             }
         }
 
-        private double _actPrice;
+
         /// <summary>
         /// The current price for the share
         /// </summary>
-        public double ActualPrice
+        public override double SinglePriceNow 
         {
-            get { return _actPrice; }
+            get =>  base.SinglePriceNow; 
             set
             {
-                if (_actPrice != value)
+                if (_singlePriceNow != value)
                 {
-                    _actPrice = value;
+                    _singlePriceNow = value;
                     foreach (var o in Orders)
                     {
-                        o.ActPrice = _actPrice;
+                        o.SinglePriceNow = _singlePriceNow;
                     }
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
@@ -180,7 +180,7 @@ namespace StockMarket.ViewModels
                 int amount = 0;
                 foreach (var o in Orders)
                 {
-                    if (o.OrderType == OrderType.buy)
+                    if (o.ComponentType == ShareComponentType.buy)
                     {
                         amount += o.Amount;
                     }
@@ -197,7 +197,7 @@ namespace StockMarket.ViewModels
                 int amount = 0;
                 foreach (var o in Orders)
                 {
-                    if (o.OrderType == OrderType.sell)
+                    if (o.ComponentType == ShareComponentType.sell)
                     {
                         amount += o.AmountSold;
                     }
@@ -256,7 +256,7 @@ namespace StockMarket.ViewModels
         private async void GetPriceAsync()
         {
             //set the price for the UI
-            ActualPrice = await RegexHelper.GetSharePriceAsync(new Share(ShareName, WebSite, WKN, ISIN, ShareType, WebSite2, WebSite3));
+            SinglePriceNow = await RegexHelper.GetSharePriceAsync(new Share(ShareName, WebSite, WKN, ISIN, ShareType, WebSite2, WebSite3));
         }
 
         /// <summary>
@@ -265,7 +265,7 @@ namespace StockMarket.ViewModels
         private void GetOrders()
         {
             // get the orders from the databse
-            var sortedOrders = DataBaseHelper.GetOrdersFromDB(ISIN).OrderByDescending((o) => { return o.Date; });
+            var sortedOrders = DataBaseHelper.GetItemsFromDB<Order>(ISIN).OrderByDescending((o) => { return o.Date; });
 
             // create or clear the list of Orders
             if (Orders == null)

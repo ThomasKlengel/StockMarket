@@ -5,6 +5,7 @@ namespace StockMarket
     /// <summary>
     /// A datamodel for <see cref="Share"/>s containing lists for 
     /// <see cref="Share"/>s, <see cref="Order"/>s and <see cref="ShareValue"/>s
+    /// Only used for saving the database to an xml file
     /// </summary>
     public class SharesDataModel
     {

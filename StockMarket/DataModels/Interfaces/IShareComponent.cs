@@ -1,14 +1,12 @@
 ﻿using System;
 
-namespace StockMarket.DataModels
+namespace StockMarket
 {
     /// <summary>
     /// An interface represening <see cref="Dividend"/>s and <see cref="Order"/>s 
     /// </summary>
     public interface IShareComponent
     {
-        // TODO: use interface in Dividend, Order, (CollectionViewModel?)
-
         int Amount { get; }
         double Percentage { get; }
         double SumNow { get; }
@@ -16,6 +14,8 @@ namespace StockMarket.DataModels
         DateTime BookingDate { get; }
         double SinglePriceBuy {get; }
         double SinglePriceNow { get; }
-        OrderType ComponentType { get; }
+        ShareComponentType ComponentType { get; }
     }
+       
+
 }

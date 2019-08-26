@@ -12,7 +12,6 @@ namespace StockMarket.ViewModels
     /// </summary>
     public class OrderViewModel : CollectionViewModel
     {
-
         #region ctor
         /// <summary>
         /// Creates a ViewModel for an order with an AddOrderCommand 
@@ -26,13 +25,13 @@ namespace StockMarket.ViewModels
         /// Creates a ViewModel for an order from an order 
         /// </summary>
         /// <param name="order">The <see cref="Order"/> to create a ViewModel for</param>
-        public OrderViewModel(Order order):base()
+        public OrderViewModel(Order order) : base()
         {
             this.Amount = order.Amount;
-            this.Date = order.Date;
+            this.BookingDate = order.Date;
             this.OrderExpenses = order.OrderExpenses;
-            this.OrderType = order.OrderType;
-            this.SharePrice = order.SharePrice;
+            this.ComponentType = order.OrderType;
+            this.SinglePriceBuy = order.SharePrice;
             this.ISIN = order.ISIN;
             this.UserName = order.UserName;
         }
@@ -43,78 +42,21 @@ namespace StockMarket.ViewModels
 
         public string UserName { get; private set; }
 
-        private string ISIN;
+        private readonly string ISIN;
 
-        private double _sharePrice;
-        /// <summary>
-        /// The prices of a single share at the day of purchase
-        /// </summary>
-        public double SharePrice
-        {
-            get { return _sharePrice; }
-            set
-            {
-                if (_sharePrice != value)
-                {
-                    _sharePrice = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SharePrice)));
-                }
-            }
-        }
-
-        private double _actPrice;
-        /// <summary>
-        /// The current price of a single share
-        /// </summary>
-        public double ActPrice
-        {
-            get { return _actPrice; }
-            set
-            {
-                if (_actPrice != value)
-                {
-                    _actPrice = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
-                    if (OrderType == OrderType.buy)
-                    {
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
-                    }
-                }
-            }
-        }
-        
-        private int _amount;
-        /// <summary>
-        /// The amount of shares purchased
-        /// </summary>
-        override public int Amount
-        {
-            get { return _amount/**(int)OrderType*/; }
-            set
-            {
-                if (_amount != value)
-                {
-                    _amount = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
-                }
-            }
-        }
 
         override public int AmountSold
         {
             get
             {
-                switch (OrderType)
+                switch (ComponentType)
                 {
-                    case OrderType.buy:
+                    case ShareComponentType.buy:
                         {
                             //get buys and sells
-                            var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
-                            var sells = orders.FindAll(o => o.OrderType == OrderType.sell).OrderBy(o => o.Date).ToList();
-                            var buysPrior = orders.FindAll(o => o.OrderType == OrderType.buy && o.Date < Date).OrderBy(o => o.Date).ToList();
+                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+                            var sells = orders.FindAll(o => o.OrderType == ShareComponentType.sell).OrderBy(o => o.Date).ToList();
+                            var buysPrior = orders.FindAll(o => o.OrderType == ShareComponentType.buy && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
 
                             //sum up the amount of sold shares
                             int numSells = 0;
@@ -149,23 +91,6 @@ namespace StockMarket.ViewModels
             }
         }
 
-        private DateTime _date;
-        /// <summary>
-        /// The date of the purchase
-        /// </summary>
-        public DateTime Date
-        {
-            get { return _date.Date; }
-            set
-            {
-                if (_date != value)
-                {
-                    _date = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Date)));
-                }
-            }
-        }
-
         /// <summary>
         /// The summed up price of the shares at the day of purchase
         /// (getter only)
@@ -174,14 +99,14 @@ namespace StockMarket.ViewModels
         {
             get
             {
-                switch (OrderType)
+                switch (ComponentType)
                 {
-                    case OrderType.sell:
+                    case ShareComponentType.sell:
                         {
                             //get buys and sells
-                            var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
-                            var sellsPrior = orders.FindAll(o => o.OrderType == OrderType.sell && o.Date<Date).OrderBy(o => o.Date).ToList();
-                            var buys = orders.FindAll(o => o.OrderType == OrderType.buy).OrderBy(o => o.Date).ToList();
+                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+                            var sellsPrior = orders.FindAll(o => o.OrderType == ShareComponentType.sell && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
+                            var buys = orders.FindAll(o => o.OrderType == ShareComponentType.buy).OrderBy(o => o.Date).ToList();
 
                             List<int> soldRemaining = new List<int>();
                             List<int> buysRemaining = new List<int>();
@@ -240,7 +165,7 @@ namespace StockMarket.ViewModels
                                 {
                                     sum += tempAmount * buys[i].SharePrice; // ... add up the price for the remaining amount (the sharepirce of the sell)
                                     sum += buys[i].OrderExpenses * (tempAmount / buys[i].Amount); // ...remove the (partial) order expenses
-                                                                                  // set the remaining amounts
+                                                                                                  // set the remaining amounts
                                     buysRemaining[i] -= tempAmount;
                                     tempAmount = 0;
                                 }
@@ -248,24 +173,24 @@ namespace StockMarket.ViewModels
                                 {
                                     sum += buysRemaining[i] * buys[i].SharePrice; // ... add up the price for the sold amount (using the sharepirce of the sell)
                                     sum += buys[i].OrderExpenses * (buysRemaining[i] / buys[i].Amount); // ...remove the (partial) order expenses
-                                                                                        // set the remaining amounts
+                                                                                                        // set the remaining amounts
                                     tempAmount -= buysRemaining[i];
                                     buysRemaining[i] = 0;
                                 }
                             }
 
                             // app up price for the remaining (not sold) shares (using the current price)
-                            sum += tempAmount * ActPrice;
+                            sum += tempAmount * SinglePriceNow;
                             sum += OrderExpenses * (tempAmount / Amount); // remove the (patial) order expenses
 
                             return sum;
-                        }                        
+                        }
                     default: // buys, for safety as default
                         {
                             // sum up the prices                     
-                            return SharePrice * (Amount) + OrderExpenses;
+                            return SinglePriceBuy * (Amount) + OrderExpenses;
                         }
-                }                
+                }
             }
         }
 
@@ -277,15 +202,15 @@ namespace StockMarket.ViewModels
         {
             get
             {
-                switch (OrderType)
+                switch (ComponentType)
                 {
-                    case OrderType.sell: return SharePrice * AmountSold + OrderExpenses;
+                    case ShareComponentType.sell: return SinglePriceBuy * AmountSold + OrderExpenses;
                     default: // buys, default for safety
                         {
                             //get buys and sells
-                            var orders = DataBaseHelper.GetOrdersFromDB(ISIN);
-                            var sells = orders.FindAll(o => o.OrderType == OrderType.sell).OrderBy(o => o.Date).ToList();
-                            var buysPrior = orders.FindAll(o => o.OrderType == OrderType.buy && o.Date < Date).OrderBy(o => o.Date).ToList();
+                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+                            var sells = orders.FindAll(o => o.OrderType == ShareComponentType.sell).OrderBy(o => o.Date).ToList();
+                            var buysPrior = orders.FindAll(o => o.OrderType == ShareComponentType.buy && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
 
                             List<int> soldRemaining = new List<int>();
                             List<int> buysRemaining = new List<int>();
@@ -359,7 +284,7 @@ namespace StockMarket.ViewModels
                             }
 
                             // app up price for the remaining (not sold) shares (using the current price)
-                            sum += tempAmount * ActPrice;
+                            sum += tempAmount * SinglePriceNow;
                             sum -= OrderExpenses * (tempAmount / Amount); // remove the (patial) order expenses
 
                             return sum;
@@ -387,23 +312,6 @@ namespace StockMarket.ViewModels
             }
         }
 
-        private OrderType _orderType;
-        /// <summary>
-        /// The type of order
-        /// </summary>
-        public OrderType OrderType
-        {
-            get { return _orderType; }
-            set
-            {
-                if (_orderType != value)
-                {
-                    _orderType = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
-                }
-            }
-        }
-
         #endregion
 
         #region Commands
@@ -417,22 +325,22 @@ namespace StockMarket.ViewModels
                 {
                     Button b = o as Button;
                     var sp = b.Parent as StackPanel;
-                    ComboBox cobo=null;
+                    ComboBox cobo = null;
                     foreach (var child in sp.Children)
                     {
-                        if (child.GetType()==typeof(ComboBox))
+                        if (child.GetType() == typeof(ComboBox))
                         {
                             cobo = child as ComboBox;
                             break;
                         }
                     }
-                    
+
                     // create a new order
                     Order order = new Order();
                     order.Amount = Convert.ToInt32(Amount);
                     order.OrderExpenses = 10;
-                    order.OrderType = OrderType.buy;
-                    order.SharePrice = Convert.ToDouble(SharePrice);
+                    order.OrderType = ShareComponentType.buy;
+                    order.SharePrice = Convert.ToDouble(SinglePriceBuy);
                     order.Date = DateTime.Today;
                     order.ISIN = (cobo.SelectedItem as ShareViewModel).ISIN;
 
@@ -443,7 +351,7 @@ namespace StockMarket.ViewModels
 
         }
 
-        private bool CanAddOrder (object o)
+        private bool CanAddOrder(object o)
         {
             return Amount > 0 ? true : false;
         }

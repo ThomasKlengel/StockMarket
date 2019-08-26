@@ -24,7 +24,7 @@ namespace StockMarket.ViewModels
         public override void UserChanged()
         {
             // get all orders of the current user
-            var ordersbyUser = DataBaseHelper.GetAllOrdersFromDB().Where(o => (SelectOrderByUser(o)));
+            var ordersbyUser = DataBaseHelper.GetAllItemsFromDB<Order>().Where(o => (SelectByUser(o)));
             // add the ISINs for these orders (HashSet only allows uniques -> duplicates are not added)
             var unique = new HashSet<string>();
             foreach (var order in ordersbyUser)

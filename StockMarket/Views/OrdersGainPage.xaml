@@ -46,7 +46,7 @@
                 <ListView.View>
                     <!-- add items to the view-->
                     <GridView AllowsColumnReorder="True">                            
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=Date.Date, StringFormat='{}{0:yyyy-MM-dd}'}" Header="Date" Width="80"/>                            
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=BookingDate.Date, StringFormat='{}{0:yyyy-MM-dd}'}" Header="Date" Width="80"/>                            
                             <GridViewColumn Header="Amount" Width="80">                                
                                 <GridViewColumn.DisplayMemberBinding>
                                     <MultiBinding StringFormat="{}{0} (-{1})">
@@ -55,8 +55,8 @@
                                     </MultiBinding>
                                 </GridViewColumn.DisplayMemberBinding>
                             </GridViewColumn>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=SharePrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Buy Price" Width="100"/>
-                        <GridViewColumn DisplayMemberBinding="{Binding Path=ActPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Current Price" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SinglePriceBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Buy Price" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SinglePriceNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Current Price" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="buy" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="current" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="diff" Width="100"/>

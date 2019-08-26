@@ -5,7 +5,7 @@ namespace StockMarket
     /// <summary>
     /// A class containing basic information about a share
     /// </summary>
-    public class Share
+    public class Share: IHasIsin
     {
 
         #region ctors

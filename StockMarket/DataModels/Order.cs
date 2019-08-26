@@ -6,7 +6,7 @@ namespace StockMarket
     /// <summary>
     /// A class containing basic information about a <see cref="Share"/> order
     /// </summary>
-    public class Order
+    public class Order: IHasIsin, IHasUser
     {
         #region ctors
         public Order() { UserName = new User().ToString(); }
@@ -44,7 +44,7 @@ namespace StockMarket
         /// <summary>
         /// Type of order (buy/sell)
         /// </summary>
-        public OrderType OrderType { get; set; }
+        public ShareComponentType OrderType { get; set; }
 
         /// <summary>
         /// The ISIN of the order to link to a share
@@ -60,11 +60,13 @@ namespace StockMarket
     /// <summary>
     /// An enumeration of the type of order
     /// (buy = 1;
+    /// sividend = 0;
     /// sell = -1)
     /// </summary>
-    public enum OrderType
+    public enum ShareComponentType
     {
         buy = 1,
+        dividend = 0,
         sell = -1
     }
 }

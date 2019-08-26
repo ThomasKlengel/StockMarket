@@ -98,7 +98,9 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="DataModels\Dividend.cs" />
-    <Compile Include="DataModels\IShareComponent.cs" />
+    <Compile Include="DataModels\Interfaces\IHasIsin.cs" />
+    <Compile Include="DataModels\Interfaces\IHasUser.cs" />
+    <Compile Include="DataModels\Interfaces\IShareComponent.cs" />
     <Compile Include="DataModels\Order.cs" />
     <Compile Include="DataModels\SharesDataModel.cs" />
     <Compile Include="DataModels\ShareValue.cs" />
@@ -109,6 +111,7 @@
     <Compile Include="Helper\RegexHelper.cs" />
     <Compile Include="Helper\Saver.cs" />
     <Compile Include="Helper\WebHelper.cs" />
+    <Compile Include="ViewModels\DividendViewModel.cs" />
     <Compile Include="Views\AddDividendPage.xaml.cs">
       <DependentUpon>AddDividendPage.xaml</DependentUpon>
     </Compile>

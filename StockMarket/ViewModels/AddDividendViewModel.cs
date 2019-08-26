@@ -32,12 +32,23 @@ namespace StockMarket.ViewModels
 
         #endregion
 
+        #region Fields
+        /// <summary>
+        /// set to true when the <see cref="Dividend"/> was changed to ignore its own refreh in the <see cref="DividendPerShare"/>
+        /// </summary>
         private bool DividendChanged = false;
+        /// <summary>
+        /// set to true when the <see cref="DividendPerShare"/> was changed to ignore its own refreh in the <see cref="Dividend"/>
+        /// </summary>
         private bool DPSChanged = false;
+        #endregion
 
         #region Properties
 
         private User _currentUser;
+        /// <summary>
+        /// The <see cref="User"/> currently selected in the main window
+        /// </summary>
         public User CurrentUser
         {
             get
@@ -57,11 +68,14 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The <see cref="Share"/>s the user can select to add a dividend for
+        /// </summary>
         public ObservableCollection<Share> Shares { get; set; }
 
         private double _dividend;
         /// <summary>
-        /// The current price of a single share
+        /// The whole dividend for the <see cref="Amount"/> of <see cref="SelectedShare"/>s
         /// </summary>
         public double Dividend
         {
@@ -73,6 +87,7 @@ namespace StockMarket.ViewModels
                     _dividend = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dividend)));
 
+                    // dont set "dividend by share" if the dividend has been changed by "dividend per share"
                     if (!DPSChanged)
                     {
                         DividendChanged = true;
@@ -99,10 +114,13 @@ namespace StockMarket.ViewModels
                     _dividendPerShare = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(DividendPerShare)));
 
+                    // refresh the dividend return
                     if (Amount != 0 && Dividend != 0.0)
                     {
                         GetDividendReturnAsync();
                     }
+
+                    // dont set "dividend" if the dividend per share has been changed by "dividend"
                     if (!DividendChanged)
                     {
                         if (Dividend / Amount != DividendPerShare)
@@ -117,6 +135,9 @@ namespace StockMarket.ViewModels
         }
 
         private Share _selectedShare;
+        /// <summary>
+        ///  The <see cref="Share"/> currently selected by the user to add a dividend to
+        /// </summary>
         public Share SelectedShare
         {
             get { return _selectedShare; }
@@ -133,7 +154,7 @@ namespace StockMarket.ViewModels
 
         private int _amount;
         /// <summary>
-        /// The amount of shares purchased
+        /// The amount of shares for which the dividend was given
         /// </summary>
         public int Amount
         {
@@ -150,6 +171,9 @@ namespace StockMarket.ViewModels
         }
 
         private DateTime _dividendPayDate = DateTime.Today;
+        /// <summary>
+        /// The date at which the dividend was payed
+        /// </summary>
         public DateTime DividendPayDate
         {
             get { return _dividendPayDate; }
@@ -163,6 +187,9 @@ namespace StockMarket.ViewModels
         }
 
         private DateTime _dividendRangeStartDate = DateTime.Today.AddYears(-1);
+        /// <summary>
+        ///  The starting date of the time the share was held
+        /// </summary>
         public DateTime DateRangeStart
         {
             get { return _dividendRangeStartDate; }
@@ -177,6 +204,9 @@ namespace StockMarket.ViewModels
         }
 
         private DateTime _dividendRangeEndDate = DateTime.Today;
+        /// <summary>
+        ///  The last date of the time the share was held
+        /// </summary>
         public DateTime DateRangeEnd
         {
             get { return _dividendRangeEndDate; }
@@ -192,6 +222,9 @@ namespace StockMarket.ViewModels
 
         private double currentPrice;
         private double _dividendReturn;
+        /// <summary>
+        /// The dividend return (dividen per share/share value)
+        /// </summary>
         public double DividendReturn
         {
             get
@@ -210,15 +243,24 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
+        #region Methods
+        
+        /// <summary>
+        /// Sets the <see cref="DividendReturn"/> for the <see cref="SelectedShare"/>
+        /// </summary>
         private async void GetDividendReturnAsync()
         {
+            // get the current price of the selected share
             currentPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
             if(currentPrice == 0.0)
             {    
                 DividendReturn= 0.0;
             }
+            // calculate the return (dividenden rendite)
             DividendReturn =  DividendPerShare / currentPrice;
         }
+
+        #endregion
 
         #region Commands
         public RelayCommand AddDividendCommand { get; private set; }
@@ -288,6 +330,7 @@ namespace StockMarket.ViewModels
                 InitialDirectory = @"C:\"
             };
 
+            // when a file was selected....
             if (ofd.ShowDialog() == true)
             {                
                 var pdfToRead = ofd.FileName;
@@ -314,30 +357,37 @@ namespace StockMarket.ViewModels
                             var isin = line.Words[(line.WordCount - 2)].Text;
                             var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
 
-                            var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));
+
+                            // try to match a Share already in the database
+                            // first by ISIN
+                            var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));                            
                             if (sharesByIsin.Count() != 0)
                             {
                                 SelectedShare = sharesByIsin.First();
                                 break;
                             }
+                            // if none is found by ISIN try by WKN
                             var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
                             if (sharesByWkn.Count() != 0)
                             {
                                 SelectedShare = sharesByWkn.First();
                                 break;
                             }
+                            // if none is found by WKN try by ISIN with "O" replaced by zeros
                             var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
                             if (sharesByIsin0.Count() != 0)
                             {
                                 SelectedShare = sharesByIsin0.First();
                                 break;
                             }
+                            // if none is found try by WKN with "O" replaced by zeros
                             var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
                             if (sharesByWkn0.Count() != 0)
                             {
                                 SelectedShare = sharesByWkn0.First();
                                 break;
                             }
+                            // if none is found, dont select any order
                             break;
                         }
                     }
@@ -418,9 +468,6 @@ namespace StockMarket.ViewModels
                 //           </ DataTrigger >   
                 //       </ Style.Triggers >
                 //   </ Style >
-
-                //TODO: search relevant parts of text 
-
 
             }
         }

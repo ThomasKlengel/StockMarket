@@ -48,7 +48,7 @@
                                     </MultiBinding>
                                 </GridViewColumn.DisplayMemberBinding>
                             </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=ActualPrice, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
+                            <GridViewColumn DisplayMemberBinding="{Binding Path=SinglePriceNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="buy" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="now" Width="100"/>
                             <GridViewColumn DisplayMemberBinding="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="diff" Width="100"/>

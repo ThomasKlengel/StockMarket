@@ -18,13 +18,13 @@ namespace StockMarket.ViewModels
         public OrderGainViewModel():base()
         {
             Shares = new ObservableCollection<Share>();
-            Orders = new ObservableCollection<OrderViewModel>();
+            Orders = new ObservableCollection<CollectionViewModel>();
         }
 
         public override void UserChanged()
         {
             // gets all orders for the current user
-            var ordersByUser = DataBaseHelper.GetAllOrdersFromDB().Where(o=>(SelectOrderByUser(o)));
+            var ordersByUser = DataBaseHelper.GetAllItemsFromDB<Order>().Where(o=>(SelectByUser(o)));
             // add any isin of these orders (HashSet only allows uniques -> duplicates are not added)
             var unique = new HashSet<string>();
             foreach (var order in ordersByUser)
@@ -75,31 +75,30 @@ namespace StockMarket.ViewModels
                 double sum = 0;
                 foreach (var order in Orders)
                 {
-                    sum += order.SharePrice;
+                    sum += order.SinglePriceBuy;
                 };
                 return sum / Orders.Count;
             }
         }
 
-        private double _actPrice;
 
         /// <summary>
         /// The current share price for the orders
         /// </summary>
-        public double ActPrice
+        public override double SinglePriceNow
         {
-            get { return _actPrice; }
+            get { return _singlePriceNow; }
             set
             {
-                if (_actPrice != value)
+                if (_singlePriceNow != value)
                 {
-                    _actPrice = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
+                    _singlePriceNow = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
 
                     // refresh the price for all orders
                     foreach (var order in Orders)
                     {
-                        order.ActPrice = (ActPrice);
+                        order.SinglePriceNow = (SinglePriceNow);
                     }
 
                     // update the ui
@@ -121,7 +120,7 @@ namespace StockMarket.ViewModels
                 int sum = 0;
                 foreach (var order in Orders)
                 {
-                    if (order.OrderType == OrderType.buy)
+                    if (order.ComponentType == ShareComponentType.buy)
                     {
                         sum += order.Amount;
                     }
@@ -141,7 +140,7 @@ namespace StockMarket.ViewModels
                 int sum = 0;
                 foreach (var order in Orders)
                 {
-                    if (order.OrderType == OrderType.sell)
+                    if (order.ComponentType == ShareComponentType.sell)
                     {
                         sum += order.Amount;
                     }
@@ -169,7 +168,7 @@ namespace StockMarket.ViewModels
 
                 foreach (var order in Orders)
                 {
-                    if (order.OrderType == OrderType.buy)
+                    if (order.ComponentType == ShareComponentType.buy)
                     {
                         sum += order.SumBuy;
                     }
@@ -188,7 +187,7 @@ namespace StockMarket.ViewModels
                 double sum = 0;
                 foreach (var order in Orders)
                 {
-                    if (order.OrderType == OrderType.buy)
+                    if (order.ComponentType == ShareComponentType.buy)
                     {
                         sum += order.SumNow;
                     }
@@ -200,7 +199,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// All orders of the selected share
         /// </summary>
-        public ObservableCollection<OrderViewModel> Orders { get; set; }
+        public ObservableCollection<CollectionViewModel> Orders { get; set; }
 
         /// <summary>
         /// The <see cref="Share"/>s that are currently managed in the database
@@ -244,17 +243,25 @@ namespace StockMarket.ViewModels
             // create or clear the list of Orders
             if (Orders == null)
             {
-                Orders = new ObservableCollection<OrderViewModel>();
+                Orders = new ObservableCollection<CollectionViewModel>();
             }
             Orders.Clear();
 
 
             // add the orders from the database for this user  
-            foreach (var order in DataBaseHelper.GetOrdersFromDB(SelectedShare)
-                .Where(o => SelectOrderByUser(o))
+            foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(SelectedShare)
+                .Where(o => SelectByUser(o))
                 .OrderByDescending((o) => { return o.Date; }))
             {
                 Orders.Add(new OrderViewModel(order));
+            }
+
+            // add the dividends from the database for this user
+            foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(SelectedShare)
+                  .Where(dividend => SelectByUser(dividend))
+                  .OrderByDescending((dividend) => { return dividend.DayOfPayment; }))
+            {
+                Orders.Add(new DividendViewModel(dividend));
             }
 
             // notify UI of changes
@@ -288,7 +295,7 @@ namespace StockMarket.ViewModels
             }
 
             //set the price for the UI
-            ActPrice = price;
+            SinglePriceNow = price;
         }
         #endregion
 
@@ -345,7 +352,7 @@ namespace StockMarket.ViewModels
                     }
 
                     //sort the orders
-                    Orders = SortCollection<OrderViewModel>(Orders, headerClicked, lastSortAscending);
+                    Orders = SortCollection<CollectionViewModel>(Orders, headerClicked, lastSortAscending);
                    
                     // set the last sorted by for next sort
                     lastSortedBy = headerClicked;

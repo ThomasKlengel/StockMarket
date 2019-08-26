@@ -265,63 +265,7 @@ namespace StockMarket
                 return -1;
             }
         }
-
-        public static List<Order> GetOrdersFromDB(Share share, string path = DEFAULTPATH)
-        {
-            try
-            {   // connect to the database
-                using (SQLiteConnection con = new SQLiteConnection(path))
-                {
-                    // get the required tables of the database
-                    con.CreateTable<Order>();
-                    // insert the order
-                    return con.Table<Order>().ToList().FindAll((order) => { return order.ISIN == share.ISIN; });
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public static List<Order> GetOrdersFromDB(string isin, string path = DEFAULTPATH)
-        {
-            try
-            {   // connect to the database
-                using (SQLiteConnection con = new SQLiteConnection(path))
-                {
-                    // get the required tables of the database
-                    con.CreateTable<Order>();
-                    // retrun the orders matching the ISIN
-                    return con.Table<Order>().ToList().FindAll((order) => { return order.ISIN == isin; });
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
-        public static List<Order> GetAllOrdersFromDB(string path = DEFAULTPATH)
-        {
-            try
-            {   // connect to the database
-                using (SQLiteConnection con = new SQLiteConnection(path))
-                {
-                    // get the required tables of the database
-                    con.CreateTable<Order>();
-
-                    var a = con.Table<Order>().ToList();
-                    // retrun the orders matching the ISIN
-                    return con.Table<Order>().ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                return null;
-            }
-        }
-
+        
         public static List<Share> GetSharesFromDB(string path = DEFAULTPATH)
         {
             try
@@ -340,16 +284,23 @@ namespace StockMarket
             }
         }
 
-        public static List<ShareValue> GetShareValuesFromDB(Share share, string path = DEFAULTPATH)
+        /// <summary>
+        /// Gets any share component of the specified type with the defined isin from the database or all if isin is string.Empty
+        /// </summary>
+        /// <typeparam name="T">Any share component that implements <see cref="IHasIsin"/></typeparam>
+        /// <param name="isin">The isin to match</param>
+        /// <param name="path">The path to the database</param>
+        /// <returns></returns>
+        public static List<T> GetItemsFromDB<T>(string isin, string path = DEFAULTPATH) where T : IHasIsin, new()
         {
             try
             {   // connect to the database
                 using (SQLiteConnection con = new SQLiteConnection(path))
                 {
-                    // get the required tables of the database
-                    con.CreateTable<ShareValue>();
-                    // insert the order
-                    return con.Table<ShareValue>().ToList().FindAll((val) => { return val.ISIN == share.ISIN; });
+                    // get the required table of the database
+                    con.CreateTable<T>();
+                    // get the values
+                    return con.Table<T>().ToList().FindAll((val) => { return isin != string.Empty ? val.ISIN == isin : true; });
                 }
             }
             catch (Exception ex)
@@ -357,18 +308,35 @@ namespace StockMarket
                 return null;
             }
         }
-
-        public static List<ShareValue> GetShareValuesFromDB(string isin, string path = DEFAULTPATH)
+        /// <summary>
+        /// Gets any share component of the specified type with an ISIN matching the defined share from the database
+        /// </summary>
+        /// <typeparam name="T">Any share component that implements <see cref="IHasIsin"/></typeparam>
+        /// <param name="share">The <see cref="Share"/> to match</param>
+        /// <param name="path">The path to the database</param>
+        /// <returns></returns>
+        public static List<T> GetItemsFromDB<T>(Share share, string path = DEFAULTPATH) where T : IHasIsin, new()
         {
             try
-            {   // connect to the database
-                using (SQLiteConnection con = new SQLiteConnection(path))
-                {
-                    // get the required tables of the database
-                    con.CreateTable<ShareValue>();
-                    // get the values
-                    return con.Table<ShareValue>().ToList().FindAll((val) => { return val.ISIN == isin; });
-                }
+            {
+                return GetItemsFromDB<T>(share.ISIN);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+        /// <summary>
+        /// Gets all items of the specified type from the database
+        /// </summary>
+        /// <typeparam name="T">Any share component that implements <see cref="IHasIsin"/></typeparam>
+        /// <param name="path">The path to the database</param>
+        /// <returns></returns>
+        public static List<T> GetAllItemsFromDB<T>(string path = DEFAULTPATH) where T : IHasIsin, new()
+        {
+            try
+            {
+                return GetItemsFromDB<T>(string.Empty);
             }
             catch (Exception ex)
             {

@@ -2,16 +2,17 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
+using System.ComponentModel;
 
 namespace StockMarket.ViewModels
 {
     /// <summary>
     /// a base class for share related collections
     /// </summary>
-    public abstract class CollectionViewModel: ViewModelBase
+    public abstract class CollectionViewModel: ViewModelBase, IShareComponent
     {
         #region Delegates
-        public delegate bool OrderSelector(Order o);
+        public delegate bool Selector<T>(T itemToSelect);
         #endregion
 
         #region Fields
@@ -24,46 +25,9 @@ namespace StockMarket.ViewModels
         /// </summary>
         public bool lastSortAscending;
         /// <summary>
-        /// Gets the orders of the <see cref="CurrentUser"/> (all if DefaultUser)
+        /// Gets any item that has <see cref="IHasUser"/> of the <see cref="CurrentUser"/> (all if DefaultUser)
         /// </summary>
-        public OrderSelector SelectOrderByUser;
-
-        private User _currentUser;
-        /// <summary>
-        /// The user currently selected in the MainWindow
-        /// </summary>
-        public User CurrentUser
-        {
-            get
-            {
-                if (_currentUser!= null)
-                {
-                    return _currentUser;
-                }
-                return User.Default();
-            }
-
-            private set
-            {
-                if (CurrentUser != value)
-                {
-                    _currentUser = value;
-
-                    //Set the delegate to get all Orders of current user
-                    if (CurrentUser.Equals(User.Default()))
-                    {
-                        SelectOrderByUser = (o) => { return true; };
-                    }
-                    else
-                    {                        
-                        SelectOrderByUser = (o) => { return o.UserName == CurrentUser.ToString(); };
-                    }
-
-                    // Call the method thats ViewModel specific
-                    UserChanged();
-                }
-            }
-        }
+        public Selector<IHasUser> SelectByUser;
         #endregion
 
         #region Contructors
@@ -75,6 +39,41 @@ namespace StockMarket.ViewModels
         #endregion
 
         #region Properties
+
+        public double _singlePriceBuy;
+        /// <summary>
+        /// The price of a single <see cref="Share"/>/<see cref="Order"/>/<see cref="Dividend"/> at the day of purchase
+        /// </summary>
+        public virtual double SinglePriceBuy {
+            get { return _singlePriceBuy; }
+            set
+            {
+                if (_singlePriceBuy != value)
+                {
+                    _singlePriceBuy = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceBuy)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// The price of a single <see cref="Share"/>/<see cref="Order"/>/<see cref="Dividend"/> today
+        /// </summary>
+        public double _singlePriceNow;
+        public virtual double SinglePriceNow
+        {
+            get { return _singlePriceNow; }
+            set
+            {
+                if (_singlePriceNow != value)
+                {
+                    _singlePriceNow = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
+                }
+            }
+        }
+
+
         /// <summary>
         /// The price for the shares today
         /// </summary>
@@ -87,12 +86,22 @@ namespace StockMarket.ViewModels
         public abstract double SumBuy
         { get; }
 
+        public int _amount;
         /// <summary>
         /// The amount of bought shares
         /// </summary>
-        public abstract int Amount
+        public virtual int Amount
         {
-            get; set;
+            get { return _amount; }
+            set
+            {
+                if (_amount != value)
+                {
+                    _amount = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+
+                }
+            }
         }
 
         /// <summary>
@@ -121,8 +130,15 @@ namespace StockMarket.ViewModels
         {
             get
             {
+
                 var paleRed = Color.FromRgb(255, 127, 127);
                 var paleGreen = Color.FromRgb(222, 255, 209);
+                var paleBlue = Color.FromRgb(112, 200, 255);
+                if (ComponentType == ShareComponentType.dividend)
+                {
+                    return new SolidColorBrush(paleBlue);
+                }
+
                 var color = Percentage > 0.0 ? paleGreen : paleRed;
                 // create solid background for shares thet are not completely sold
                 Brush solidBack = new SolidColorBrush(color);
@@ -136,9 +152,78 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The lost/gained percentage
         /// </summary>
-        public double Percentage
+        public virtual double Percentage
         {
             get { return SumNow / SumBuy - 1.0; }
+        }
+
+        public DateTime _bookingDate;
+
+        /// <summary>
+        /// The date at which the share item was bought/sold
+        /// </summary>
+        public virtual DateTime BookingDate
+        {
+            get { return _bookingDate; }
+            set
+            {
+                if (_bookingDate!=value)
+                {
+                    _bookingDate = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(BookingDate)));
+                }
+            }
+        }
+
+        public ShareComponentType _componentType = ShareComponentType.buy;
+        public virtual ShareComponentType ComponentType
+        {
+            get { return _componentType; }
+            set
+            {
+                if (_componentType != value)
+                {
+                    _componentType = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ComponentType)));
+                }
+            }
+        }
+
+        private User _currentUser;
+        /// <summary>
+        /// The user currently selected in the MainWindow
+        /// </summary>
+        public User CurrentUser
+        {
+            get
+            {
+                if (_currentUser != null)
+                {
+                    return _currentUser;
+                }
+                return User.Default();
+            }
+
+            private set
+            {
+                if (CurrentUser != value)
+                {
+                    _currentUser = value;
+
+                    //Set the delegate to get all Orders of current user
+                    if (CurrentUser.Equals(User.Default()))
+                    {
+                        SelectByUser = (o) => { return true; };
+                    }
+                    else
+                    {
+                        SelectByUser = (o) => { return o.UserName == CurrentUser.ToString(); };
+                    }
+
+                    // Call the method thats ViewModel specific
+                    UserChanged();
+                }
+            }
         }
 
         #endregion

@@ -14,6 +14,10 @@ namespace StockMarket.ViewModels
     /// </summary>
     public class AddOrderViewModel : ViewModelBase
     {
+        /// <summary>
+        /// set to true when a <see cref="Share"/> is selected from reading a pdf
+        /// to irgnore auto updates for <see cref="ActPrice"/>, etc.
+        /// </summary>
         bool ignoreUpdate = false;
 
         #region ctor
@@ -36,6 +40,9 @@ namespace StockMarket.ViewModels
         #region Properties
 
         private User _currentUser;
+        /// <summary>
+        /// The <see cref="User"/> currently selected in the main window
+        /// </summary>
         public User CurrentUser
         {
             get
@@ -55,6 +62,9 @@ namespace StockMarket.ViewModels
             }
         }
 
+        /// <summary>
+        /// The <see cref="Share"/>s the user can choose from to add an orders to
+        /// </summary>
         public ObservableCollection<Share> Shares { get; set; }
 
         private double _actPrice;
@@ -76,7 +86,7 @@ namespace StockMarket.ViewModels
 
         private double _expenses =10.0;
         /// <summary>
-        /// The current price of a single share
+        /// The expenses for any transaction
         /// </summary>
         public double Expenses
         {
@@ -92,6 +102,9 @@ namespace StockMarket.ViewModels
         }
 
         private Share _selectedShare;
+        /// <summary>
+        /// The <see cref="Share"/> that is currently selected in the UI to add the orders to
+        /// </summary>
         public Share SelectedShare
         {
             get { return _selectedShare; }
@@ -101,25 +114,21 @@ namespace StockMarket.ViewModels
                 {
                     _selectedShare = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
+                    // update when Share is selected by user, not when reading from PDF
                     if (!ignoreUpdate)
                     {
                         GetPriceAsync();
                         Expenses = 10;
                         Amount = 0;
                         OrderDate = DateTime.Today;
-                        OrderType = OrderType.buy;
+                        OrderType = ShareComponentType.buy;
                     }
                     ignoreUpdate = false;
                 }
                 
             }
         }
-
-        private async void GetPriceAsync ()
-        {
-            ActPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
-        }
-
+               
         private int _amount;
         /// <summary>
         /// The amount of shares purchased
@@ -137,11 +146,11 @@ namespace StockMarket.ViewModels
             }
         }             
 
-        private OrderType _orderType = OrderType.buy;
+        private ShareComponentType _orderType = ShareComponentType.buy;
         /// <summary>
         /// The type of order
         /// </summary>
-        public OrderType OrderType
+        public ShareComponentType OrderType
         {
             get { return _orderType; }
             set
@@ -149,44 +158,53 @@ namespace StockMarket.ViewModels
                 if (_orderType != value)
                 {
                     _orderType = value;
+                    // Update the Checkboxes
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsBuy)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsSell)));
                 }
             }
         }
-
-
+        
+        /// <summary>
+        /// Used to check the buy/sell-checkbox
+        /// </summary>
         public bool OrderIsBuy
         {
             get
             {
-                return OrderType == OrderType.buy;
+                return OrderType == ShareComponentType.buy;
             }
             set
             {
-                if (value) // ignore the when bound CheckBox is unchecked
+                if (value) // dont update when bound CheckBox is unchecked
                 {
-                    OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+                    OrderType = OrderType == ShareComponentType.sell ? ShareComponentType.buy : ShareComponentType.sell;
                 }
             }
         }
+        /// <summary>
+        /// Used to check the buy/sell-checkbox
+        /// </summary>
         public bool OrderIsSell
         {
             get
             {
-                return OrderType == OrderType.sell;
+                return OrderType == ShareComponentType.sell;
             }
             set
             {
-                if (value) // ignore the when bound CheckBox is unchecked
+                if (value) // dont update when bound CheckBox is unchecked
                 {
-                    OrderType = OrderType == OrderType.sell ? OrderType.buy : OrderType.sell;
+                    OrderType = OrderType == ShareComponentType.sell ? ShareComponentType.buy : ShareComponentType.sell;
                 }
             }
         }
 
         private DateTime _dateTime = DateTime.Today;
+        /// <summary>
+        /// The date at which the order has been booked
+        /// </summary>
         public DateTime OrderDate
         {
             get { return _dateTime; }
@@ -197,31 +215,20 @@ namespace StockMarket.ViewModels
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderDate)));
                 }
             }
-        }       
-        
+        }
+
         #endregion
 
         #region Methods
-        private async void RefreshPriceAsync()
+
+        /// <summary>
+        /// Gets the current price of the <see cref="SelectedShare"/>
+        /// </summary>
+        private async void GetPriceAsync()
         {
-            if (SelectedShare != null)
-            {
-                double price = 0.0;
-                var content = await WebHelper.getWebContent(SelectedShare.WebSite);
-                price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
-                if (price == 0.0 && SelectedShare.WebSite2 != string.Empty)
-                {
-                    content = await WebHelper.getWebContent(SelectedShare.WebSite2);
-                    price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
-                }
-                if (price == 0.0 && SelectedShare.WebSite3 != string.Empty)
-                {
-                    content = await WebHelper.getWebContent(SelectedShare.WebSite3);
-                    price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
-                }
-                ActPrice = price;
-            }
+            ActPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
         }
+
         #endregion
 
         #region Commands
@@ -231,6 +238,7 @@ namespace StockMarket.ViewModels
 
         private void AddOrder(object o)
         {
+            // cehck if a valid user is selected
             if (CurrentUser.Equals(User.Default()))
             {
                 System.Windows.MessageBox.Show("There is no valid user selected");
@@ -250,17 +258,18 @@ namespace StockMarket.ViewModels
             // add the order to the matching share
             DataBaseHelper.AddOrderToDB(order);
 
+            // set Amount to zero so that it cant be added by accident twice
             Amount = 0;
         }
 
         private bool CanAddOrder(object o)
         {
+            // anly add if the amount of ordered Shares is more then zero
             return Amount > 0 ? true : false;
         }
 
         private void AddInputViaPdf(object o)
         {
-
             //create the OCR reader
             AdvancedOcr Ocr = new AdvancedOcr()
             {
@@ -302,7 +311,7 @@ namespace StockMarket.ViewModels
                     if (line.Text.StartsWith("Wertpapier Abrechnung"))
                     {
                         var buySell = line.Words.Last().Text;
-                        OrderType = buySell == "Verkauf" ? OrderType.sell : OrderType.sell;
+                        OrderType = buySell == "Verkauf" ? ShareComponentType.sell : ShareComponentType.sell;
                         break;
                     }
                 }
@@ -477,9 +486,6 @@ namespace StockMarket.ViewModels
                 //           </ DataTrigger >   
                 //       </ Style.Triggers >
                 //   </ Style >
-
-                //TODO: search relevant parts of text 
-
 
             }
         }

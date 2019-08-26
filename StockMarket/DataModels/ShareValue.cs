@@ -6,7 +6,7 @@ namespace StockMarket
     /// <summary>
     /// A class containing information about a <see cref="Share"/> price at a specific date
     /// </summary>
-    public class ShareValue
+    public class ShareValue: IHasIsin
     {
         #region ctors
         public ShareValue() { }

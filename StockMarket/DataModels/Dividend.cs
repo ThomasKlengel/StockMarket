@@ -10,7 +10,7 @@ namespace StockMarket
     /// <summary>
     /// A class containing basic information about a dividend payment of a <see cref="Share"/>
     /// </summary>
-    public class Dividend
+    public class Dividend: IHasIsin, IHasUser
     {
 
         public Dividend() { UserName = new User().ToString(); }

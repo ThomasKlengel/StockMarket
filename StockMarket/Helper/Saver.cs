@@ -26,8 +26,8 @@ namespace StockMarket
             ShareSerializer.Serialize(ShareWriter, DataBaseHelper.GetSharesFromDB());
             foreach (var share in DataBaseHelper.GetSharesFromDB())
             {
-                orders.Add(DataBaseHelper.GetOrdersFromDB(share));
-                values.Add(DataBaseHelper.GetShareValuesFromDB(share));
+                orders.Add(DataBaseHelper.GetItemsFromDB<Order>(share));
+                values.Add(DataBaseHelper.GetItemsFromDB<ShareValue>(share));
 
             }
             OrderSerializer.Serialize(OrderWriter, orders);
