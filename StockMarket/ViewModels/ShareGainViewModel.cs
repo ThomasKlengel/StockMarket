@@ -14,7 +14,7 @@ namespace StockMarket.ViewModels
         #region Constructors
         public ShareGainViewModel():base()
         {
-
+            Orders = new ObservableCollection<OrderViewModel>();
         }
 
         /// <summary>
@@ -31,8 +31,7 @@ namespace StockMarket.ViewModels
             ISIN = share.ISIN;
             ShareName = share.ShareName;
             ShareType = share.ShareType;
-            GetOrders();
-            GetPriceAsync();
+            Orders = new ObservableCollection<OrderViewModel>();
         }
         #endregion
 
@@ -264,21 +263,36 @@ namespace StockMarket.ViewModels
         /// </summary>
         private void GetOrders()
         {
-            // get the orders from the databse
-            var sortedOrders = DataBaseHelper.GetItemsFromDB<Order>(ISIN).OrderByDescending((o) => { return o.Date; });
-
-            // create or clear the list of Orders
-            if (Orders == null)
+            try
             {
-                Orders = new ObservableCollection<OrderViewModel>();
-            }
-            Orders.Clear();
+                // get the orders from the databse
+                var sortedOrders = DataBaseHelper.GetItemsFromDB<Order>(ISIN).
+                    Where(o => (SelectByUser(o))).
+                    OrderByDescending((o) => { return o.Date; });
 
-            // add the orders from the database
-            foreach (var order in sortedOrders)
-            {
-                Orders.Add(new OrderViewModel(order));
+                // create or clear the list of Orders
+                if (Orders == null)
+                {
+                    Orders = new ObservableCollection<OrderViewModel>();
+                }
+                Orders.Clear();
+
+                // add the orders from the database
+                foreach (var order in sortedOrders)
+                {
+                    Orders.Add(new OrderViewModel(order));
+                }
             }
+            catch (Exception ex)
+            {
+
+            }
+        }
+
+        public override void UserChanged()
+        {
+            GetOrders();
+            GetPriceAsync();
         }
         #endregion
     }

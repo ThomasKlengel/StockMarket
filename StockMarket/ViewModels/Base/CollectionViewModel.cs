@@ -52,6 +52,10 @@ namespace StockMarket.ViewModels
                 {
                     _singlePriceBuy = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceBuy)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                 }
             }
         }
@@ -69,7 +73,10 @@ namespace StockMarket.ViewModels
                 {
                     _singlePriceNow = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                 }
             }
         }
@@ -100,6 +107,11 @@ namespace StockMarket.ViewModels
                 {
                     _amount = value;
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
 
                 }
             }
@@ -159,7 +171,6 @@ namespace StockMarket.ViewModels
         }
 
         public DateTime _bookingDate;
-
         /// <summary>
         /// The date at which the share item was bought/sold
         /// </summary>
@@ -177,6 +188,9 @@ namespace StockMarket.ViewModels
         }
 
         public ShareComponentType _componentType = ShareComponentType.buy;
+        /// <summary>
+        /// Indicates if this Share component was buy, sell or dividend. Used for background settings
+        /// </summary>
         public virtual ShareComponentType ComponentType
         {
             get { return _componentType; }

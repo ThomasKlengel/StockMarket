@@ -87,26 +87,17 @@ namespace StockMarket.ViewModels
         /// </summary>
         public override double SinglePriceNow
         {
-            get { return _singlePriceNow; }
+            get { return base.SinglePriceNow; }
             set
             {
                 if (_singlePriceNow != value)
                 {
-                    _singlePriceNow = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
-
-                    // refresh the price for all orders
                     foreach (var order in Orders)
                     {
-                        order.SinglePriceNow = (SinglePriceNow);
+                        order.SinglePriceNow = value;
                     }
-
-                    // update the ui
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                 }
+                base.SinglePriceNow = value;                
             }
         }
 
@@ -187,7 +178,7 @@ namespace StockMarket.ViewModels
                 double sum = 0;
                 foreach (var order in Orders)
                 {
-                    if (order.ComponentType == ShareComponentType.buy)
+                    if (order.ComponentType == ShareComponentType.buy  || order.ComponentType== ShareComponentType.dividend)
                     {
                         sum += order.SumNow;
                     }
