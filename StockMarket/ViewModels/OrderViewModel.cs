@@ -10,7 +10,7 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for a single <see cref="Order"/>
     /// </summary>
-    public class OrderViewModel : CollectionViewModel
+    public class OrderViewModel : ShareComponentViewModel
     {
         #region ctor
         /// <summary>

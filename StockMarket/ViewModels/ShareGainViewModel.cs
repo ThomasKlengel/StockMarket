@@ -8,7 +8,7 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for a single <see cref="Share"/> in the <see cref="Pages.SharesOverviewPage"/>
     /// </summary>
-    class ShareGainViewModel : CollectionViewModel
+    class ShareGainViewModel : ShareComponentViewModel
     {
 
         #region Constructors

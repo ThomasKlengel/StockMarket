@@ -29,7 +29,7 @@
             <Grid Margin="5" Grid.Row="1">
 
                 <!--ListView containing information about all orders of the selected share-->
-                <ListView ItemsSource="{Binding Path=Orders}" Name="LV">
+                <ListView ItemsSource="{Binding Path=ShareComponents}" Name="LV">
                 <ListView.Resources>
                     <!--create style for item background color-->
                     <Style TargetType="{x:Type ListViewItem}">

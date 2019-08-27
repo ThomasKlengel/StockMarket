@@ -140,7 +140,7 @@
     <Compile Include="ViewModels\AddDividendViewModel.cs" />
     <Compile Include="ViewModels\AddUserViewModel.cs" />
     <Compile Include="ViewModels\AddOrderViewModel.cs" />
-    <Compile Include="ViewModels\Base\CollectionViewModel.cs" />
+    <Compile Include="ViewModels\Base\ShareComponentViewModel.cs" />
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\DayValueViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />

@@ -9,11 +9,9 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// a base class for share related collections
     /// </summary>
-    public abstract class CollectionViewModel: ViewModelBase, IShareComponent
+    public abstract class ShareComponentViewModel: ViewModelBase, IShareComponent
     {
-        #region Delegates
-        public delegate bool Selector<T>(T itemToSelect);
-        #endregion
+        //TODO: maybe Split up Sorting Method to seperate
 
         #region Fields
         /// <summary>
@@ -27,11 +25,11 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// Gets any item that has <see cref="IHasUser"/> of the <see cref="CurrentUser"/> (all if DefaultUser)
         /// </summary>
-        public Selector<IHasUser> SelectByUser;
+        public Predicate<IHasUser> SelectByUser;
         #endregion
 
         #region Contructors
-        public CollectionViewModel()
+        public ShareComponentViewModel()
         {            
             // set the current user as selected in MainWindow
             ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user)=> { CurrentUser = user; });
@@ -246,13 +244,14 @@ namespace StockMarket.ViewModels
         #region Methods
         /// <summary>
         /// Sorts an <see cref="ObservableCollection{T}"/> by a given property name of the collection items
+        /// Mainly used for GridViews
         /// </summary>
         /// <typeparam name="T">The <see cref="Type"/> of the <see cref="ObservableCollection{T}"/>s items</typeparam>
         /// <param name="origCollection">The original <see cref="ObservableCollection{T}"/> to sort</param>
         /// <param name="sortBy">The name of a property of an item of the <see cref="ObservableCollection{T}"/></param>
         /// <param name="ascending">The sort direction (true=ascending, false=descending)</param>
         /// <returns>The sorted <see cref="ObservableCollection{T}"/></returns>
-        public ObservableCollection<T> SortCollection<T>(ObservableCollection<T> origCollection, string sortBy, bool ascending) where T: CollectionViewModel
+        public ObservableCollection<T> SortCollection<T>(ObservableCollection<T> origCollection, string sortBy, bool ascending) where T: ShareComponentViewModel
         {
             #region actual sorting
             // create a copy of the orders
@@ -261,6 +260,8 @@ namespace StockMarket.ViewModels
 
             // create an empty collection
             IOrderedEnumerable<T> sortedCollection = null;
+
+            // rename the sortBy since any sort by Date refers to the BookingDate
             sortBy = sortBy == "Date" ? "BookingDate" : sortBy;
             // get the property to sort by
             System.Reflection.PropertyInfo property = typeof(T).GetProperty(sortBy);
