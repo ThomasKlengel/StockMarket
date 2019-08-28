@@ -10,6 +10,8 @@ namespace StockMarket
     /// </summary>
     public static class RegexHelper
     {
+        //TODO: default page by isin = https://www.finanzen.net/kurse/de000uf0aa67
+
         //TODO: add regex to get values from other pages like
         //https://kurse.boerse.ard.de/ard/kurse_einzelkurs_uebersicht.htn?i=48310499
 
@@ -24,7 +26,7 @@ namespace StockMarket
         //<meta name = "viewport" content="width=device-width"/>
         //<meta name = "description" content="Finden Sie Informationen zum Zertifikat Amazon.com FaktorZert  open end (UBS) (WKN UF0AA6, ISIN DE000UF0AA67), sowie den aktuellen Zertifikat-Kurs und Chart." />
 
-                    
+
         //<table summary = "Die folgende Tabelle enth&auml;lt Kursinformationen zu Amazon.com FaktorZert  open end (UBS)." cellspacing="0" >
         //  <tbody>
         //    <tr class="gray_bg">
@@ -59,20 +61,21 @@ namespace StockMarket
         //      <th id = "boerse" scope="row" class="tleft"><strong>Börsenplatz:</strong></th>
         //      <td headers = "boerse" class="tright">Stuttgart</td>
         //    </tr>
-            
+
         //    <tr class="gray_bg">
         //      <th id = "gattung" scope="row" class="tleft"><strong>Gattung:</strong></th>
         //      <td headers = "gattung" class="tright">Faktor</td>
         //    </tr>
-            
+
         //      <tr class="">
         //        <th id = "emittent" scope="row" class="tleft"><strong>Emittent:</strong></th>
         //        <td headers = "boerse" class="tright">UBS</td>
         //      </tr>
-              
+
         //  </tbody>
         //</table>
-  
+
+
 
         #region Regex strings
         public const string REGEX_Website_Valid1 = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
@@ -159,13 +162,13 @@ namespace StockMarket
             var content = await WebHelper.getWebContent(share.WebSite);
             //get the price
             var price = RegexHelper.GetSharePrice(content, share.ShareType);
-            if (price == 0.0)
+            if (price == 0.0 && share.WebSite2!= string.Empty)
             {
                 content = await WebHelper.getWebContent(share.WebSite2);
                 //get the price
                 price = RegexHelper.GetSharePrice(content, share.ShareType);
             }
-            if (price == 0.0)
+            if (price == 0.0 && share.WebSite3 != string.Empty)
             {
                 content = await WebHelper.getWebContent(share.WebSite3);
                 //get the price

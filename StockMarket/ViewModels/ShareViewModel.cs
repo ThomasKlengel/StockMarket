@@ -231,7 +231,8 @@ namespace StockMarket.ViewModels
                 //Factor for Shares is always 1
                 Factor = 1;
                 //get the current price
-                price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
+                //price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
+                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, WebSite, "iah345", "de0000000000"));
             }
 
 
@@ -249,8 +250,11 @@ namespace StockMarket.ViewModels
                 var factorMatch = Regex.Match(title.Value,RegexHelper.REGEX_Group_CertFactor);
                 Factor = Convert.ToByte(factorMatch.Value.Substring(6));
                 // get the current bid price
-                var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
+                //var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                //price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
+
+                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, WebSite, "iah345", "de0000000000", ShareType.Certificate));
+
                 // get name of SHARE certificate
                 var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
                 name = nameMatch.Value.Substring(4).Replace(" von", "").Trim() + " Certificate "+factorMatch.Value+"x";
