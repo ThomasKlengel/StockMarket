@@ -60,12 +60,12 @@
             </Grid>
 
         <!--Grid containing information about all shares handled by the program on grid row 2-->
-            <Grid Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid" Grid.Row="1">
+        <Grid DataContext="{Binding TileDividends}" Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid" Grid.Row="1">
                 <!--StackPanel containing information about all shares handled by the program-->
                 <StackPanel Orientation="Horizontal">
                     <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
-                    <local:UserStackPanelList Height="60" Width="100"/>
-                    <local:UserStackPanelList Height="60" HeaderText="Amount" >
+                <local:UserStackPanelList Height="60" Width="100" HeaderText="{Binding Path=Name}"/>
+                <local:UserStackPanelList Height="60" HeaderText="Amount" >
                         <local:UserStackPanelList.ValueText>
                             <MultiBinding StringFormat="{}{0} (-{1})">
                                 <Binding Path="Amount"/>

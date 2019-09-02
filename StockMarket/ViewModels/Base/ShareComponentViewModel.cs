@@ -84,13 +84,13 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The price for the shares today
         /// </summary>
-        public abstract double SumNow
+        public virtual double SumNow
         { get; }
 
         /// <summary>
         /// The price for the shares at the day bought
         /// </summary>
-        public abstract double SumBuy
+        public virtual double SumBuy
         { get; }
 
         public int _amount;
@@ -119,7 +119,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of sold shares
         /// </summary>
-        public abstract int AmountSold
+        public virtual int AmountSold
         {
             get; 
         }

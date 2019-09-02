@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace StockMarket.ViewModels
 {
@@ -22,7 +18,30 @@ namespace StockMarket.ViewModels
         #region Constructors
         public SingleShareGainPageViewModel():base()
         {
-            Shares = new ObservableCollection<Share>();
+            Shares = new ObservableCollection<Share>();            
+        }
+
+        private void DisplayedShare_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SumNow")
+            {
+                List<ShareComponentViewModel> all = new List<ShareComponentViewModel>();
+                List<ShareComponentViewModel> divs = new List<ShareComponentViewModel>();
+
+                foreach (var component in DisplayedShare.ShareComponents)
+                {
+                    all.Add(component);
+                    if (component.ComponentType == ShareComponentType.dividend)
+                    {
+                        divs.Add(component);
+                    }
+                }
+
+                TileAll = new TileViewModel(all, ShareComponentType.buy);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
+                TileDividends = new TileViewModel(divs, ShareComponentType.dividend);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
+            }
         }
 
         public override void UserChanged()
@@ -91,16 +110,24 @@ namespace StockMarket.ViewModels
                         // notify Share of CurrentUser so values are refreshed
                         ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayedShare)));
+                        DisplayedShare.PropertyChanged -= DisplayedShare_PropertyChanged;
+                        DisplayedShare.PropertyChanged += DisplayedShare_PropertyChanged;
+
+
                     }
                 }
             }
         }
 
-        public override double SumNow { get { return 0.0; } }
+        public TileViewModel TileAll
+        {
+            get; set;
+        }
 
-        public override double SumBuy { get { return 0.0; } }
-
-        public override int AmountSold { get { return 0; } }
+        public TileViewModel TileDividends
+        {
+            get; set;
+        }
 
         #endregion
 

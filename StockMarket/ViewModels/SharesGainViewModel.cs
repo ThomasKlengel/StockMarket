@@ -111,7 +111,7 @@ namespace StockMarket.ViewModels
                 TileAll = new TileViewModel(all, ShareComponentType.buy);
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
                 TileDividends = new TileViewModel(divs,ShareComponentType.dividend);
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
             }
         }
         #endregion
@@ -122,76 +122,6 @@ namespace StockMarket.ViewModels
         /// </summary>
         public ObservableCollection<ShareViewModel> Shares { get; private set; }
 
-        /// <summary>
-        /// The summed up price for all orders on the date of purchase
-        /// </summary>
-        override public double SumBuy
-        {
-            get
-            {
-                double buy = 0;
-
-                foreach (var share in Shares)
-                {
-                    buy += share.SumBuy;
-                }
-                return buy;
-            }
-        }
-
-        /// <summary>
-        /// The current summed up price for all orders 
-        /// </summary>
-        override public double SumNow
-        {
-            get
-            {
-                double now = 0;
-
-                foreach (var share in Shares)
-                {
-                    now += share.SumNow;
-                }
-                return now;
-            }
-        }
-
-        /// <summary>
-        /// The amount of bought shares
-        /// </summary>
-        override public int Amount
-        {
-            get
-            {
-                int amount = 0;
-                foreach (var share in Shares)
-                {
-                    amount += share.Amount;
-                }
-
-                return amount;
-            }
-            set { return; }
-        }
-
-        /// <summary>
-        /// The amount of sold shares
-        /// </summary>
-        public override int AmountSold
-        {
-            get
-            {
-                int amount = 0;
-                foreach (var share in Shares)
-                {
-                    amount += share.AmountSold;
-                }
-
-                return amount;
-            }
-        }
-
-        
         public TileViewModel TileAll
         {
             get;set;

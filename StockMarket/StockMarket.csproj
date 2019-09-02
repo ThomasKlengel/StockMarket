@@ -113,7 +113,7 @@
     <Compile Include="Helper\WebHelper.cs" />
     <Compile Include="ViewModels\BaseShareComponents\DividendViewModel.cs" />
     <Compile Include="ViewModels\BaseShareComponents\ShareViewModel.cs" />
-    <Compile Include="ViewModels\SingleShareGainViewModel.cs" />
+    <Compile Include="ViewModels\SingleShareGainPageViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />
     <Compile Include="Views\AddDividendPage.xaml.cs">
       <DependentUpon>AddDividendPage.xaml</DependentUpon>
