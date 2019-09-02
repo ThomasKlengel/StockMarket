@@ -11,7 +11,7 @@ namespace StockMarket.ViewModels
     /// </summary>
     public abstract class ShareComponentViewModel: ViewModelBase, IShareComponent
     {
-        //TODO: maybe Split up Sorting Method to seperate
+        //TODO: maybe Split up Sorting Method to seperate Class?
 
         #region Fields
         /// <summary>
@@ -23,9 +23,9 @@ namespace StockMarket.ViewModels
         /// </summary>
         public bool lastSortAscending;
         /// <summary>
-        /// Gets any item that has <see cref="IHasUser"/> of the <see cref="CurrentUser"/> (all if DefaultUser)
+        /// Gets any item that has <see cref="IHasUserName"/> of the <see cref="CurrentUser"/> (all if DefaultUser)
         /// </summary>
-        public Predicate<IHasUser> SelectByUser;
+        public Predicate<IHasUserName> SelectByUser;
         #endregion
 
         #region Contructors
