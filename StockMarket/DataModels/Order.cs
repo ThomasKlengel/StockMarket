@@ -6,7 +6,7 @@ namespace StockMarket
     /// <summary>
     /// A class containing basic information about a <see cref="Share"/> order
     /// </summary>
-    public class Order: IHasIsin, IHasUser
+    public class Order: IHasIsin, IHasUserName
     {
         #region ctors
         public Order() { UserName = new User().ToString(); }

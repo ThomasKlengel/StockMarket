@@ -9,7 +9,7 @@ namespace StockMarket
     /// <summary>
     /// An interface representing any share component that relates to a user
     /// </summary>
-    public interface IHasUser
+    public interface IHasUserName
     {
         string UserName { get; }
     }
