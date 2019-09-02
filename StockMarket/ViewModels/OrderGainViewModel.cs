@@ -12,13 +12,18 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>
     /// </summary>
-    class OrderGainViewModel : CollectionViewModel
+    class OrderGainViewModel : ShareComponentViewModel
     {
+
+        //TODO: rename ViewModel, since its essentially the VieModel for a "ShareGainViewModel"
+        //create an additional one for the page it is displayed on, inheriting from this one
+
+
         #region Constructors
         public OrderGainViewModel():base()
         {
             Shares = new ObservableCollection<Share>();
-            Orders = new ObservableCollection<CollectionViewModel>();
+            ShareComponents = new ObservableCollection<ShareComponentViewModel>();
         }
 
         public override void UserChanged()
@@ -33,12 +38,12 @@ namespace StockMarket.ViewModels
             }
             // clear the colections
             Shares.Clear();
-            Orders.Clear();
+            ShareComponents.Clear();
             var unsortedShares = new ObservableCollection<Share>();
             // get all shares for the user
             foreach (var isin in unique)
             {
-                unsortedShares.Add(DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }).First());
+                unsortedShares.Add(DataBaseHelper.GetItemsFromDB<Share>(isin).First());
             }
             // sort the shares by name
             foreach (var share in unsortedShares.OrderBy((s) => { return s.ShareName; }))
@@ -73,11 +78,11 @@ namespace StockMarket.ViewModels
             get
             {
                 double sum = 0;
-                foreach (var order in Orders)
+                foreach (var order in ShareComponents)
                 {
                     sum += order.SinglePriceBuy;
                 };
-                return sum / Orders.Count;
+                return sum / ShareComponents.Count;
             }
         }
 
@@ -87,26 +92,17 @@ namespace StockMarket.ViewModels
         /// </summary>
         public override double SinglePriceNow
         {
-            get { return _singlePriceNow; }
+            get { return base.SinglePriceNow; }
             set
             {
                 if (_singlePriceNow != value)
                 {
-                    _singlePriceNow = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SinglePriceNow)));
-
-                    // refresh the price for all orders
-                    foreach (var order in Orders)
+                    foreach (var order in ShareComponents)
                     {
-                        order.SinglePriceNow = (SinglePriceNow);
+                        order.SinglePriceNow = value;
                     }
-
-                    // update the ui
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                 }
+                base.SinglePriceNow = value;                
             }
         }
 
@@ -118,7 +114,7 @@ namespace StockMarket.ViewModels
             get
             {
                 int sum = 0;
-                foreach (var order in Orders)
+                foreach (var order in ShareComponents)
                 {
                     if (order.ComponentType == ShareComponentType.buy)
                     {
@@ -138,7 +134,7 @@ namespace StockMarket.ViewModels
             get
             {
                 int sum = 0;
-                foreach (var order in Orders)
+                foreach (var order in ShareComponents)
                 {
                     if (order.ComponentType == ShareComponentType.sell)
                     {
@@ -166,11 +162,13 @@ namespace StockMarket.ViewModels
             {
                 double sum = 0;
 
-                foreach (var order in Orders)
+                foreach (var shareComponent in ShareComponents)
                 {
-                    if (order.ComponentType == ShareComponentType.buy)
+                    // we can ignors sells, because sells have no "buy" costs
+                    // we can also ignore dividends because divends have no "buy" costs either
+                    if (shareComponent.ComponentType == ShareComponentType.buy)
                     {
-                        sum += order.SumBuy;
+                        sum += shareComponent.SumBuy;
                     }
                 }
                 return sum;
@@ -185,9 +183,10 @@ namespace StockMarket.ViewModels
             get
             {
                 double sum = 0;
-                foreach (var order in Orders)
+                foreach (var order in ShareComponents)
                 {
-                    if (order.ComponentType == ShareComponentType.buy)
+                    // we dont need to take sells into account since sells are represented in the SumNow of a buy if any amount of it was sold
+                    if (order.ComponentType == ShareComponentType.buy  || order.ComponentType== ShareComponentType.dividend)
                     {
                         sum += order.SumNow;
                     }
@@ -199,7 +198,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// All orders of the selected share
         /// </summary>
-        public ObservableCollection<CollectionViewModel> Orders { get; set; }
+        public ObservableCollection<ShareComponentViewModel> ShareComponents { get; set; }
 
         /// <summary>
         /// The <see cref="Share"/>s that are currently managed in the database
@@ -235,34 +234,35 @@ namespace StockMarket.ViewModels
 
         #region Methods
         /// <summary>
-        /// Selects the <see cref="Orders"/> associated to the selected <see cref="Share"/>
-        /// and add them to the <see cref="Orders"/> property
+        /// Selects the <see cref="ShareComponents"/> associated to the selected <see cref="Share"/>
+        /// and add them to the <see cref="ShareComponents"/> property
         /// </summary>
         private void SetOrdersInitially()
         {
             // create or clear the list of Orders
-            if (Orders == null)
+            if (ShareComponents == null)
             {
-                Orders = new ObservableCollection<CollectionViewModel>();
+                ShareComponents = new ObservableCollection<ShareComponentViewModel>();
             }
-            Orders.Clear();
+            ShareComponents.Clear();
 
 
             // add the orders from the database for this user  
             foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(SelectedShare)
-                .Where(o => SelectByUser(o))
-                .OrderByDescending((o) => { return o.Date; }))
+                .Where(o => SelectByUser(o)))
             {
-                Orders.Add(new OrderViewModel(order));
+                ShareComponents.Add(new OrderViewModel(order));
             }
 
             // add the dividends from the database for this user
             foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(SelectedShare)
-                  .Where(dividend => SelectByUser(dividend))
-                  .OrderByDescending((dividend) => { return dividend.DayOfPayment; }))
+                  .Where(dividend => SelectByUser(dividend)))
             {
-                Orders.Add(new DividendViewModel(dividend));
+                ShareComponents.Add(new DividendViewModel(dividend));
             }
+
+            //sort the displayed by Date
+            ShareComponents = SortCollection(ShareComponents, "Date", false);
 
             // notify UI of changes
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
@@ -318,7 +318,7 @@ namespace StockMarket.ViewModels
 
         private void SortOrders(object o)
         {
-            if (Orders.Count > 1)
+            if (ShareComponents.Count > 1)
             {
                 // check if clicked item is a column header
                 if (o.GetType() == typeof(GridViewColumnHeader))
@@ -352,7 +352,7 @@ namespace StockMarket.ViewModels
                     }
 
                     //sort the orders
-                    Orders = SortCollection<CollectionViewModel>(Orders, headerClicked, lastSortAscending);
+                    ShareComponents = SortCollection(ShareComponents, headerClicked, lastSortAscending);
                    
                     // set the last sorted by for next sort
                     lastSortedBy = headerClicked;

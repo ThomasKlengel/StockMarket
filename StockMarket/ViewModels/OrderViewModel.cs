@@ -10,7 +10,7 @@ namespace StockMarket.ViewModels
     /// <summary>
     /// A ViewModel for a single <see cref="Order"/>
     /// </summary>
-    public class OrderViewModel : CollectionViewModel
+    public class OrderViewModel : ShareComponentViewModel
     {
         #region ctor
         /// <summary>
@@ -208,7 +208,7 @@ namespace StockMarket.ViewModels
                     default: // buys, default for safety
                         {
                             //get buys and sells
-                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN).FindAll((o)=> { return o.UserName == UserName; });
                             var sells = orders.FindAll(o => o.OrderType == ShareComponentType.sell).OrderBy(o => o.Date).ToList();
                             var buysPrior = orders.FindAll(o => o.OrderType == ShareComponentType.buy && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
 
