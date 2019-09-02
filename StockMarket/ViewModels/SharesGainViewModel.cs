@@ -17,12 +17,13 @@ namespace StockMarket.ViewModels
         public SharesGainViewModel() : base()
         {
             // create an empty collection
-            Shares = new ObservableCollection<ShareGainViewModel>();
+            Shares = new ObservableCollection<ShareViewModel>();
             SortCommand = new RelayCommand(SortShares);
         }
 
         public override void UserChanged()
         {
+            #region set Shares for the user
             // get all orders of the current user
             var ordersbyUser = DataBaseHelper.GetAllItemsFromDB<Order>().Where(o => (SelectByUser(o)));
             // add the ISINs for these orders (HashSet only allows uniques -> duplicates are not added)
@@ -43,12 +44,18 @@ namespace StockMarket.ViewModels
             // add the shares from the database to the collection (oderd by the name)
             foreach (var share in unsortedShares.OrderBy((s) => { return s.ShareName; }))
             {
-                ShareGainViewModel svm = new ShareGainViewModel(share);
+                ShareViewModel svm = new ShareViewModel(share);
                 Shares.Add(svm);
                 // add a handler for updating the ui in relevant cases
                 svm.PropertyChanged += Share_RelevantPropertyChanged;
             }
+            #endregion
 
+
+
+
+            // notify Shares of CurrentUser so they refresh their values
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
         #endregion
 
@@ -73,7 +80,38 @@ namespace StockMarket.ViewModels
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
                         break;
                     }
+                case "Amount":
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
+                        break;
+                    }
+                case "AmountSold":
+                    {
+                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
+                        break;
+                    }
                 default: break;
+            }
+
+            if (e.PropertyName == "SumNow")
+            {
+                List<ShareComponentViewModel> all = new List<ShareComponentViewModel>();
+                List<ShareComponentViewModel> divs = new List<ShareComponentViewModel>();
+                foreach (var share in Shares)
+                {
+                    foreach (var component in share.ShareComponents)
+                    {
+                        all.Add(component);
+                        if (component.ComponentType == ShareComponentType.dividend)
+                        {
+                            divs.Add(component);
+                        }
+                    }
+                }
+                TileAll = new TileViewModel(all, ShareComponentType.buy);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
+                TileDividends = new TileViewModel(divs,ShareComponentType.dividend);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
             }
         }
         #endregion
@@ -82,7 +120,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// All shares managed by this program
         /// </summary>
-        public ObservableCollection<ShareGainViewModel> Shares { get; private set; }
+        public ObservableCollection<ShareViewModel> Shares { get; private set; }
 
         /// <summary>
         /// The summed up price for all orders on the date of purchase
@@ -153,6 +191,16 @@ namespace StockMarket.ViewModels
             }
         }
 
+        
+        public TileViewModel TileAll
+        {
+            get;set;
+        }
+
+        public TileViewModel TileDividends
+        {
+            get; set;
+        }
         #endregion
 
         #region Commands
@@ -194,7 +242,7 @@ namespace StockMarket.ViewModels
                     }
 
                     // Sort the shares
-                    Shares = SortCollection<ShareGainViewModel>(Shares, headerClicked, lastSortAscending);   
+                    Shares = SortCollection<ShareViewModel>(Shares, headerClicked, lastSortAscending);   
 
                     // set the last sorted by for next sort
                     lastSortedBy = headerClicked;

@@ -30,8 +30,8 @@ namespace StockMarket.ViewModels
             AddShareCommand = new RelayCommand(AddShare);
             AddDividendCommand = new RelayCommand(AddDividend);
             AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
-            DisplayOrderOverviewCommand = new RelayCommand(DisplayOrderOverview, CanDisplayOrderOverview);
-            DisplayShareOverviewCommand = new RelayCommand(DisplayShareOverview, CanDisplayShareOverview);
+            DisplaySingleShareOverviewCommand = new RelayCommand(DisplaySingleShareOverview, CanDisplaySingleShareOverview);
+            DisplaySharesOverviewCommand = new RelayCommand(DisplaySharesOverview, CanDisplaySharesOverview);
             DisplayShareDetailCommand = new RelayCommand(DisplayShareDetail, CanDisplayShareDetail);
 
             // create a timer for updating the Sharevalues in the database
@@ -247,16 +247,16 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
-        #region Display Order Gain Command
-        public RelayCommand DisplayOrderOverviewCommand { get; private set; }
+        #region Display Single Share Gain Command
+        public RelayCommand DisplaySingleShareOverviewCommand { get; private set; }
 
-        private void DisplayOrderOverview(object o)
+        private void DisplaySingleShareOverview(object o)
         {
-            DisplayPage = new Pages.OrdersOverviewPage();
+            DisplayPage = new Views.ShareGainPage();
             ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
 
-        private bool CanDisplayOrderOverview(object o)
+        private bool CanDisplaySingleShareOverview(object o)
         {
             int orders = 0;
 
@@ -279,16 +279,16 @@ namespace StockMarket.ViewModels
         }
         #endregion
 
-        #region Display Share Gain Command
-        public RelayCommand DisplayShareOverviewCommand { get; private set; }
+        #region Display Shares Gain Command
+        public RelayCommand DisplaySharesOverviewCommand { get; private set; }
 
-        private void DisplayShareOverview(object o)
+        private void DisplaySharesOverview(object o)
         {
             DisplayPage = new Pages.SharesOverviewPage();
             ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
 
-        private bool CanDisplayShareOverview(object o)
+        private bool CanDisplaySharesOverview(object o)
         {
             int count = 0;
             // try-catch only for UI generator

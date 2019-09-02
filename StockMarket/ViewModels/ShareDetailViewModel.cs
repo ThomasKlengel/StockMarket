@@ -9,7 +9,7 @@ using System.Windows.Controls;
 
 namespace StockMarket.ViewModels
 {
-    public class ShareDetailViewModel : ShareViewModel
+    public class ShareDetailViewModel : AddShareViewModel
     {
         #region ctors
         public ShareDetailViewModel()

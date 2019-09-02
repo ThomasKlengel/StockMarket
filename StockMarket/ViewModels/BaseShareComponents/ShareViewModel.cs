@@ -10,82 +10,35 @@ using System.Windows.Threading;
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>
+    /// A ViewModel for a <see cref="Share"/>
     /// </summary>
-    class OrderGainViewModel : ShareComponentViewModel
+    class ShareViewModel : ShareComponentViewModel
     {
 
-        //TODO: rename ViewModel, since its essentially the VieModel for a "ShareGainViewModel"
-        //create an additional one for the page it is displayed on, inheriting from this one
-
-
         #region Constructors
-        public OrderGainViewModel():base()
+        public ShareViewModel():base()
         {
-            Shares = new ObservableCollection<Share>();
             ShareComponents = new ObservableCollection<ShareComponentViewModel>();
         }
 
-        public override void UserChanged()
+        public ShareViewModel(Share share) : base()
         {
-            // gets all orders for the current user
-            var ordersByUser = DataBaseHelper.GetAllItemsFromDB<Order>().Where(o=>(SelectByUser(o)));
-            // add any isin of these orders (HashSet only allows uniques -> duplicates are not added)
-            var unique = new HashSet<string>();
-            foreach (var order in ordersByUser)
-            {
-                unique.Add(order.ISIN);
-            }
-            // clear the colections
-            Shares.Clear();
-            ShareComponents.Clear();
-            var unsortedShares = new ObservableCollection<Share>();
-            // get all shares for the user
-            foreach (var isin in unique)
-            {
-                unsortedShares.Add(DataBaseHelper.GetItemsFromDB<Share>(isin).First());
-            }
-            // sort the shares by name
-            foreach (var share in unsortedShares.OrderBy((s) => { return s.ShareName; }))
-            {
-                Shares.Add(share);
-            }
+            ShareComponents = new ObservableCollection<ShareComponentViewModel>();
+            baseShare = share;
+            ShareName = share.ShareName;
+            WebSite = share.WebSite;
+            WebSite2 = share.WebSite2;
+            WebSite3 = share.WebSite3;
+            WKN = share.WKN;
+            ISIN = share.ISIN;
+            IsShare = share.ShareType == ShareType.Share ? true : false;
+            Factor = IsShare == true ? (byte)1  : (byte)10;
 
-            if (Shares.Count > 0)
-            {
-                // set the selected share for initially creating the view model
-                SelectedShare = Shares.First();
-
-                // set the command for sorting the Orders
-                SortCommand = new RelayCommand(SortOrders);
-
-                // create a timer for refreshing the shown prices
-                var refrehTimer = new DispatcherTimer();
-                refrehTimer.Interval = new TimeSpan(0, 10, 0);
-                refrehTimer.Tick += RefrehTimer_Tick;
-                refrehTimer.Start();
-            }
         }
 
         #endregion
 
         #region Properties
-        /// <summary>
-        /// The average share price for the orders
-        /// </summary>
-        public double AvgSharePrice
-        {
-            get
-            {
-                double sum = 0;
-                foreach (var order in ShareComponents)
-                {
-                    sum += order.SinglePriceBuy;
-                };
-                return sum / ShareComponents.Count;
-            }
-        }
-
 
         /// <summary>
         /// The current share price for the orders
@@ -200,36 +153,153 @@ namespace StockMarket.ViewModels
         /// </summary>
         public ObservableCollection<ShareComponentViewModel> ShareComponents { get; set; }
 
-        /// <summary>
-        /// The <see cref="Share"/>s that are currently managed in the database
-        /// </summary>
-        public ObservableCollection<Share> Shares { get; private set; }
+        #region Propties of Share itself (from Share Data model)
+        private readonly Share baseShare;
 
-        private Share _selectedShare;
+        private string _shareName;
         /// <summary>
-        /// The <see cref="Share"/> that is currently selected
+        /// The name of the stock company
         /// </summary>
-        public Share SelectedShare
+        public string ShareName
         {
-            get { return _selectedShare; }
+            get { return _shareName; }
             set
             {
-                if (_selectedShare != value)
+                if (_shareName != value)
                 {
-                    _selectedShare = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
-
-                    if (SelectedShare != null)
-                    {
-                        // refresh the orders list
-                        SetOrdersInitially();
-                        // refresh the prices for the orders
-                        RefreshPriceAsync();
-                    }
+                    _shareName = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
                 }
             }
         }
 
+        private string _webSite;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite
+        {
+            get { return _webSite; }
+            set
+            {
+                if (_webSite != value)
+                {
+                    _webSite = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                }
+            }
+        }
+
+        private string _webSite2;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite2
+        {
+            get { return _webSite2; }
+            set
+            {
+                if (_webSite2 != value)
+                {
+                    _webSite2 = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite2)));
+                }
+            }
+        }
+
+        private string _webSite3;
+        /// <summary>
+        /// The website from which to get the data for the <see cref="Share"/>
+        /// </summary>
+        public string WebSite3
+        {
+            get { return _webSite3; }
+            set
+            {
+                if (_webSite3 != value)
+                {
+                    _webSite3 = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite3)));
+                }
+            }
+        }
+
+        private string _wkn;
+        /// <summary>
+        /// Thw WKN of the <see cref="Share"/>
+        /// </summary>
+        public string WKN
+        {
+            get { return _wkn; }
+            set
+            {
+                if (_wkn != value)
+                {
+                    _wkn = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                }
+            }
+        }
+
+        private string _isin;
+        /// <summary>
+        /// The ISIN of the <see cref="Share"/>
+        /// </summary>
+        public string ISIN
+        {
+            get { return _isin; }
+            set
+            {
+                if (_isin != value)
+                {
+                    _isin = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                }
+            }
+        }
+
+        private bool _shareTypeIsShare = true;
+        public bool IsShare
+        {
+            get { return _shareTypeIsShare; }
+            set
+            {
+                if (value)
+                {
+                    _shareTypeIsShare = true;
+                }
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
+            }
+        }
+
+        public bool IsCertificate
+        {
+            get { return !_shareTypeIsShare; }
+            set
+            {
+                if (value)
+                {
+                    _shareTypeIsShare = false;
+                }
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
+            }
+        }
+
+        private byte _factor;
+        public byte Factor
+        {
+            get { return _factor; }
+            set
+            {
+                if (_factor != value)
+                {
+                    _factor = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Factor)));
+                }
+            }
+        }
+
+        #endregion
         #endregion
 
         #region Methods
@@ -248,14 +318,14 @@ namespace StockMarket.ViewModels
 
 
             // add the orders from the database for this user  
-            foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(SelectedShare)
+            foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(baseShare)
                 .Where(o => SelectByUser(o)))
             {
                 ShareComponents.Add(new OrderViewModel(order));
             }
 
             // add the dividends from the database for this user
-            foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(SelectedShare)
+            foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(baseShare)
                   .Where(dividend => SelectByUser(dividend)))
             {
                 ShareComponents.Add(new DividendViewModel(dividend));
@@ -267,8 +337,9 @@ namespace StockMarket.ViewModels
             // notify UI of changes
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(AvgSharePrice)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+
+            RefreshPriceAsync();
 
         }
 
@@ -277,41 +348,16 @@ namespace StockMarket.ViewModels
         /// </summary>
         private async void RefreshPriceAsync()
         {
-            // get the website content
-            var content = await WebHelper.getWebContent(SelectedShare.WebSite);
-            //get the price
-            var price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
-            if (price == 0.0)
-            {
-                 content = await WebHelper.getWebContent(SelectedShare.WebSite2);
-                //get the price
-                 price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
-            }
-            if (price == 0.0)
-            {
-                content = await WebHelper.getWebContent(SelectedShare.WebSite3);
-                //get the price
-                price = RegexHelper.GetSharePrice(content, SelectedShare.ShareType);
-            }
+            var price = await RegexHelper.GetSharePriceAsync(baseShare);
 
             //set the price for the UI
             SinglePriceNow = price;
         }
-        #endregion
 
-        #region Handler
-
-        /// <summary>
-        /// Eventhandler that refreshes the current price
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void RefrehTimer_Tick(object sender, EventArgs e)
+        public override void UserChanged()
         {
-            //refresh the actual prices
-            RefreshPriceAsync();
+            SetOrdersInitially();
         }
-
         #endregion
 
         #region Commands

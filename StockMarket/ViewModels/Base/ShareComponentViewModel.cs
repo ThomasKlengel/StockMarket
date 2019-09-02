@@ -12,6 +12,7 @@ namespace StockMarket.ViewModels
     public abstract class ShareComponentViewModel: ViewModelBase, IShareComponent
     {
         //TODO: maybe Split up Sorting Method to seperate Class?
+        //TODO: maybe set User Stuff to seperate UserViewViewModel (Which implements ViewModelBase)
 
         #region Fields
         /// <summary>

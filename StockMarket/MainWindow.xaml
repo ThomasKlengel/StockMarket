@@ -29,11 +29,11 @@
                     <MenuItem Header="AddShare" Command="{Binding AddShareCommand}"/>
                     <MenuItem Header="AddDividend" Command="{Binding AddDividendCommand}"/>
                     <MenuItem Header="View Details" Command="{Binding DisplayShareDetailCommand}"/>
-                    <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplayShareOverviewCommand}"/>
+                    <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplaySharesOverviewCommand}"/>
                 </MenuItem>
                 <MenuItem Header="Order" Margin="5">
                     <MenuItem Header="Add Order" Command="{Binding AddOrderCommand}"/>
-                    <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplayOrderOverviewCommand}"/>
+                    <MenuItem Header="Gain/Loss Overview" Command="{Binding DisplaySingleShareOverviewCommand}"/>
                 </MenuItem>
             </Menu>
         </Grid>

@@ -44,7 +44,6 @@ namespace StockMarket.ViewModels
 
         private readonly string ISIN;
 
-
         override public int AmountSold
         {
             get
@@ -342,7 +341,7 @@ namespace StockMarket.ViewModels
                     order.OrderType = ShareComponentType.buy;
                     order.SharePrice = Convert.ToDouble(SinglePriceBuy);
                     order.Date = DateTime.Today;
-                    order.ISIN = (cobo.SelectedItem as ShareViewModel).ISIN;
+                    order.ISIN = (cobo.SelectedItem as AddShareViewModel).ISIN;
 
                     // add the order to the matching share
                     DataBaseHelper.AddOrderToDB(order);

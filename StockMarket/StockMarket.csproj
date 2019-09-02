@@ -111,12 +111,18 @@
     <Compile Include="Helper\RegexHelper.cs" />
     <Compile Include="Helper\Saver.cs" />
     <Compile Include="Helper\WebHelper.cs" />
-    <Compile Include="ViewModels\DividendViewModel.cs" />
+    <Compile Include="ViewModels\BaseShareComponents\DividendViewModel.cs" />
+    <Compile Include="ViewModels\BaseShareComponents\ShareViewModel.cs" />
+    <Compile Include="ViewModels\SingleShareGainViewModel.cs" />
+    <Compile Include="ViewModels\TileViewModel.cs" />
     <Compile Include="Views\AddDividendPage.xaml.cs">
       <DependentUpon>AddDividendPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\AddUserPage.xaml.cs">
       <DependentUpon>AddUserPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShareGainPage.xaml.cs">
+      <DependentUpon>ShareGainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\ShareDetailPage.xaml.cs">
       <DependentUpon>ShareDetailPage.xaml</DependentUpon>
@@ -133,9 +139,6 @@
     <Compile Include="Views\BlankPage.xaml.cs">
       <DependentUpon>BlankPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\OrdersGainPage.xaml.cs">
-      <DependentUpon>OrdersGainPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataModels\Share.cs" />
     <Compile Include="ViewModels\AddDividendViewModel.cs" />
     <Compile Include="ViewModels\AddUserViewModel.cs" />
@@ -144,18 +147,20 @@
     <Compile Include="ViewModels\Commands\RelayCommand.cs" />
     <Compile Include="ViewModels\DayValueViewModel.cs" />
     <Compile Include="ViewModels\MainWindowViewModel.cs" />
-    <Compile Include="ViewModels\ShareGainViewModel.cs" />
     <Compile Include="ViewModels\SharesGainViewModel.cs" />
-    <Compile Include="ViewModels\OrderGainViewModel.cs" />
-    <Compile Include="ViewModels\OrderViewModel.cs" />
+    <Compile Include="ViewModels\BaseShareComponents\OrderViewModel.cs" />
     <Compile Include="ViewModels\ShareDetailViewModel.cs" />
-    <Compile Include="ViewModels\ShareViewModel.cs" />
+    <Compile Include="ViewModels\AddShareViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
     <Page Include="Views\AddDividendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\AddUserPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ShareGainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -195,10 +200,6 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="Views\BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Views\OrdersGainPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

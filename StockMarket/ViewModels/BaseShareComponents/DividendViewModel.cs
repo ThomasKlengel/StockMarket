@@ -24,7 +24,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// Creates a ViewModel for an order from an order 
         /// </summary>
-        /// <param name="order">The <see cref="Order"/> to create a ViewModel for</param>
+        /// <param name="dividend">The <see cref="Dividend"/> to create a ViewModel for</param>
         public DividendViewModel(Dividend dividend) : base()
         {
             this.Amount = dividend.Amount;

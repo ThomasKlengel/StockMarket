@@ -110,7 +110,7 @@ namespace StockMarket
         /// <param name="share">The <see cref="Share"/> to add</param>
         /// <param name="path">The path to the database to insert the <see cref="Share"/>into</param>
         /// <returns>1 if successful, 0 if a share matching the ISIN already exists, -1 if an error occured</returns>
-        public static short AddShareToDB(ShareViewModel share, string path = DEFAULTPATH)
+        public static short AddShareToDB(AddShareViewModel share, string path = DEFAULTPATH)
         {
             try
             {   // connect to the database

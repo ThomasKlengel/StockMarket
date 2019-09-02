@@ -7,10 +7,10 @@ using System.Windows.Controls;
 
 namespace StockMarket.ViewModels
 {
-    public class ShareViewModel : ViewModelBase
+    public class AddShareViewModel : ViewModelBase
     {
         #region ctors
-        public ShareViewModel()
+        public AddShareViewModel()
         {
             //Orders = new ObservableCollection<OrderViewModel>();
             //DayValues = new ObservableCollection<DayValueViewModel>();
@@ -190,7 +190,7 @@ namespace StockMarket.ViewModels
         
         /// <summary>
         /// The execute method of of the AutoFill<see cref="RelayCommand"/>
-        /// Sets <see cref="ShareViewModel"/> properties after reading data from a website
+        /// Sets <see cref="AddShareViewModel"/> properties after reading data from a website
         /// </summary>
         /// <param name="o">A parameter for this method</param>
         private async void AutofillAsync(object o)

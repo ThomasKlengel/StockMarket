@@ -16,7 +16,7 @@
         </ResourceDictionary>
     </Page.Resources>
     <Page.DataContext>
-        <view:ShareViewModel/>
+        <view:AddShareViewModel/>
     </Page.DataContext>
     
     <!-- define grid rows-->
