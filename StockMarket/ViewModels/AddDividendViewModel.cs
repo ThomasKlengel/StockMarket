@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 
 namespace StockMarket.ViewModels
 {
@@ -340,53 +341,63 @@ namespace StockMarket.ViewModels
                     // create a rectangle from which to read (dont set for complete page)
                     System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
                     var Results = Ocr.ReadPdf(pdfToRead, area, 1);
-                    var lines = Results.Pages[0].LinesOfText;
+                    var lines = Results.Pages[0].LinesOfText;               
+
 
                     // get Amount, ISIN, WKN
                     foreach (var line in lines)
                     {
                         if (line.Text.StartsWith("Stück"))
                         {
-                            // get ordered amount
-                            var strAmount = line.Words[1].Text;
-                            int intAmount = 0;
-                            Int32.TryParse(strAmount, out intAmount);
-                            Amount = intAmount;
+                            try
+                            {
+                                // get ordered amount
+                                var strAmount = line.Words[1].Text;
+                                int intAmount = 0;
+                                Int32.TryParse(strAmount, out intAmount);
+                                Amount = intAmount;
 
-                            // Share by ISIN or WKN
-                            var isin = line.Words[(line.WordCount - 2)].Text;
-                            var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
+                                // Share by ISIN or WKN
+                                var isin = line.Words[(line.WordCount - 2)].Text;
+                                var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
 
 
-                            // try to match a Share already in the database
-                            // first by ISIN
-                            var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));                            
-                            if (sharesByIsin.Count() != 0)
-                            {
-                                SelectedShare = sharesByIsin.First();
-                                break;
+                                // try to match a Share already in the database
+                                // first by ISIN
+                                var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));
+                                if (sharesByIsin.Count() != 0)
+                                {
+                                    SelectedShare = sharesByIsin.First();
+                                    break;
+                                }
+                                // if none is found by ISIN try by WKN
+                                var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
+                                if (sharesByWkn.Count() != 0)
+                                {
+                                    SelectedShare = sharesByWkn.First();
+                                    break;
+                                }
+                                // if none is found by WKN try by ISIN with "O" replaced by zeros
+                                var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
+                                if (sharesByIsin0.Count() != 0)
+                                {
+                                    SelectedShare = sharesByIsin0.First();
+                                    break;
+                                }
+                                // if none is found try by WKN with "O" replaced by zeros
+                                var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
+                                if (sharesByWkn0.Count() != 0)
+                                {
+                                    SelectedShare = sharesByWkn0.First();
+                                    break;
+                                }
                             }
-                            // if none is found by ISIN try by WKN
-                            var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
-                            if (sharesByWkn.Count() != 0)
+                            catch (Exception)
                             {
-                                SelectedShare = sharesByWkn.First();
-                                break;
+                                MessageBox.Show("Error on reading amount, ISIN or WKN");
                             }
-                            // if none is found by WKN try by ISIN with "O" replaced by zeros
-                            var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
-                            if (sharesByIsin0.Count() != 0)
-                            {
-                                SelectedShare = sharesByIsin0.First();
-                                break;
-                            }
-                            // if none is found try by WKN with "O" replaced by zeros
-                            var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
-                            if (sharesByWkn0.Count() != 0)
-                            {
-                                SelectedShare = sharesByWkn0.First();
-                                break;
-                            }
+                            
+
                             // if none is found, dont select any order
                             break;
                         }
@@ -397,13 +408,20 @@ namespace StockMarket.ViewModels
                     {
                         if (line.Text.StartsWith("Ausmachender Betrag"))
                         {
-                            // get share price
-                            var strPrice = line.Words[2].Text.Replace("+", "");
-                            double doublePrice = 0.0;
-                            Double.TryParse(strPrice, out doublePrice);
-                            DividendChanged = false;
-                            DPSChanged = false;
-                            Dividend = doublePrice;
+                            try
+                            {
+                                // get share price
+                                var strPrice = line.Words[2].Text.Replace("+", "");
+                                double doublePrice = 0.0;
+                                Double.TryParse(strPrice, out doublePrice);
+                                DividendChanged = false;
+                                DPSChanged = false;
+                                Dividend = doublePrice;
+                            }
+                            catch (Exception)
+                            {
+                                MessageBox.Show("Error on reading of whole dividend");
+                            }
                             break;
                         }
                     }
@@ -413,13 +431,19 @@ namespace StockMarket.ViewModels
                     {
                         if (line.Text.StartsWith("Bestandsstichtag"))
                         {
-
-                            var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
-                            // get share price
-                            var strDate = match.Value;
-                            DateTime Date;
-                            DateTime.TryParse(strDate, out Date);
-                            DividendPayDate = Date;
+                            try
+                            {
+                                var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
+                                // get share price
+                                var strDate = match.Value;
+                                DateTime Date;
+                                DateTime.TryParse(strDate, out Date);
+                                DividendPayDate = Date;
+                            }
+                            catch (Exception)
+                            {
+                                MessageBox.Show("Error on reading of booking date");
+                            }
                             break;
                         }
                     }
@@ -429,28 +453,36 @@ namespace StockMarket.ViewModels
                     {
                         if (line.Text.StartsWith("Geschäftsjahr"))
                         {
-                            var matches = Regex.Matches(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
+                            try
+                            {
+                                var matches = Regex.Matches(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
 
-                            // get share price
-                            var strDate = matches[0].Value;
-                            DateTime Date;
-                            DateTime.TryParse(strDate, out Date);
-                            DateRangeStart = Date;
+                                // get share price
+                                var strDate = matches[0].Value;
+                                DateTime Date;
+                                DateTime.TryParse(strDate, out Date);
+                                DateRangeStart = Date;
 
-                            strDate = matches[1].Value;
-                            DateTime.TryParse(strDate, out Date);
-                            DateRangeEnd = Date;
+                                strDate = matches[1].Value;
+                                DateTime.TryParse(strDate, out Date);
+                                DateRangeEnd = Date;
+                            }
+                            catch (Exception)
+                            {
+                                MessageBox.Show("Error on reading dividend timespan");
+                            }
 
                             break;
+                            
                         }
                     }
-
                 }
-
-                catch (Exception ex)
+                catch(Exception)
                 {
-
+                    MessageBox.Show("Error on reading pdf");
                 }
+
+
 
 
                 // time for OCR ~8s ... animation für busy einbauen?

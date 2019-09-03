@@ -162,13 +162,13 @@ namespace StockMarket
             var content = await WebHelper.getWebContent(share.WebSite);
             //get the price
             var price = RegexHelper.GetSharePrice(content, share.ShareType);
-            if (price == 0.0 && share.WebSite2!= string.Empty)
+            if (price == 0.0 && !share.WebSite2.IsNullEmptyWhitespace())
             {
                 content = await WebHelper.getWebContent(share.WebSite2);
                 //get the price
                 price = RegexHelper.GetSharePrice(content, share.ShareType);
             }
-            if (price == 0.0 && share.WebSite3 != string.Empty)
+            if (price == 0.0 && !share.WebSite3.IsNullEmptyWhitespace())
             {
                 content = await WebHelper.getWebContent(share.WebSite3);
                 //get the price
