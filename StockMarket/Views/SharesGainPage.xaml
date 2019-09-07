@@ -15,15 +15,14 @@
         <!--define grid rows-->
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="100"/>
-            <RowDefinition Height="100"/>
+            <RowDefinition Height="200"/>
         </Grid.RowDefinitions>
 
         <!--Grid containing information about each share handled by the program on grid row 1-->
-            <Grid Margin="5" Grid.Row="0">
+        <Grid Margin="5" Grid.Row="0">
 
-                <!--ListView containing information about each share handled by the program-->
-                <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
+            <!--ListView containing information about each share handled by the program-->
+            <ListView ItemsSource="{Binding Path=Shares}" Name="LV">
                 <ListView.Resources>
                     <!--create style for item background color-->
                     <Style TargetType="{x:Type ListViewItem}">
@@ -36,71 +35,95 @@
                         <Setter Property="Command" Value="{Binding SortCommand}"/>
                         <Setter Property="CommandParameter" Value="{Binding RelativeSource = {RelativeSource Self}}"/>
                     </Style>
-                </ListView.Resources>                    
+                </ListView.Resources>
                 <ListView.View>
                     <!-- add items to the view-->
-                        <GridView AllowsColumnReorder="True">
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=ShareName}" Header="Name" Width="100"/>
-                            <GridViewColumn Header="Amount" Width="100">
-                                <GridViewColumn.DisplayMemberBinding>
-                                    <MultiBinding StringFormat="{}{0} (-{1})">
-                                        <Binding Path="Amount"/>
-                                        <Binding Path="AmountSold"/>
-                                    </MultiBinding>
-                                </GridViewColumn.DisplayMemberBinding>
-                            </GridViewColumn>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=SinglePriceNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="buy" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="now" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="diff" Width="100"/>
-                            <GridViewColumn DisplayMemberBinding="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}" Header="Percentage" Width="100"/>
-                        </GridView>
-                    </ListView.View>
-                </ListView>
-            </Grid>
-
-        <!--Grid containing information about all shares handled by the program on grid row 2-->
-        <Grid DataContext="{Binding TileDividends}" Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid" Grid.Row="1">
-                <!--StackPanel containing information about all shares handled by the program-->
-                <StackPanel Orientation="Horizontal">
-                    <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
-                <local:UserStackPanelList Height="60" Width="100" HeaderText="{Binding Path=Name}"/>
-                <local:UserStackPanelList Height="60" HeaderText="Amount" >
-                        <local:UserStackPanelList.ValueText>
-                            <MultiBinding StringFormat="{}{0} (-{1})">
-                                <Binding Path="Amount"/>
-                                <Binding Path="AmountSold"/>
-                            </MultiBinding>
-                        </local:UserStackPanelList.ValueText>
-                    </local:UserStackPanelList>
-                    <local:UserStackPanelList Height="60" />
-                    <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    <local:UserStackPanelList Height="60" HeaderText="Diff" ValueText="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                    <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
-                </StackPanel>
-            </Grid>
-
-        <Grid DataContext="{Binding TileAll}" Background="{Binding Path=Background}" Margin="5" Grid.Row="2">
-            <!--StackPanel containing information about all shares handled by the program-->
-            <StackPanel Orientation="Horizontal">
-                <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
-                <local:UserStackPanelList Height="60" Width="100" HeaderText="{Binding Path=Name}"/>
-                <local:UserStackPanelList Height="60" HeaderText="Amount" >
-                    <local:UserStackPanelList.ValueText>
-                        <MultiBinding StringFormat="{}{0} (-{1})">
-                            <Binding Path="Amount"/>
-                            <Binding Path="AmountSold"/>
-                        </MultiBinding>
-                    </local:UserStackPanelList.ValueText>
-                </local:UserStackPanelList>
-                <local:UserStackPanelList Height="60" />
-                <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                <local:UserStackPanelList Height="60" HeaderText="Diff" ValueText="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
-                <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
-            </StackPanel>
+                    <GridView AllowsColumnReorder="True">
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=ShareName}" Header="Name" Width="100"/>
+                        <GridViewColumn Header="Amount" Width="100">
+                            <GridViewColumn.DisplayMemberBinding>
+                                <MultiBinding StringFormat="{}{0} (-{1})">
+                                    <Binding Path="Amount"/>
+                                    <Binding Path="AmountSold"/>
+                                </MultiBinding>
+                            </GridViewColumn.DisplayMemberBinding>
+                        </GridViewColumn>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SinglePriceNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="Act Price" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="buy" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="now" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}" Header="diff" Width="100"/>
+                        <GridViewColumn DisplayMemberBinding="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}" Header="Percentage" Width="100"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
         </Grid>
 
+        <ScrollViewer Grid.Row="1">
+            <StackPanel Orientation="Vertical">
+                <!--Grid containing information about all shares handled by the program on grid row 2-->
+                <Grid DataContext="{Binding TileDividends}" Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid">
+                    <!--StackPanel containing information about all shares handled by the program-->
+                    <StackPanel Orientation="Horizontal">
+                        <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
+                        <local:UserStackPanelList Height="60" Width="100" HeaderText="{Binding Path=Name}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Amount" >
+                            <local:UserStackPanelList.ValueText>
+                                <MultiBinding StringFormat="{}{0} (-{1})">
+                                    <Binding Path="Amount"/>
+                                    <Binding Path="AmountSold"/>
+                                </MultiBinding>
+                            </local:UserStackPanelList.ValueText>
+                        </local:UserStackPanelList>
+                        <local:UserStackPanelList Height="60" />
+                        <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Diff" ValueText="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid DataContext="{Binding TileAll}" Background="{Binding Path=Background}" Margin="5" >
+                    <!--StackPanel containing information about all shares handled by the program-->
+                    <StackPanel Orientation="Horizontal">
+                        <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
+                        <local:UserStackPanelList Height="60" Width="100" HeaderText="{Binding Path=Name}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Amount" >
+                            <local:UserStackPanelList.ValueText>
+                                <MultiBinding StringFormat="{}{0} (-{1})">
+                                    <Binding Path="Amount"/>
+                                    <Binding Path="AmountSold"/>
+                                </MultiBinding>
+                            </local:UserStackPanelList.ValueText>
+                        </local:UserStackPanelList>
+                        <local:UserStackPanelList Height="60" />
+                        <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Diff" ValueText="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
+                    </StackPanel>
+                </Grid>
+
+                <Grid DataContext="{Binding TileCurrent}" Background="{Binding Path=Background}" Margin="5" >
+                    <!--StackPanel containing information about all shares handled by the program-->
+                    <StackPanel Orientation="Horizontal">
+                        <!--<local:UserStackPanelList Height="60" HeaderText="Amount" ValueText="{Binding Path=Amount}"/>-->
+                        <local:UserStackPanelList Height="60" Width="100" HeaderText="{Binding Path=Name}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Amount" >
+                            <local:UserStackPanelList.ValueText>
+                                <MultiBinding StringFormat="{}{0} (-{1})">
+                                    <Binding Path="Amount"/>
+                                    <Binding Path="AmountSold"/>
+                                </MultiBinding>
+                            </local:UserStackPanelList.ValueText>
+                        </local:UserStackPanelList>
+                        <local:UserStackPanelList Height="60" />
+                        <local:UserStackPanelList Height="60" HeaderText="SumBuy" ValueText="{Binding Path=SumBuy, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="SumNow" ValueText="{Binding Path=SumNow, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Diff" ValueText="{Binding Path=Difference, ConverterCulture='de-DE' , StringFormat= {}{0:C}}"/>
+                        <local:UserStackPanelList Height="60" HeaderText="Percentage" ValueText="{Binding Path=Percentage, StringFormat='{}{0:##0.000%}'}"/>
+                    </StackPanel>
+                </Grid>
+            </StackPanel>
+        </ScrollViewer>
     </Grid>
 </Page>

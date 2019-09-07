@@ -19,11 +19,14 @@ namespace StockMarket.ViewModels
         public ShareViewModel():base()
         {
             ShareComponents = new ObservableCollection<ShareComponentViewModel>();
+            SortCommand = new RelayCommand(SortComponents);
+
         }
 
         public ShareViewModel(Share share) : base()
         {
             ShareComponents = new ObservableCollection<ShareComponentViewModel>();
+            SortCommand = new RelayCommand(SortComponents);
             baseShare = share;
             ShareName = share.ShareName;
             WebSite = share.WebSite;
@@ -362,7 +365,7 @@ namespace StockMarket.ViewModels
 
         #region Commands
 
-        private void SortOrders(object o)
+        private void SortComponents(object o)
         {
             if (ShareComponents.Count > 1)
             {

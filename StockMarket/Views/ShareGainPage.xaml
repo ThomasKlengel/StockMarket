@@ -40,7 +40,7 @@
                     <!--create style to sort rows on column header click-->
                     <!--(columnheaders a buttons by default)-->
                     <Style TargetType="{x:Type GridViewColumnHeader}">
-                        <Setter Property="Command" Value="{Binding SortCommand}"/>
+                        <Setter Property="Command" Value="{Binding Path=DisplayedShare.SortCommand}"/>
                         <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource Self}}"/>
                     </Style>
                 </ListView.Resources>

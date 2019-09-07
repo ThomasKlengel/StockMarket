@@ -2,6 +2,8 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Windows.Controls;
+using System.Windows.Data;
 
 namespace StockMarket.ViewModels
 {
@@ -11,14 +13,10 @@ namespace StockMarket.ViewModels
     class SingleShareGainPageViewModel : ShareComponentViewModel
     {
 
-        //TODO: rename ViewModel, since its essentially the VieModel for a "ShareGainViewModel"
-        //create an additional one for the page it is displayed on, inheriting from this one
-
-
         #region Constructors
         public SingleShareGainPageViewModel():base()
         {
-            Shares = new ObservableCollection<Share>();            
+            Shares = new ObservableCollection<Share>();
         }
 
         private void DisplayedShare_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -128,56 +126,6 @@ namespace StockMarket.ViewModels
         {
             get; set;
         }
-
-        #endregion
-
-
-        #region Commands
-
-        //private void SortOrders(object o)
-        //{
-        //    if (ShareComponents.Count > 1)
-        //    {
-        //        // check if clicked item is a column header
-        //        if (o.GetType() == typeof(GridViewColumnHeader))
-        //        {
-        //            var header = o as GridViewColumnHeader;
-
-        //            var headerClicked = "";
-        //            // if the binding is a binding...
-        //            if (header.Column.DisplayMemberBinding.GetType() == typeof(Binding))
-        //            { //... set the header to the bound path
-        //                var content = header.Column.DisplayMemberBinding as Binding;
-        //                headerClicked = content.Path.Path;
-        //                if (headerClicked.Contains("Date"))
-        //                {
-        //                    headerClicked = "Date";
-        //                }
-        //            }
-        //            else
-        //            { //... otherwise it's amount (which is a multibinding)
-        //                headerClicked = "Amount";
-        //            }
-
-        //            //get the sort Direction
-        //            if (lastSortedBy == headerClicked)
-        //            {
-        //                lastSortAscending = !lastSortAscending;
-        //            }
-        //            else
-        //            {
-        //                lastSortAscending = false;
-        //            }
-
-        //            //sort the orders
-        //            ShareComponents = SortCollection(ShareComponents, headerClicked, lastSortAscending);
-
-        //            // set the last sorted by for next sort
-        //            lastSortedBy = headerClicked;
-
-        //        }
-        //    }
-        //}
 
         #endregion
 
