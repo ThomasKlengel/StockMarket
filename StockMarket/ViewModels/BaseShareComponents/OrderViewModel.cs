@@ -191,17 +191,18 @@ namespace StockMarket.ViewModels
                         {
                             var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
                             double sum = 0;
+                            // if it is an ETF...
                             if (DataBaseHelper.GetItemsFromDB<Share>(ISIN).First().ShareType == ShareType.ETF)
-                            {
+                            {   // ... go through each order for the share
                                 foreach (var order in orders)
-                                {
+                                {   // if it is reinvesting
                                     if (order.ReInvesting)
-                                    {
+                                    {   // accumulate since orderdate
                                         var monthSinceBuy = (DateTime.Today.Date.Month - orders.First().Date.Month);
                                         sum += orders.First().Amount * orders.First().SharePrice * monthSinceBuy;
                                     }
                                     else
-                                    {
+                                    {   // sum is the same as for regular share
                                         sum += order.SharePrice * order.Amount + OrderExpenses;
                                     }
                                 }
