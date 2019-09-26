@@ -51,8 +51,9 @@ namespace StockMarket
         /// </summary>
         public string ISIN { get; set; }
 
-        public string UserName { get; set; }
+        public string UserName { get; set; }        
 
+        public bool ReInvesting { get; set; }
         #endregion
     }
 

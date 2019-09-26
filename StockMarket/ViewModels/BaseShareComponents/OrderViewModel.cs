@@ -102,8 +102,11 @@ namespace StockMarket.ViewModels
                 {
                     case ShareComponentType.sell:
                         {
-                            //get buys and sells
                             var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+
+
+                            //get buys and sells
+                            
                             var sellsPrior = orders.FindAll(o => o.OrderType == ShareComponentType.sell && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
                             var buys = orders.FindAll(o => o.OrderType == ShareComponentType.buy).OrderBy(o => o.Date).ToList();
 
@@ -186,8 +189,30 @@ namespace StockMarket.ViewModels
                         }
                     default: // buys, for safety as default
                         {
-                            // sum up the prices                     
-                            return SinglePriceBuy * (Amount) + OrderExpenses;
+                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+                            double sum = 0;
+                            // if it is an ETF...
+                            if (DataBaseHelper.GetItemsFromDB<Share>(ISIN).First().ShareType == ShareType.ETF)
+                            {   // ... go through each order for the share
+                                foreach (var order in orders)
+                                {   // if it is reinvesting
+                                    if (order.ReInvesting)
+                                    {   // accumulate since orderdate
+                                        var monthSinceBuy = (DateTime.Today.Date.Month - orders.First().Date.Month);
+                                        sum += orders.First().Amount * orders.First().SharePrice * monthSinceBuy;
+                                    }
+                                    else
+                                    {   // sum is the same as for regular share
+                                        sum += order.SharePrice * order.Amount + OrderExpenses;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                sum = SinglePriceBuy * (Amount) + OrderExpenses;
+                            }
+                                                
+                            return sum;
                         }
                 }
             }

@@ -91,7 +91,7 @@ namespace StockMarket
     public enum ShareType
     {
         Share=0,
-        Certificate=1,
-        ETF=2
+        Certificate=1, 
+        ETF = 2
     }
 }

@@ -1,0 +1,11 @@
+﻿ETFs:
+
+input mask order:
+	- add monthly
+	- add start day
+	- add end day
+
+calculations
+	 - amont today: foreach month after including buy (amount += order buyprice/price per piece at day of ourchase)
+	 - price today: foreach month after including buy (amount today * price per piece today)
+	 - buyprice: foreach month after including buy (price+= orderbuyprice)
