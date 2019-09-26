@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using SQLite;
 
 namespace StockMarket
@@ -15,7 +11,7 @@ namespace StockMarket
 
         public Dividend() { UserName = new User().ToString(); }
 
-        public Dividend(string isin, DateTime dayOfPayment, double paymentValue, int amountOfShares, DateTime dateRangeStart, DateTime dateRangeEnd)
+        public Dividend(string isin, DateTime dayOfPayment, double paymentValue, double amountOfShares, DateTime dateRangeStart, DateTime dateRangeEnd)
         {
             ISIN = isin;
             DayOfPayment = dayOfPayment;
@@ -50,7 +46,7 @@ namespace StockMarket
         /// <summary>
         /// The amount of shares for which the dividen is payed
         /// </summary>
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         /// <summary>
         /// The start date of the period of time for which the dividend is payed

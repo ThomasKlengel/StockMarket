@@ -207,17 +207,20 @@ namespace StockMarket
             return Regex.Match(isin, REGEX_ISIN_Valid).Success;
         }
 
-        public static bool IsShareTypeShare(string website)
+        public static ShareType GetShareTypeShare(string website)
         {
             if (Regex.Match(website, "aktien").Success)
             {
-                return true;
+                return ShareType.Share;
             }
             else if (Regex.Match(website, "optionsscheine").Success)
             {
-                return false;
+                return ShareType.Certificate;
             }
-            return true;
+            else
+            {
+                return ShareType.ETF;
+            }
         }
 
     }

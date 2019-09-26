@@ -129,11 +129,11 @@ namespace StockMarket.ViewModels
             }
         }
                
-        private int _amount;
+        private double _amount;
         /// <summary>
         /// The amount of shares purchased
         /// </summary>
-        public int Amount
+        public double Amount
         {
             get { return _amount; }
             set

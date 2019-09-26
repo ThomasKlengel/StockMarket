@@ -142,30 +142,55 @@ namespace StockMarket.ViewModels
             }
         }
 
-        private bool _shareTypeIsShare=true;
+        private ShareType _shareType = ShareType.Share;
+        public ShareType ShareType
+            {
+            get { return _shareType; }
+            set
+            {
+                if (_shareType!=value)
+                {
+                    _shareType = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareType)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsETF)));
+                }
+            }
+            }
         public bool IsShare
         {
-            get { return _shareTypeIsShare; }
+            get { return ShareType == ShareType.Share;  }
             set
             {
                 if (value)
                 {
-                    _shareTypeIsShare = true;
+                    ShareType = ShareType.Share;
                 }
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
             }
         }
 
         public bool IsCertificate
         {
-            get { return !_shareTypeIsShare; }
+            get { return ShareType == ShareType.Certificate; }
             set
             {
                 if (value)
                 {
-                    _shareTypeIsShare = false;
+                    ShareType = ShareType.Certificate;
                 }
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
+            }
+        }
+
+        public bool IsETF
+        {
+            get { return ShareType == ShareType.ETF; }
+            set
+            {
+                if (value)
+                {
+                    ShareType = ShareType.ETF;
+                }
             }
         }
 
@@ -199,14 +224,21 @@ namespace StockMarket.ViewModels
             string webContent = await WebHelper.getWebContent(WebSite);
 
             //check the share type
-            if (RegexHelper.IsShareTypeShare(WebSite))
+            var type = RegexHelper.GetShareTypeShare(WebSite);
+            switch (type)
             {
-                IsShare = true;
+                case ShareType.Share:
+                    IsShare = true;
+                    break;
+                case ShareType.Certificate:
+                    IsCertificate = true;
+                    break;
+                case ShareType.ETF:
+                    IsShare = false;
+                    IsCertificate = false;
+                    break;
             }
-            else
-            {
-                IsCertificate = true;
-            }
+
 
 
             //set empty values

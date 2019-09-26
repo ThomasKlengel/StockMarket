@@ -64,10 +64,10 @@ namespace StockMarket.ViewModels
         readonly double _sumBuy;
         public override double SumBuy { get { return _sumBuy; } }
 
-        readonly int _amountSold;
-        public override int AmountSold { get { return _amountSold; } }
+        readonly double _amountSold;
+        public override double AmountSold { get { return _amountSold; } }
 
-        public override int Amount { get { return _amount; } }
+        public override double Amount { get { return _amount; } }
 
         private readonly double _percentage;
         public override double Percentage

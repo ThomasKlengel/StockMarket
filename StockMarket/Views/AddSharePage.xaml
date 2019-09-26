@@ -30,7 +30,7 @@
         <Grid  Margin="10" VerticalAlignment="Top" Grid.Row="0">
             <!-- define grid columns-->
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"></ColumnDefinition>
+                <ColumnDefinition Width="120"></ColumnDefinition>
                 <ColumnDefinition Width="*"></ColumnDefinition>
             </Grid.ColumnDefinitions>
             

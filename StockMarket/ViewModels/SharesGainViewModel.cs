@@ -68,7 +68,7 @@ namespace StockMarket.ViewModels
                 // go through each share (of the current user)
                 foreach (var share in Shares)
                 {
-                    int currentAmount = 0;
+                    double currentAmount = 0;
                     // calc the current amount of shares
                     foreach(var component in share.ShareComponents)
                     {

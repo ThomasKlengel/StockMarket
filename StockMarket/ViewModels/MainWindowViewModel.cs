@@ -78,7 +78,7 @@ namespace StockMarket.ViewModels
                 {
                     var orders = DataBaseHelper.GetItemsFromDB<Order>(shares[i]);
 
-                    int amountRemaining = 0;
+                    double amountRemaining = 0;
                     foreach (var o in orders)
                     {
 

@@ -43,7 +43,7 @@ namespace StockMarket.ViewModels
 
         private readonly string ISIN;
 
-        override public int AmountSold
+        override public double AmountSold
         {
             get
             {

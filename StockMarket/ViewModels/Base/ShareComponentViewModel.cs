@@ -93,11 +93,11 @@ namespace StockMarket.ViewModels
         public virtual double SumBuy
         { get; }
 
-        public int _amount;
+        public double _amount;
         /// <summary>
         /// The amount of bought shares
         /// </summary>
-        public virtual int Amount
+        public virtual double Amount
         {
             get { return _amount; }
             set
@@ -119,7 +119,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of sold shares
         /// </summary>
-        public virtual int AmountSold
+        public virtual double AmountSold
         {
             get; 
         }
