@@ -4,7 +4,6 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
-      xmlns:local="clr-namespace:StockMarket.Pages"
       xmlns:view="clr-namespace:StockMarket.ViewModels"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"

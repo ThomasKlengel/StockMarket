@@ -51,9 +51,6 @@ namespace StockMarket.ViewModels
             }
             #endregion
 
-
-
-
             // notify Shares of CurrentUser so they refresh their values
             ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
         }
@@ -61,57 +58,48 @@ namespace StockMarket.ViewModels
 
         #region Eventhandler
         private void Share_RelevantPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case "SumNow":
-                    {
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
-                        break;
-                    }
-                case "SumBuy":
-                    {
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Difference)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Percentage)));
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Background)));
-                        break;
-                    }
-                case "Amount":
-                    {
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
-                        break;
-                    }
-                case "AmountSold":
-                    {
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
-                        break;
-                    }
-                default: break;
-            }
-
+        { 
             if (e.PropertyName == "SumNow")
             {
+                //change the Sum Tiles displayed values
                 List<ShareComponentViewModel> all = new List<ShareComponentViewModel>();
+                List<ShareComponentViewModel> current = new List<ShareComponentViewModel>();
                 List<ShareComponentViewModel> divs = new List<ShareComponentViewModel>();
+                // go through each share (of the current user)
                 foreach (var share in Shares)
                 {
-                    foreach (var component in share.ShareComponents)
+                    int currentAmount = 0;
+                    // calc the current amount of shares
+                    foreach(var component in share.ShareComponents)
                     {
+                        if (component.ComponentType==ShareComponentType.buy)
+                        {
+                            currentAmount += component.Amount;
+                            currentAmount -= component.AmountSold;
+                        }
+                    }
+                    foreach (var component in share.ShareComponents)
+                    {   //add all ccomponents to the "all" tile
                         all.Add(component);
+                        //add dividends to the "dividends" tile
                         if (component.ComponentType == ShareComponentType.dividend)
                         {
                             divs.Add(component);
                         }
+                        // add shares where there is at least one share is currently held to the "current" tile
+                        if (currentAmount>0 && component.ComponentType== ShareComponentType.buy)
+                        {
+                            current.Add(component);
+                        }
                     }
                 }
+                // update the view of the tiles
                 TileAll = new TileViewModel(all, ShareComponentType.buy);
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
                 TileDividends = new TileViewModel(divs,ShareComponentType.dividend);
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
+                TileCurrent = new TileViewModel(current, ShareComponentType.buy);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileCurrent)));
             }
         }
         #endregion
@@ -122,82 +110,17 @@ namespace StockMarket.ViewModels
         /// </summary>
         public ObservableCollection<ShareViewModel> Shares { get; private set; }
 
-        /// <summary>
-        /// The summed up price for all orders on the date of purchase
-        /// </summary>
-        override public double SumBuy
-        {
-            get
-            {
-                double buy = 0;
-
-                foreach (var share in Shares)
-                {
-                    buy += share.SumBuy;
-                }
-                return buy;
-            }
-        }
-
-        /// <summary>
-        /// The current summed up price for all orders 
-        /// </summary>
-        override public double SumNow
-        {
-            get
-            {
-                double now = 0;
-
-                foreach (var share in Shares)
-                {
-                    now += share.SumNow;
-                }
-                return now;
-            }
-        }
-
-        /// <summary>
-        /// The amount of bought shares
-        /// </summary>
-        override public double Amount
-        {
-            get
-            {
-                double amount = 0;
-                foreach (var share in Shares)
-                {
-                    amount += share.Amount;
-                }
-
-                return amount;
-            }
-            set { return; }
-        }
-
-        /// <summary>
-        /// The amount of sold shares
-        /// </summary>
-        public override double AmountSold
-        {
-            get
-            {
-                double amount = 0;
-                foreach (var share in Shares)
-                {
-                    amount += share.AmountSold;
-                }
-
-                return amount;
-            }
-        }
-
-        
         public TileViewModel TileAll
         {
             get;set;
         }
 
         public TileViewModel TileDividends
+        {
+            get; set;
+        }
+
+        public TileViewModel TileCurrent
         {
             get; set;
         }

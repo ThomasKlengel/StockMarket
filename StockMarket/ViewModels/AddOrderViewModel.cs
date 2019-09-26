@@ -311,7 +311,7 @@ namespace StockMarket.ViewModels
                     if (line.Text.StartsWith("Wertpapier Abrechnung"))
                     {
                         var buySell = line.Words.Last().Text;
-                        OrderType = buySell == "Verkauf" ? ShareComponentType.sell : ShareComponentType.sell;
+                        OrderType = buySell == "Verkauf" ? ShareComponentType.sell : ShareComponentType.buy;
                         break;
                     }
                 }

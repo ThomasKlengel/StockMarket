@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Threading;
 
 namespace StockMarket.ViewModels
 {
@@ -15,14 +13,33 @@ namespace StockMarket.ViewModels
     class SingleShareGainPageViewModel : ShareComponentViewModel
     {
 
-        //TODO: rename ViewModel, since its essentially the VieModel for a "ShareGainViewModel"
-        //create an additional one for the page it is displayed on, inheriting from this one
-
-
         #region Constructors
         public SingleShareGainPageViewModel():base()
         {
             Shares = new ObservableCollection<Share>();
+        }
+
+        private void DisplayedShare_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "SumNow")
+            {
+                List<ShareComponentViewModel> all = new List<ShareComponentViewModel>();
+                List<ShareComponentViewModel> divs = new List<ShareComponentViewModel>();
+
+                foreach (var component in DisplayedShare.ShareComponents)
+                {
+                    all.Add(component);
+                    if (component.ComponentType == ShareComponentType.dividend)
+                    {
+                        divs.Add(component);
+                    }
+                }
+
+                TileAll = new TileViewModel(all, ShareComponentType.buy);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
+                TileDividends = new TileViewModel(divs, ShareComponentType.dividend);
+                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
+            }
         }
 
         public override void UserChanged()
@@ -91,66 +108,24 @@ namespace StockMarket.ViewModels
                         // notify Share of CurrentUser so values are refreshed
                         ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
                         OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayedShare)));
+                        DisplayedShare.PropertyChanged -= DisplayedShare_PropertyChanged;
+                        DisplayedShare.PropertyChanged += DisplayedShare_PropertyChanged;
+
+
                     }
                 }
             }
         }
 
-        public override double SumNow { get { return 0.0; } }
+        public TileViewModel TileAll
+        {
+            get; set;
+        }
 
-        public override double SumBuy { get { return 0.0; } }
-
-        public override double AmountSold { get { return 0; } }
-
-        #endregion
-
-
-        #region Commands
-
-        //private void SortOrders(object o)
-        //{
-        //    if (ShareComponents.Count > 1)
-        //    {
-        //        // check if clicked item is a column header
-        //        if (o.GetType() == typeof(GridViewColumnHeader))
-        //        {
-        //            var header = o as GridViewColumnHeader;
-
-        //            var headerClicked = "";
-        //            // if the binding is a binding...
-        //            if (header.Column.DisplayMemberBinding.GetType() == typeof(Binding))
-        //            { //... set the header to the bound path
-        //                var content = header.Column.DisplayMemberBinding as Binding;
-        //                headerClicked = content.Path.Path;
-        //                if (headerClicked.Contains("Date"))
-        //                {
-        //                    headerClicked = "Date";
-        //                }
-        //            }
-        //            else
-        //            { //... otherwise it's amount (which is a multibinding)
-        //                headerClicked = "Amount";
-        //            }
-
-        //            //get the sort Direction
-        //            if (lastSortedBy == headerClicked)
-        //            {
-        //                lastSortAscending = !lastSortAscending;
-        //            }
-        //            else
-        //            {
-        //                lastSortAscending = false;
-        //            }
-
-        //            //sort the orders
-        //            ShareComponents = SortCollection(ShareComponents, headerClicked, lastSortAscending);
-
-        //            // set the last sorted by for next sort
-        //            lastSortedBy = headerClicked;
-
-        //        }
-        //    }
-        //}
+        public TileViewModel TileDividends
+        {
+            get; set;
+        }
 
         #endregion
 

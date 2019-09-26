@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StockMarket.ViewModels
 {
@@ -16,6 +12,7 @@ namespace StockMarket.ViewModels
             _sumBuy = 0;
             _amount = 0;
             _amountSold = 0;
+            _percentage = 0;
 
             // add up
             foreach (var component in svm)
@@ -29,7 +26,17 @@ namespace StockMarket.ViewModels
                         _amount += component.Amount;
                         _amountSold += component.AmountSold;
                     }
+                    if  (component.ComponentType== ShareComponentType.dividend)
+                    {
+                        _percentage += component.Percentage;                        
+                    }
                 }
+            }
+
+            if (type==ShareComponentType.dividend)
+            {
+                _amount = svm.Count;
+                _percentage = _percentage / svm.Count;
             }
 
             //refresh UI
@@ -61,6 +68,22 @@ namespace StockMarket.ViewModels
         public override double AmountSold { get { return _amountSold; } }
 
         public override double Amount { get { return _amount; } }
+
+        private readonly double _percentage;
+        public override double Percentage
+        {
+            get
+            {
+                if (ComponentType == ShareComponentType.dividend)
+                {
+                    return _percentage;
+                }
+                else
+                {
+                    return base.Percentage;
+                }
+            }
+        }
 
     }
 }

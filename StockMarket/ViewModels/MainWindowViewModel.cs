@@ -72,7 +72,32 @@ namespace StockMarket.ViewModels
                 DateTime.Now.Hour>=22)
             {
                 //... get all shares in the portfolio
-                var shares = DataBaseHelper.GetSharesFromDB();
+                var shares = DataBaseHelper.GetAllItemsFromDB<Share>();
+
+                for (int i=shares.Count-1;i>=0;i--)
+                {
+                    var orders = DataBaseHelper.GetItemsFromDB<Order>(shares[i]);
+
+                    int amountRemaining = 0;
+                    foreach (var o in orders)
+                    {
+
+                        if (o.OrderType == ShareComponentType.buy)
+                        {
+                            amountRemaining += o.Amount;
+                        }
+                        else if (o.OrderType==ShareComponentType.sell)
+                        {
+                            amountRemaining -= o.Amount;
+                        }
+                    }
+                    if (amountRemaining<1)
+                    {
+                        shares.RemoveAt(i);
+                    }
+                }
+
+
 
                 // for each of these shares...
                 foreach (var share in shares)
