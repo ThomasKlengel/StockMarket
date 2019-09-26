@@ -7,7 +7,7 @@
         xmlns:view="clr-namespace:StockMarket.ViewModels"
         mc:Ignorable="d"
         Title="MainWindow" Height="500" Width="800">
-    <Grid x:Name="MainGrid">
+    <Grid x:Name="MainGrid" >
         <Grid.DataContext>
             <view:MainWindowViewModel/>
         </Grid.DataContext>
@@ -16,7 +16,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0">
+        
+            <Grid Grid.Row="0">
             <!-- the Menu for navigation -->
             <Menu Margin="0">
                 <MenuItem Header="User" Margin="5">

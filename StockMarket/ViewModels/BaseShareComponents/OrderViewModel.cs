@@ -44,7 +44,7 @@ namespace StockMarket.ViewModels
 
         private readonly string ISIN;
 
-        override public int AmountSold
+        override public double AmountSold
         {
             get
             {
@@ -58,7 +58,7 @@ namespace StockMarket.ViewModels
                             var buysPrior = orders.FindAll(o => o.OrderType == ShareComponentType.buy && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
 
                             //sum up the amount of sold shares
-                            int numSells = 0;
+                            double numSells = 0;
                             foreach (var order in sells)
                             {
                                 numSells += order.Amount;
@@ -102,13 +102,16 @@ namespace StockMarket.ViewModels
                 {
                     case ShareComponentType.sell:
                         {
-                            //get buys and sells
                             var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+
+
+                            //get buys and sells
+                            
                             var sellsPrior = orders.FindAll(o => o.OrderType == ShareComponentType.sell && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
                             var buys = orders.FindAll(o => o.OrderType == ShareComponentType.buy).OrderBy(o => o.Date).ToList();
 
-                            List<int> soldRemaining = new List<int>();
-                            List<int> buysRemaining = new List<int>();
+                            List<double> soldRemaining = new List<double>();
+                            List<double> buysRemaining = new List<double>();
                             //put the amounts of sold/bought shares into a List
                             foreach (var order in sellsPrior)
                             {
@@ -147,7 +150,7 @@ namespace StockMarket.ViewModels
                             }
 
                             double sum = 0.0;
-                            int tempAmount = Amount;
+                            double tempAmount = Amount;
                             // go through all sells and add up the prices
                             for (int i = 0; i < buysRemaining.Count; i++)
                             {
@@ -186,8 +189,29 @@ namespace StockMarket.ViewModels
                         }
                     default: // buys, for safety as default
                         {
-                            // sum up the prices                     
-                            return SinglePriceBuy * (Amount) + OrderExpenses;
+                            var orders = DataBaseHelper.GetItemsFromDB<Order>(ISIN);
+                            double sum = 0;
+                            if (DataBaseHelper.GetItemsFromDB<Share>(ISIN).First().ShareType == ShareType.ETF)
+                            {
+                                foreach (var order in orders)
+                                {
+                                    if (order.ReInvesting)
+                                    {
+                                        var monthSinceBuy = (DateTime.Today.Date.Month - orders.First().Date.Month);
+                                        sum += orders.First().Amount * orders.First().SharePrice * monthSinceBuy;
+                                    }
+                                    else
+                                    {
+                                        sum += order.SharePrice * order.Amount + OrderExpenses;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                sum = SinglePriceBuy * (Amount) + OrderExpenses;
+                            }
+                                                
+                            return sum;
                         }
                 }
             }
@@ -211,8 +235,8 @@ namespace StockMarket.ViewModels
                             var sells = orders.FindAll(o => o.OrderType == ShareComponentType.sell).OrderBy(o => o.Date).ToList();
                             var buysPrior = orders.FindAll(o => o.OrderType == ShareComponentType.buy && o.Date < BookingDate).OrderBy(o => o.Date).ToList();
 
-                            List<int> soldRemaining = new List<int>();
-                            List<int> buysRemaining = new List<int>();
+                            List<double> soldRemaining = new List<double>();
+                            List<double> buysRemaining = new List<double>();
                             //put the amounts of sold/bought shares into a List
                             foreach (var order in sells)
                             {
@@ -251,7 +275,7 @@ namespace StockMarket.ViewModels
                             }
 
                             double sum = 0.0;
-                            int tempAmount = Amount;
+                            double tempAmount = Amount;
                             // go through all sells and add up the prices
                             for (int i = 0; i < soldRemaining.Count; i++)
                             {

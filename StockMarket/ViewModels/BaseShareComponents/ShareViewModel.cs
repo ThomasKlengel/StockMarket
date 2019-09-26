@@ -62,11 +62,11 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of shares in all orders
         /// </summary>
-        override public int Amount
+        override public double Amount
         {
             get
             {
-                int sum = 0;
+                double sum = 0;
                 foreach (var order in ShareComponents)
                 {
                     if (order.ComponentType == ShareComponentType.buy)
@@ -82,11 +82,11 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of shares sold over all orders
         /// </summary>
-        override public int AmountSold
+        override public double AmountSold
         {
             get
             {
-                int sum = 0;
+                double sum = 0;
                 foreach (var order in ShareComponents)
                 {
                     if (order.ComponentType == ShareComponentType.sell)

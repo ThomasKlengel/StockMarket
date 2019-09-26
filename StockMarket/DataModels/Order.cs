@@ -29,7 +29,7 @@ namespace StockMarket
         /// <summary>
         /// The amount of <see cref="Share"/>s purchased
         /// </summary>
-        public int Amount { get; set; }
+        public double Amount { get; set; }
 
         /// <summary>
         /// The date of purchase
@@ -51,8 +51,9 @@ namespace StockMarket
         /// </summary>
         public string ISIN { get; set; }
 
-        public string UserName { get; set; }
+        public string UserName { get; set; }        
 
+        public bool ReInvesting { get; set; }
         #endregion
     }
 

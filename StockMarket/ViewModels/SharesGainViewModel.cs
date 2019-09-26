@@ -159,11 +159,11 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of bought shares
         /// </summary>
-        override public int Amount
+        override public double Amount
         {
             get
             {
-                int amount = 0;
+                double amount = 0;
                 foreach (var share in Shares)
                 {
                     amount += share.Amount;
@@ -177,11 +177,11 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of sold shares
         /// </summary>
-        public override int AmountSold
+        public override double AmountSold
         {
             get
             {
-                int amount = 0;
+                double amount = 0;
                 foreach (var share in Shares)
                 {
                     amount += share.AmountSold;

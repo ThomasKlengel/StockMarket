@@ -100,7 +100,7 @@ namespace StockMarket.ViewModels
 
         public override double SumBuy { get { return 0.0; } }
 
-        public override int AmountSold { get { return 0; } }
+        public override double AmountSold { get { return 0; } }
 
         #endregion
 

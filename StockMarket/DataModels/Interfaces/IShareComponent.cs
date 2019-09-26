@@ -7,7 +7,7 @@ namespace StockMarket
     /// </summary>
     public interface IShareComponent
     {
-        int Amount { get; }
+        double Amount { get; }
         double Percentage { get; }
         double SumNow { get; }
         double SumBuy { get; }

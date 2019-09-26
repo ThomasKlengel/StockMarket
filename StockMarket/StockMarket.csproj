@@ -113,7 +113,7 @@
     <Compile Include="Helper\WebHelper.cs" />
     <Compile Include="ViewModels\BaseShareComponents\DividendViewModel.cs" />
     <Compile Include="ViewModels\BaseShareComponents\ShareViewModel.cs" />
-    <Compile Include="ViewModels\SingleShareGainViewModel.cs" />
+    <Compile Include="ViewModels\SingleShareGainPageViewModel.cs" />
     <Compile Include="ViewModels\TileViewModel.cs" />
     <Compile Include="Views\AddDividendPage.xaml.cs">
       <DependentUpon>AddDividendPage.xaml</DependentUpon>
@@ -152,6 +152,10 @@
     <Compile Include="ViewModels\ShareDetailViewModel.cs" />
     <Compile Include="ViewModels\AddShareViewModel.cs" />
     <Compile Include="ViewModels\Base\ViewModelBase.cs" />
+    <Page Include="AppResources.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\AddDividendPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -244,6 +248,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="ImagesIcons\CopyIcon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Thoughts.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets" Condition="Exists('..\packages\SQLitePCLRaw.lib.e_sqlite3.linux.1.1.11\build\net35\SQLitePCLRaw.lib.e_sqlite3.linux.targets')" />

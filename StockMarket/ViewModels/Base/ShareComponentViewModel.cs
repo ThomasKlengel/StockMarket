@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Media;
 using System.ComponentModel;
+using System.Windows;
 
 namespace StockMarket.ViewModels
 {
@@ -93,11 +94,11 @@ namespace StockMarket.ViewModels
         public abstract double SumBuy
         { get; }
 
-        public int _amount;
+        public double _amount;
         /// <summary>
         /// The amount of bought shares
         /// </summary>
-        public virtual int Amount
+        public virtual double Amount
         {
             get { return _amount; }
             set
@@ -119,7 +120,7 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// The amount of sold shares
         /// </summary>
-        public abstract int AmountSold
+        public abstract double AmountSold
         {
             get; 
         }
@@ -142,10 +143,11 @@ namespace StockMarket.ViewModels
         {
             get
             {
+                Color paleRed = (Color)Application.Current.Resources["PaleRed"]; // for negative return
+                Color paleGreen = (Color)Application.Current.Resources["PaleGreen"]; // for positive return
+                Color paleBlue = (Color)Application.Current.Resources["PaleBlue"]; // for dividends which are always positive return
+                Color darkGray = (Color)Application.Current.Resources["DarkGray"]; // for dividends which are always positive return
 
-                var paleRed = Color.FromRgb(255, 127, 127);
-                var paleGreen = Color.FromRgb(222, 255, 209);
-                var paleBlue = Color.FromRgb(112, 200, 255);
                 if (ComponentType == ShareComponentType.dividend)
                 {
                     return new SolidColorBrush(paleBlue);
@@ -155,9 +157,9 @@ namespace StockMarket.ViewModels
                 // create solid background for shares thet are not completely sold
                 Brush solidBack = new SolidColorBrush(color);
                 // create partly gray background for shares that are completely sold
-                Brush gradientBack = new LinearGradientBrush(Colors.Gray, color, 0);
+                Brush gradientBack = new LinearGradientBrush(darkGray, color, 0);
 
-                return Amount-AmountSold > 0 ? solidBack : gradientBack;
+                return Amount - AmountSold > 0 ? solidBack : gradientBack;
             }
         }
 
