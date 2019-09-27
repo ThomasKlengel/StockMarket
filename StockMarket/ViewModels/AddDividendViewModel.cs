@@ -35,11 +35,11 @@ namespace StockMarket.ViewModels
 
         #region Fields
         /// <summary>
-        /// set to true when the <see cref="Dividend"/> was changed to ignore its own refreh in the <see cref="DividendPerShare"/>
+        /// set to true when the <see cref="Dividend"/> was changed to ignore its own refresh in the <see cref="DividendPerShare"/>
         /// </summary>
         private bool DividendChanged = false;
         /// <summary>
-        /// set to true when the <see cref="DividendPerShare"/> was changed to ignore its own refreh in the <see cref="Dividend"/>
+        /// set to true when the <see cref="DividendPerShare"/> was changed to ignore its own refresh in the <see cref="Dividend"/>
         /// </summary>
         private bool DPSChanged = false;
         #endregion
@@ -121,7 +121,7 @@ namespace StockMarket.ViewModels
                         GetDividendReturnAsync();
                     }
 
-                    // dont set "dividend" if the dividend per share has been changed by "dividend"
+                    // don't set "dividend" if the dividend per share has been changed by "dividend"
                     if (!DividendChanged)
                     {
                         if (Dividend / Amount != DividendPerShare)
@@ -338,7 +338,7 @@ namespace StockMarket.ViewModels
 
                 try
                 {
-                    // create a rectangle from which to read (dont set for complete page)
+                    // create a rectangle from which to read (don't set for complete page)
                     System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
                     var Results = Ocr.ReadPdf(pdfToRead, area, 1);
                     var lines = Results.Pages[0].LinesOfText;               
@@ -398,7 +398,7 @@ namespace StockMarket.ViewModels
                             }
                             
 
-                            // if none is found, dont select any order
+                            // if none is found, don't select any order
                             break;
                         }
                     }

@@ -35,9 +35,9 @@ namespace StockMarket.ViewModels
                     }
                 }
 
-                TileAll = new TileViewModel(all, ShareComponentType.buy);
+                TileAll = new TileViewModel(all, ShareComponentType.buy, "All");
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
-                TileDividends = new TileViewModel(divs, ShareComponentType.dividend);
+                TileDividends = new TileViewModel(divs, ShareComponentType.dividend, "Dividends");
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
             }
         }

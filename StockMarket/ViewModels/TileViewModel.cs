@@ -5,9 +5,10 @@ namespace StockMarket.ViewModels
 {
     class TileViewModel : ShareComponentViewModel
     {
-        public TileViewModel(List<ShareComponentViewModel> svm, ShareComponentType type)
+        public TileViewModel(List<ShareComponentViewModel> svm, ShareComponentType type, string name)
         {
             //initialise to zero
+            Name = name;
             _sumNow = 0;
             _sumBuy = 0;
             _amount = 0;
@@ -44,16 +45,7 @@ namespace StockMarket.ViewModels
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
             OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
-            if (type == ShareComponentType.dividend)
-            {
-                ComponentType = ShareComponentType.dividend;
-                Name = "Dividends";
-            }
-            else
-            {
-                ComponentType = ShareComponentType.buy;
-                Name = "All";
-            }
+
         }
 
         public string Name { get; private set; }

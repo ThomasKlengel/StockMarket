@@ -61,7 +61,7 @@ namespace StockMarket
     /// <summary>
     /// An enumeration of the type of order
     /// (buy = 1;
-    /// sividend = 0;
+    /// dividend = 0;
     /// sell = -1)
     /// </summary>
     public enum ShareComponentType

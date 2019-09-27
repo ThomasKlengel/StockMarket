@@ -15,7 +15,8 @@
         <!--define grid rows-->
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="200"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <!--Grid containing information about each share handled by the program on grid row 1-->
@@ -58,7 +59,9 @@
             </ListView>
         </Grid>
 
-        <ScrollViewer Grid.Row="1">
+        <GridSplitter Grid.Row ="1" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+        <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
                 <!--Grid containing information about all shares handled by the program on grid row 2-->
                 <Grid DataContext="{Binding TileDividends}" Background="{Binding Path=Background}" Margin="5" Name="OverViewGrid">
@@ -124,6 +127,7 @@
                     </StackPanel>
                 </Grid>
             </StackPanel>
-        </ScrollViewer>
+        </ScrollViewer>       
+
     </Grid>
 </Page>

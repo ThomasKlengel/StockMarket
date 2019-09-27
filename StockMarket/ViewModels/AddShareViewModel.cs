@@ -93,7 +93,7 @@ namespace StockMarket.ViewModels
 
         private string _wkn;
         /// <summary>
-        /// Thw WKN of the <see cref="Share"/>
+        /// The WKN of the <see cref="Share"/>
         /// </summary>
         public string WKN
         {
@@ -214,13 +214,13 @@ namespace StockMarket.ViewModels
         public RelayCommand AutoFillCommand { get; private set; }
         
         /// <summary>
-        /// The execute method of of the AutoFill<see cref="RelayCommand"/>
+        /// The execute method of the AutoFill<see cref="RelayCommand"/>
         /// Sets <see cref="AddShareViewModel"/> properties after reading data from a website
         /// </summary>
         /// <param name="o">A parameter for this method</param>
         private async void AutofillAsync(object o)
         {
-            // get the webcontent
+            // get the web content
             string webContent = await WebHelper.getWebContent(WebSite);
 
             //check the share type
@@ -292,7 +292,7 @@ namespace StockMarket.ViewModels
                 name = nameMatch.Value.Substring(4).Replace(" von", "").Trim() + " Certificate "+factorMatch.Value+"x";
             }
 
-            // write values to viewmodel
+            // write values to view model
             ISIN = isin;
             ShareName = name;
             WKN = wkn;
@@ -303,7 +303,7 @@ namespace StockMarket.ViewModels
         }
 
         /// <summary>
-        /// The canExecute method of of the AutoFill<see cref="RelayCommand"/>
+        /// The canExecute method of the AutoFill<see cref="RelayCommand"/>
         /// Checks by validating a website
         /// </summary>
         /// <param name="sender">A parameter for this method</param>
@@ -334,7 +334,7 @@ namespace StockMarket.ViewModels
         public RelayCommand InsertCommand { get; private set; }
 
         /// <summary>
-        /// The execute method of of the Insert<see cref="RelayCommand"/>
+        /// The execute method of the Insert<see cref="RelayCommand"/>
         /// Tries to add the share to the Database
         /// </summary>
         /// <param name="o">A parameter for this method</param>
@@ -347,7 +347,7 @@ namespace StockMarket.ViewModels
                 case 0: // Message if it already exist
                     MessageBox.Show($"You already have a share with an ISIN matching ISIN={ISIN}.");
                     break;
-                case -1: // Message if the was an error while inseting
+                case -1: // Message if the was an error while inserting
                     MessageBox.Show($"There was an error while inserting the share with the ISIN={ISIN} to the database.");
                     break;
                 default: break;
@@ -356,7 +356,7 @@ namespace StockMarket.ViewModels
         }
 
         /// <summary>
-        /// The canExecute method of of the Insert<see cref="RelayCommand"/>
+        /// The canExecute method of the Insert<see cref="RelayCommand"/>
         /// Checks by validating ISIN and WebSite
         /// </summary>
         /// <param name="sender">A parameter for this method</param>
@@ -370,7 +370,7 @@ namespace StockMarket.ViewModels
                 if (sender.GetType() == typeof(Button))
                 {
                     b = sender as Button;
-                    // set default tooltip
+                    // set default tool tip
                     b.ToolTip = "Website or ISIN are not valid";
                 }
                 else
@@ -385,19 +385,19 @@ namespace StockMarket.ViewModels
                 // if WebSite is not valid...
                 if (!RegexHelper.WebsiteIsValid(WebSite))
                 {
-                    //... set error tooltip
+                    //... set error tool tip
                     b.ToolTip = "Website is not valid";
                     return false;
                 }
                 // if ISIN is not valid...
                 else if (!RegexHelper.IsinIsValid(ISIN))
-                {   //... set error tooltip
+                {   //... set error tool tip
                     b.ToolTip = "ISIN is not valid";
                     return false;
                 }
                 // if both are valid...
                 else
-                {   //... set ok tooltip
+                {   //... set OK tool tip
                     b.ToolTip = "You can add the share to the database";
                     return true;
                 }                           

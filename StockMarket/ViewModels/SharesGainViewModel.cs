@@ -94,11 +94,11 @@ namespace StockMarket.ViewModels
                     }
                 }
                 // update the view of the tiles
-                TileAll = new TileViewModel(all, ShareComponentType.buy);
+                TileAll = new TileViewModel(all, ShareComponentType.buy, "All");
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
-                TileDividends = new TileViewModel(divs,ShareComponentType.dividend);
+                TileDividends = new TileViewModel(divs,ShareComponentType.dividend, "Dividends");
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
-                TileCurrent = new TileViewModel(current, ShareComponentType.buy);
+                TileCurrent = new TileViewModel(current, ShareComponentType.buy, "Current");
                 OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileCurrent)));
             }
         }
