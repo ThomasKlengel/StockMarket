@@ -28,15 +28,15 @@ namespace StockMarket
             {
                 orders.Add(DataBaseHelper.GetItemsFromDB<Order>(share));
                 values.Add(DataBaseHelper.GetItemsFromDB<ShareValue>(share));
-
             }
+
             OrderSerializer.Serialize(OrderWriter, orders);
             ValueSerializer.Serialize(ValueWriter, values);
 
             UserWriter.Close();
             ValueWriter.Close();
             OrderWriter.Close();
-            ShareWriter.Close();            
+            ShareWriter.Close();
         }
 
         public static void Load()

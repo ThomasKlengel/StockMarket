@@ -4,23 +4,37 @@ using SQLite;
 namespace StockMarket
 {
     /// <summary>
-    /// A class containing basic information about a dividend payment of a <see cref="Share"/>
+    /// A class containing basic information about a dividend payment of a <see cref="Share"/>.
     /// </summary>
-    public class Dividend: IHasIsin, IHasUserName
+    public class Dividend : IHasIsin, IHasUserName
     {
 
-        public Dividend() { UserName = new User().ToString(); }
-
-        public Dividend(string isin, DateTime dayOfPayment, double paymentValue, double amountOfShares, DateTime dateRangeStart, DateTime dateRangeEnd)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Dividend"/> class.
+        /// </summary>
+        public Dividend()
         {
-            ISIN = isin;
-            DayOfPayment = dayOfPayment;
-            Value = paymentValue;
-            Amount = amountOfShares;
-            DateRangeStart = dateRangeStart;
-            DateRangeEnd = dateRangeEnd;
+            this.UserName = new User().ToString();
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Dividend"/> class.
+        /// </summary>
+        /// <param name="isin"></param>
+        /// <param name="dayOfPayment"></param>
+        /// <param name="paymentValue"></param>
+        /// <param name="amountOfShares"></param>
+        /// <param name="dateRangeStart"></param>
+        /// <param name="dateRangeEnd"></param>
+        public Dividend(string isin, DateTime dayOfPayment, double paymentValue, double amountOfShares, DateTime dateRangeStart, DateTime dateRangeEnd)
+        {
+            this.ISIN = isin;
+            this.DayOfPayment = dayOfPayment;
+            this.Value = paymentValue;
+            this.Amount = amountOfShares;
+            this.DateRangeStart = dateRangeStart;
+            this.DateRangeEnd = dateRangeEnd;
+        }
 
         [PrimaryKey][AutoIncrement]
         /// <summary>
@@ -29,36 +43,36 @@ namespace StockMarket
         public int DB_ID { get; set; }
 
         /// <summary>
-        /// The ISIN of the share for the dividend payment
+        /// Gets or sets the ISIN of the share for the dividend payment.
         /// </summary>
         public string ISIN { get; set; }
 
         /// <summary>
-        /// The day of the dividend payment
+        /// Gets or sets the day of the dividend payment.
         /// </summary>
         public DateTime DayOfPayment { get; set; }
 
         /// <summary>
-        /// The dividend payed
+        /// Gets or sets the dividend payed.
         /// </summary>
         public double Value { get; set; }
 
         /// <summary>
-        /// The amount of shares for which the dividen is payed
+        /// Gets or sets the amount of shares for which the dividen is payed.
         /// </summary>
         public double Amount { get; set; }
 
         /// <summary>
-        /// The start date of the period of time for which the dividend is payed
+        /// Gets or sets the start date of the period of time for which the dividend is payed.
         /// </summary>
         public DateTime DateRangeStart { get; set; }
 
         /// <summary>
-        /// The end date of the period of time for which the dividend is payed
+        /// Gets or sets the end date of the period of time for which the dividend is payed.
         /// </summary>
         public DateTime DateRangeEnd { get; set; }
 
+        /// <inheritdoc/>
         public string UserName { get; set; }
-
     }
 }

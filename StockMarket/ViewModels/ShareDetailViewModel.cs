@@ -6,85 +6,92 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace StockMarket.ViewModels
 {
     public class ShareDetailViewModel : AddShareViewModel
     {
         #region ctors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShareDetailViewModel"/> class.
+        /// </summary>
         public ShareDetailViewModel()
         {
-            Shares = DataBaseHelper.GetSharesFromDB();
-            SelectedShare = Shares.First();
-            CopyCommand = new RelayCommand(Copy, CanCopy);
-            ModifyShareCommand = new RelayCommand(ModifyShare, CanModifiyShare);
+            this.Shares = DataBaseHelper.GetSharesFromDB();
+            this.SelectedShare = this.Shares.First();
+            this.CopyCommand = new RelayCommand(this.Copy, this.CanCopy);
+            this.ModifyShareCommand = new RelayCommand(this.ModifyShare, this.CanModifiyShare);
         }
         #endregion
 
         bool PropChanged = false;
 
         #region Properties
+
         /// <summary>
-        /// The <see cref="Share"/>s that are currently managed in the database
+        /// Gets the <see cref="Share"/>s that are currently managed in the database.
         /// </summary>
         public List<Share> Shares { get; private set; }
 
         private Share _selectedShare;
+
         /// <summary>
-        /// The <see cref="Share"/> that is currently selected
+        /// Gets or sets the <see cref="Share"/> that is currently selected.
         /// </summary>
         public Share SelectedShare
         {
-            get { return _selectedShare; }
+            get
+            {
+                return this._selectedShare;
+            }
+
             set
             {
-                if (_selectedShare != value)
+                if (this._selectedShare != value)
                 {
-                    _selectedShare = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
+                    this._selectedShare = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SelectedShare)));
 
                     // refresh the details
+                    var share = DataBaseHelper.GetSharesFromDB().Find((s) => { return s.ISIN == this.SelectedShare.ISIN; });
 
-                    var share = DataBaseHelper.GetSharesFromDB().Find((s) => { return s.ISIN == SelectedShare.ISIN; });
-                                        
-                    WebSite = share.WebSite;
-                    WebSite2 = share.WebSite2;
-                    WebSite3 = share.WebSite3;
-                    WKN = share.WKN;
-                    ISIN = share.ISIN;
-                    ShareName = share.ShareName;
-                    IsCertificate = share.ShareType == ShareType.Certificate;
-                    IsShare = share.ShareType == ShareType.Share;
-                    Factor = 1;
-                    if (IsCertificate)
+                    this.WebSite = share.WebSite;
+                    this.WebSite2 = share.WebSite2;
+                    this.WebSite3 = share.WebSite3;
+                    this.WKN = share.WKN;
+                    this.ISIN = share.ISIN;
+                    this.ShareName = share.ShareName;
+                    this.IsCertificate = share.ShareType == ShareType.Certificate;
+                    this.IsShare = share.ShareType == ShareType.Share;
+                    this.Factor = 1;
+                    if (this.IsCertificate)
                     {
-                        var namePart = ShareName.Substring(ShareName.LastIndexOf(" "));
-                        namePart = namePart.Replace("x", "");
-                        Factor = Convert.ToByte(namePart);
+                        var namePart = this.ShareName.Substring(this.ShareName.LastIndexOf(" "));
+                        namePart = namePart.Replace("x", string.Empty);
+                        this.Factor = Convert.ToByte(namePart);
                     }
 
-                    this.PropertyChanged -= ShareDetailViewModel_PropertyChanged;
-                    this.PropertyChanged += ShareDetailViewModel_PropertyChanged;
+                    this.PropertyChanged -= this.ShareDetailViewModel_PropertyChanged;
+                    this.PropertyChanged += this.ShareDetailViewModel_PropertyChanged;
                 }
             }
         }
 
         private void ShareDetailViewModel_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            var share = DataBaseHelper.GetSharesFromDB().Find((s) => { return s.ISIN == SelectedShare.ISIN; });
+            var share = DataBaseHelper.GetSharesFromDB().Find((s) => { return s.ISIN == this.SelectedShare.ISIN; });
 
-            if (share.WebSite != WebSite ||
-                share.WebSite2 != WebSite2 ||
-                share.WebSite3 != WebSite3)
+            if (share.WebSite != this.WebSite ||
+                share.WebSite2 != this.WebSite2 ||
+                share.WebSite3 != this.WebSite3)
             {
-                PropChanged = true;
+                this.PropChanged = true;
             }
             else
             {
-                PropChanged = false;
+                this.PropChanged = false;
             }
         }
-
 
         #endregion
 
@@ -108,6 +115,7 @@ namespace StockMarket.ViewModels
                 string copyFrom = input.ToString();
                 return copyFrom != string.Empty;
             }
+
             return false;
         }
         #endregion
@@ -117,28 +125,28 @@ namespace StockMarket.ViewModels
 
         private void ModifyShare(object input)
         {
-            PropChanged = false;
+            this.PropChanged = false;
             var modShare = new Share() { ISIN = this.ISIN, ShareName = this.ShareName, WKN = this.WKN, WebSite = this.WebSite, WebSite2 = this.WebSite2, WebSite3 = this.WebSite3 };
             DataBaseHelper.ModifiyShare(modShare);
         }
 
         private bool CanModifiyShare(object input)
-        { 
-            if (PropChanged)
+        {
+            if (this.PropChanged)
             {
-                if ((RegexHelper.WebsiteIsValid(WebSite) || WebSite.IsNullEmptyWhitespace() )&&
-                    (RegexHelper.WebsiteIsValid(WebSite2) || WebSite2.IsNullEmptyWhitespace()) &&
-                    (RegexHelper.WebsiteIsValid(WebSite3) || WebSite3.IsNullEmptyWhitespace()) &&
-                    (RegexHelper.WebsiteIsValid(WebSite) || RegexHelper.WebsiteIsValid(WebSite2) || RegexHelper.WebsiteIsValid(WebSite3))
+                if ((RegexHelper.WebsiteIsValid(this.WebSite) || this.WebSite.IsNullEmptyWhitespace() ) &&
+                    (RegexHelper.WebsiteIsValid(this.WebSite2) || this.WebSite2.IsNullEmptyWhitespace()) &&
+                    (RegexHelper.WebsiteIsValid(this.WebSite3) || this.WebSite3.IsNullEmptyWhitespace()) &&
+                    (RegexHelper.WebsiteIsValid(this.WebSite) || RegexHelper.WebsiteIsValid(this.WebSite2) || RegexHelper.WebsiteIsValid(this.WebSite3))
                     )
                 {
                     return true;
                 }
             }
+
             return false;
-        } 
+        }
         #endregion
         #endregion
     }
-
 }

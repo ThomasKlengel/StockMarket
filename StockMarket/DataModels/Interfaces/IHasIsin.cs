@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace StockMarket
 {
     /// <summary>
-    /// An interface representing any share component that relates to an isin
+    /// An interface representing any share component that relates to an isin.
     /// </summary>
     public interface IHasIsin
     {

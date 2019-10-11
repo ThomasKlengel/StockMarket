@@ -5,70 +5,97 @@ namespace StockMarket.ViewModels
 {
     class TileViewModel : ShareComponentViewModel
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TileViewModel"/> class.
+        /// </summary>
+        /// <param name="svm"></param>
+        /// <param name="type"></param>
+        /// <param name="name"></param>
         public TileViewModel(List<ShareComponentViewModel> svm, ShareComponentType type, string name)
         {
-            //initialise to zero
-            Name = name;
-            _sumNow = 0;
-            _sumBuy = 0;
-            _amount = 0;
-            _amountSold = 0;
-            _percentage = 0;
+            // initialise to zero
+            this.Name = name;
+            this._sumNow = 0;
+            this._sumBuy = 0;
+            this._amount = 0;
+            this._amountSold = 0;
+            this._percentage = 0;
 
             // add up
             foreach (var component in svm)
             {
-                if (component.ComponentType != ShareComponentType.sell)
+                if (component.ComponentType != ShareComponentType.Sell)
                 {
-                    _sumNow += component.SumNow;
-                    _sumBuy += component.SumBuy;
-                    if (component.ComponentType == ShareComponentType.buy)
+                    this._sumNow += component.SumNow;
+                    this._sumBuy += component.SumBuy;
+                    if (component.ComponentType == ShareComponentType.Buy)
                     {
-                        _amount += component.Amount;
-                        _amountSold += component.AmountSold;
+                        this._amount += component.Amount;
+                        this._amountSold += component.AmountSold;
                     }
-                    if  (component.ComponentType== ShareComponentType.dividend)
+
+                    if  (component.ComponentType == ShareComponentType.Dividend)
                     {
-                        _percentage += component.Percentage;                        
+                        this._percentage += component.Percentage;
                     }
                 }
             }
 
-            if (type==ShareComponentType.dividend)
+            if (type == ShareComponentType.Dividend)
             {
-                _amount = svm.Count;
-                _percentage = _percentage / svm.Count;
+                this._amount = svm.Count;
+                this._percentage = this._percentage / svm.Count;
             }
 
-            //refresh UI
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumNow)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
-
+            // refresh UI
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SumBuy)));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SumNow)));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Amount)));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.AmountSold)));
         }
 
         public string Name { get; private set; }
 
         readonly double _sumNow;
-        public override double SumNow { get { return _sumNow; } }
+
+        /// <inheritdoc/>
+        public override double SumNow
+        {
+            get { return this._sumNow; }
+        }
 
         readonly double _sumBuy;
-        public override double SumBuy { get { return _sumBuy; } }
+
+        /// <inheritdoc/>
+        public override double SumBuy
+        {
+            get { return this._sumBuy; }
+        }
 
         readonly double _amountSold;
-        public override double AmountSold { get { return _amountSold; } }
 
-        public override double Amount { get { return _amount; } }
+        /// <inheritdoc/>
+        public override double AmountSold
+        {
+            get { return this._amountSold; }
+        }
+
+        /// <inheritdoc/>
+        public override double Amount
+        {
+            get { return this._amount; }
+        }
 
         private readonly double _percentage;
+
+        /// <inheritdoc/>
         public override double Percentage
         {
             get
             {
-                if (ComponentType == ShareComponentType.dividend)
+                if (this.ComponentType == ShareComponentType.Dividend)
                 {
-                    return _percentage;
+                    return this._percentage;
                 }
                 else
                 {
@@ -76,6 +103,5 @@ namespace StockMarket.ViewModels
                 }
             }
         }
-
     }
 }

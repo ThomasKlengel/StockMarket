@@ -10,7 +10,7 @@ namespace StockMarket
     {
         public static bool IsNullEmptyWhitespace(this string s)
         {
-            return (string.IsNullOrEmpty(s) || string.IsNullOrWhiteSpace(s));
+            return string.IsNullOrEmpty(s) || string.IsNullOrWhiteSpace(s);
         }
     }
 }

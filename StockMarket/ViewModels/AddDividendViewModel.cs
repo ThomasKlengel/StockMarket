@@ -1,45 +1,52 @@
-﻿using IronOcr;
-using Microsoft.Win32;
-using Prism.Events;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
+using IronOcr;
+using Microsoft.Win32;
+using Prism.Events;
 
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for a single <see cref="Order"/>
+    /// A ViewModel for a single <see cref="Order"/>.
     /// </summary>
     public class AddDividendViewModel : ViewModelBase
     {
 
         #region ctor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddDividendViewModel"/> class.
+        /// </summary>
         public AddDividendViewModel()
         {
-            AddDividendCommand = new RelayCommand(AddDividend, CanAddDividednd);
-            AddInputViaPdfCommand = new RelayCommand(AddInputViaPdf);
-            Shares = new ObservableCollection<Share>();
+            this.AddDividendCommand = new RelayCommand(this.AddDividend, this.CanAddDividednd);
+            this.AddInputViaPdfCommand = new RelayCommand(this.AddInputViaPdf);
+            this.Shares = new ObservableCollection<Share>();
             foreach (var share in DataBaseHelper.GetSharesFromDB())
             {
-                Shares.Add(share);
+                this.Shares.Add(share);
             }
-            SelectedShare = Shares.First();
 
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { CurrentUser = user; });
+            this.SelectedShare = this.Shares.First();
+
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { this.CurrentUser = user; });
         }
 
         #endregion
 
         #region Fields
+
         /// <summary>
-        /// set to true when the <see cref="Dividend"/> was changed to ignore its own refresh in the <see cref="DividendPerShare"/>
+        /// set to true when the <see cref="Dividend"/> was changed to ignore its own refresh in the <see cref="DividendPerShare"/>.
         /// </summary>
         private bool DividendChanged = false;
+
         /// <summary>
-        /// set to true when the <see cref="DividendPerShare"/> was changed to ignore its own refresh in the <see cref="Dividend"/>
+        /// set to true when the <see cref="DividendPerShare"/> was changed to ignore its own refresh in the <see cref="Dividend"/>.
         /// </summary>
         private bool DPSChanged = false;
         #endregion
@@ -47,218 +54,258 @@ namespace StockMarket.ViewModels
         #region Properties
 
         private User _currentUser;
+
         /// <summary>
-        /// The <see cref="User"/> currently selected in the main window
+        /// Gets or sets the <see cref="User"/> currently selected in the main window.
         /// </summary>
         public User CurrentUser
         {
             get
             {
-                if (_currentUser != null)
+                if (this._currentUser != null)
                 {
-                    return _currentUser;
+                    return this._currentUser;
                 }
+
                 return User.Default();
             }
+
             set
             {
-                if (CurrentUser != value)
+                if (this.CurrentUser != value)
                 {
-                    _currentUser = value;
+                    this._currentUser = value;
                 }
             }
         }
 
         /// <summary>
-        /// The <see cref="Share"/>s the user can select to add a dividend for
+        /// Gets or sets the <see cref="Share"/>s the user can select to add a dividend for.
         /// </summary>
         public ObservableCollection<Share> Shares { get; set; }
 
         private double _dividend;
+
         /// <summary>
-        /// The whole dividend for the <see cref="Amount"/> of <see cref="SelectedShare"/>s
+        /// Gets or sets the whole dividend for the <see cref="Amount"/> of <see cref="SelectedShare"/>s.
         /// </summary>
         public double Dividend
         {
-            get { return _dividend; }
+            get
+            {
+                return this._dividend;
+            }
+
             set
             {
-                if (_dividend != value)
+                if (this._dividend != value)
                 {
-                    _dividend = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Dividend)));
+                    this._dividend = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Dividend)));
 
                     // dont set "dividend by share" if the dividend has been changed by "dividend per share"
-                    if (!DPSChanged)
+                    if (!this.DPSChanged)
                     {
-                        DividendChanged = true;
-                        DividendPerShare = Dividend / Amount;
+                        this.DividendChanged = true;
+                        this.DividendPerShare = this.Dividend / this.Amount;
                     }
-                    DPSChanged = false;
 
+                    this.DPSChanged = false;
                 }
             }
         }
 
-
         private double _dividendPerShare;
+
         /// <summary>
-        /// The current price of a single share
+        /// Gets or sets the current price of a single share.
         /// </summary>
         public double DividendPerShare
         {
-            get { return _dividendPerShare; }
+            get
+            {
+                return this._dividendPerShare;
+            }
+
             set
             {
-                if (_dividendPerShare != value)
+                if (this._dividendPerShare != value)
                 {
-                    _dividendPerShare = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DividendPerShare)));
+                    this._dividendPerShare = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DividendPerShare)));
 
                     // refresh the dividend return
-                    if (Amount != 0 && Dividend != 0.0)
+                    if (this.Amount != 0 && this.Dividend != 0.0)
                     {
-                        GetDividendReturnAsync();
+                        this.GetDividendReturnAsync();
                     }
 
                     // don't set "dividend" if the dividend per share has been changed by "dividend"
-                    if (!DividendChanged)
+                    if (!this.DividendChanged)
                     {
-                        if (Dividend / Amount != DividendPerShare)
+                        if (this.Dividend / this.Amount != this.DividendPerShare)
                         {
-                            Dividend = DividendPerShare * Amount;
-                            DPSChanged = true;
+                            this.Dividend = this.DividendPerShare * this.Amount;
+                            this.DPSChanged = true;
                         }
                     }
-                    DividendChanged = false;
+
+                    this.DividendChanged = false;
                 }
             }
         }
 
         private Share _selectedShare;
+
         /// <summary>
-        ///  The <see cref="Share"/> currently selected by the user to add a dividend to
+        ///  Gets or sets the <see cref="Share"/> currently selected by the user to add a dividend to.
         /// </summary>
         public Share SelectedShare
         {
-            get { return _selectedShare; }
+            get
+            {
+                return this._selectedShare;
+            }
+
             set
             {
-                if (_selectedShare != value)
+                if (this._selectedShare != value)
                 {
-                    _selectedShare = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
+                    this._selectedShare = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SelectedShare)));
                 }
-
             }
         }
 
         private double _amount;
+
         /// <summary>
-        /// The amount of shares for which the dividend was given
+        /// Gets or sets the amount of shares for which the dividend was given.
         /// </summary>
         public double Amount
         {
-            get { return _amount; }
+            get
+            {
+                return this._amount;
+            }
+
             set
             {
-                if (_amount != value)
+                if (this._amount != value)
                 {
-                    _amount = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
-                    Dividend = DividendPerShare * Amount;
+                    this._amount = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Amount)));
+                    this.Dividend = this.DividendPerShare * this.Amount;
                 }
             }
         }
 
         private DateTime _dividendPayDate = DateTime.Today;
+
         /// <summary>
-        /// The date at which the dividend was payed
+        /// Gets or sets the date at which the dividend was payed.
         /// </summary>
         public DateTime DividendPayDate
         {
-            get { return _dividendPayDate; }
-            set {
-                if (_dividendPayDate != value)
+            get
+            {
+                return this._dividendPayDate;
+            }
+
+            set
+            {
+                if (this._dividendPayDate != value)
                 {
-                    _dividendPayDate = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DividendPayDate)));
+                    this._dividendPayDate = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DividendPayDate)));
                 }
             }
         }
 
         private DateTime _dividendRangeStartDate = DateTime.Today.AddYears(-1);
+
         /// <summary>
-        ///  The starting date of the time the share was held
+        ///  Gets or sets the starting date of the time the share was held.
         /// </summary>
         public DateTime DateRangeStart
         {
-            get { return _dividendRangeStartDate; }
+            get
+            {
+                return this._dividendRangeStartDate;
+            }
+
             set
             {
-                if (_dividendRangeStartDate != value)
+                if (this._dividendRangeStartDate != value)
                 {
-                    _dividendRangeStartDate = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DateRangeStart)));
+                    this._dividendRangeStartDate = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DateRangeStart)));
                 }
             }
         }
 
         private DateTime _dividendRangeEndDate = DateTime.Today;
+
         /// <summary>
-        ///  The last date of the time the share was held
+        ///  Gets or sets the last date of the time the share was held.
         /// </summary>
         public DateTime DateRangeEnd
         {
-            get { return _dividendRangeEndDate; }
+            get
+            {
+                return this._dividendRangeEndDate;
+            }
+
             set
             {
-                if (_dividendRangeEndDate != value)
+                if (this._dividendRangeEndDate != value)
                 {
-                    _dividendRangeEndDate = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DateRangeEnd)));
+                    this._dividendRangeEndDate = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DateRangeEnd)));
                 }
             }
         }
 
         private double currentPrice;
         private double _dividendReturn;
+
         /// <summary>
-        /// The dividend return (dividen per share/share value)
+        /// Gets the dividend return (dividen per share/share value).
         /// </summary>
         public double DividendReturn
         {
             get
             {
-                return _dividendReturn;
-            }
-            private set
-            {
-                if (_dividendReturn!=value)
-                {
-                    _dividendReturn = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DividendReturn)));
-                }
+                return this._dividendReturn;
             }
 
+            private set
+            {
+                if (this._dividendReturn != value)
+                {
+                    this._dividendReturn = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DividendReturn)));
+                }
+            }
         }
         #endregion
 
         #region Methods
-        
+
         /// <summary>
-        /// Sets the <see cref="DividendReturn"/> for the <see cref="SelectedShare"/>
+        /// Sets the <see cref="DividendReturn"/> for the <see cref="SelectedShare"/>.
         /// </summary>
         private async void GetDividendReturnAsync()
         {
             // get the current price of the selected share
-            currentPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
-            if(currentPrice == 0.0)
-            {    
-                DividendReturn= 0.0;
+            this.currentPrice = await RegexHelper.GetSharePriceAsync(this.SelectedShare);
+            if (this.currentPrice == 0.0)
+            {
+                this.DividendReturn = 0.0;
             }
+
             // calculate the return (dividenden rendite)
-            DividendReturn =  DividendPerShare / currentPrice;
+            this.DividendReturn =  this.DividendPerShare / this.currentPrice;
         }
 
         #endregion
@@ -270,7 +317,7 @@ namespace StockMarket.ViewModels
 
         private void AddDividend(object o)
         {
-            if (CurrentUser.Equals(User.Default()))
+            if (this.CurrentUser.Equals(User.Default()))
             {
                 System.Windows.MessageBox.Show("There is no valid user selected");
                 return;
@@ -279,33 +326,33 @@ namespace StockMarket.ViewModels
             // create a new dividend
             Dividend dividend = new Dividend
             {
-                ISIN = SelectedShare.ISIN,
-                Amount = Amount,
-                Value = Dividend,
-                DayOfPayment = DividendPayDate,                
-                DateRangeStart = DateRangeStart,
-                DateRangeEnd = DateRangeEnd,
-                UserName = CurrentUser.ToString()
+                ISIN = this.SelectedShare.ISIN,
+                Amount = this.Amount,
+                Value = this.Dividend,
+                DayOfPayment = this.DividendPayDate,
+                DateRangeStart = this.DateRangeStart,
+                DateRangeEnd = this.DateRangeEnd,
+                UserName = this.CurrentUser.ToString(),
             };
 
             // add the order to the matching share
             DataBaseHelper.AddDividendToDB(dividend);
 
-            Amount = 0;
-            Dividend = 0.0;
-            DividendPerShare = 0;
-            DividendReturn = 0;
+            this.Amount = 0;
+            this.Dividend = 0.0;
+            this.DividendPerShare = 0;
+            this.DividendReturn = 0;
         }
 
         private bool CanAddDividednd(object o)
         {
-            return (Amount > 0 && Dividend > 0.0) ? true : false;
+            return (this.Amount > 0 && this.Dividend > 0.0) ? true : false;
         }
 
         private void AddInputViaPdf(object o)
         {
 
-            //create the OCR reader
+            // create the OCR reader
             AdvancedOcr Ocr = new AdvancedOcr()
             {
                 CleanBackgroundNoise = false,
@@ -318,7 +365,7 @@ namespace StockMarket.ViewModels
                 EnhanceResolution = true,
                 InputImageType = AdvancedOcr.InputTypes.Document,
                 ReadBarCodes = false,
-                Strategy = AdvancedOcr.OcrStrategy.Advanced
+                Strategy = AdvancedOcr.OcrStrategy.Advanced,
             };
 
             // create a file dialog
@@ -328,12 +375,12 @@ namespace StockMarket.ViewModels
                 CheckPathExists = true,
                 Multiselect = false,
                 Filter = "PDFs|*.pdf",
-                InitialDirectory = @"C:\"
+                InitialDirectory = @"C:\",
             };
 
             // when a file was selected....
             if (ofd.ShowDialog() == true)
-            {                
+            {
                 var pdfToRead = ofd.FileName;
 
                 try
@@ -341,8 +388,7 @@ namespace StockMarket.ViewModels
                     // create a rectangle from which to read (don't set for complete page)
                     System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
                     var Results = Ocr.ReadPdf(pdfToRead, area, 1);
-                    var lines = Results.Pages[0].LinesOfText;               
-
+                    var lines = Results.Pages[0].LinesOfText;
 
                     // get Amount, ISIN, WKN
                     foreach (var line in lines)
@@ -354,41 +400,43 @@ namespace StockMarket.ViewModels
                                 // get ordered amount
                                 var strAmount = line.Words[1].Text;
                                 int intAmount = 0;
-                                Int32.TryParse(strAmount, out intAmount);
-                                Amount = intAmount;
+                                int.TryParse(strAmount, out intAmount);
+                                this.Amount = intAmount;
 
                                 // Share by ISIN or WKN
-                                var isin = line.Words[(line.WordCount - 2)].Text;
-                                var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
-
+                                var isin = line.Words[line.WordCount - 2].Text;
+                                var wkn = line.Words.Last().Text.Replace("(", string.Empty).Replace(")", string.Empty);
 
                                 // try to match a Share already in the database
                                 // first by ISIN
-                                var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));
+                                var sharesByIsin = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; });
                                 if (sharesByIsin.Count() != 0)
                                 {
-                                    SelectedShare = sharesByIsin.First();
+                                    this.SelectedShare = sharesByIsin.First();
                                     break;
                                 }
+
                                 // if none is found by ISIN try by WKN
-                                var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
+                                var sharesByWkn = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; });
                                 if (sharesByWkn.Count() != 0)
                                 {
-                                    SelectedShare = sharesByWkn.First();
+                                    this.SelectedShare = sharesByWkn.First();
                                     break;
                                 }
+
                                 // if none is found by WKN try by ISIN with "O" replaced by zeros
-                                var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
+                                var sharesByIsin0 = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); });
                                 if (sharesByIsin0.Count() != 0)
                                 {
-                                    SelectedShare = sharesByIsin0.First();
+                                    this.SelectedShare = sharesByIsin0.First();
                                     break;
                                 }
+
                                 // if none is found try by WKN with "O" replaced by zeros
-                                var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
+                                var sharesByWkn0 = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); });
                                 if (sharesByWkn0.Count() != 0)
                                 {
-                                    SelectedShare = sharesByWkn0.First();
+                                    this.SelectedShare = sharesByWkn0.First();
                                     break;
                                 }
                             }
@@ -396,14 +444,13 @@ namespace StockMarket.ViewModels
                             {
                                 MessageBox.Show("Error on reading amount, ISIN or WKN");
                             }
-                            
 
                             // if none is found, don't select any order
                             break;
                         }
                     }
 
-                    //get dividend
+                    // get dividend
                     foreach (var line in lines)
                     {
                         if (line.Text.StartsWith("Ausmachender Betrag"))
@@ -411,22 +458,23 @@ namespace StockMarket.ViewModels
                             try
                             {
                                 // get share price
-                                var strPrice = line.Words[2].Text.Replace("+", "");
+                                var strPrice = line.Words[2].Text.Replace("+", string.Empty);
                                 double doublePrice = 0.0;
-                                Double.TryParse(strPrice, out doublePrice);
-                                DividendChanged = false;
-                                DPSChanged = false;
-                                Dividend = doublePrice;
+                                double.TryParse(strPrice, out doublePrice);
+                                this.DividendChanged = false;
+                                this.DPSChanged = false;
+                                this.Dividend = doublePrice;
                             }
                             catch (Exception)
                             {
                                 MessageBox.Show("Error on reading of whole dividend");
                             }
+
                             break;
                         }
                     }
 
-                    //get dividend pay date
+                    // get dividend pay date
                     foreach (var line in lines)
                     {
                         if (line.Text.StartsWith("Bestandsstichtag"))
@@ -438,17 +486,18 @@ namespace StockMarket.ViewModels
                                 var strDate = match.Value;
                                 DateTime Date;
                                 DateTime.TryParse(strDate, out Date);
-                                DividendPayDate = Date;
+                                this.DividendPayDate = Date;
                             }
                             catch (Exception)
                             {
                                 MessageBox.Show("Error on reading of booking date");
                             }
+
                             break;
                         }
                     }
 
-                    //get dividend Start Range Date and End Range Date
+                    // get dividend Start Range Date and End Range Date
                     foreach (var line in lines)
                     {
                         if (line.Text.StartsWith("Geschäftsjahr"))
@@ -461,11 +510,11 @@ namespace StockMarket.ViewModels
                                 var strDate = matches[0].Value;
                                 DateTime Date;
                                 DateTime.TryParse(strDate, out Date);
-                                DateRangeStart = Date;
+                                this.DateRangeStart = Date;
 
                                 strDate = matches[1].Value;
                                 DateTime.TryParse(strDate, out Date);
-                                DateRangeEnd = Date;
+                                this.DateRangeEnd = Date;
                             }
                             catch (Exception)
                             {
@@ -473,34 +522,29 @@ namespace StockMarket.ViewModels
                             }
 
                             break;
-                            
                         }
                     }
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     MessageBox.Show("Error on reading pdf");
                 }
 
-
-
-
                 // time for OCR ~8s ... animation für busy einbauen?
 
-                //< Style >
+                // < Style >
                 //    < Style.Triggers >
-                //        < DataTrigger Binding = "{Binding IsAnimationRunning}" Value = "True" >   
-                //               < DataTrigger.EnterActions >   
-                //                   < BeginStoryboard >   
-                //                       < Storyboard >   
-                //                           < SomeAnimation />   
-                //                       </ Storyboard >   
-                //                   </ BeginStoryboard >   
-                //               </ DataTrigger.EnterActions >   
-                //           </ DataTrigger >   
+                //        < DataTrigger Binding = "{Binding IsAnimationRunning}" Value = "True" >
+                //               < DataTrigger.EnterActions >
+                //                   < BeginStoryboard >
+                //                       < Storyboard >
+                //                           < SomeAnimation />
+                //                       </ Storyboard >
+                //                   </ BeginStoryboard >
+                //               </ DataTrigger.EnterActions >
+                //           </ DataTrigger >
                 //       </ Style.Triggers >
                 //   </ Style >
-
             }
         }
         #endregion

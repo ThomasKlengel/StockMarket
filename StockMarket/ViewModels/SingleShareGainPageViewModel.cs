@@ -8,15 +8,20 @@ using System.Windows.Data;
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>
+    /// A ViewModel for all <see cref="Order"/>s of a <see cref="Share"/>.
     /// </summary>
     class SingleShareGainPageViewModel : ShareComponentViewModel
     {
 
         #region Constructors
-        public SingleShareGainPageViewModel():base()
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SingleShareGainPageViewModel"/> class.
+        /// </summary>
+        public SingleShareGainPageViewModel()
+            : base()
         {
-            Shares = new ObservableCollection<Share>();
+            this.Shares = new ObservableCollection<Share>();
         }
 
         private void DisplayedShare_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -26,92 +31,97 @@ namespace StockMarket.ViewModels
                 List<ShareComponentViewModel> all = new List<ShareComponentViewModel>();
                 List<ShareComponentViewModel> divs = new List<ShareComponentViewModel>();
 
-                foreach (var component in DisplayedShare.ShareComponents)
+                foreach (var component in this.DisplayedShare.ShareComponents)
                 {
                     all.Add(component);
-                    if (component.ComponentType == ShareComponentType.dividend)
+                    if (component.ComponentType == ShareComponentType.Dividend)
                     {
                         divs.Add(component);
                     }
                 }
 
-                TileAll = new TileViewModel(all, ShareComponentType.buy, "All");
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileAll)));
-                TileDividends = new TileViewModel(divs, ShareComponentType.dividend, "Dividends");
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(TileDividends)));
+                this.TileAll = new TileViewModel(all, ShareComponentType.Buy, "All");
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.TileAll)));
+                this.TileDividends = new TileViewModel(divs, ShareComponentType.Dividend, "Dividends");
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.TileDividends)));
             }
         }
 
+        /// <inheritdoc/>
         public override void UserChanged()
         {
             // gets all orders for the current user
-            var ordersByUser = DataBaseHelper.GetAllItemsFromDB<Order>().Where(o=>(SelectByUser(o)));
+            var ordersByUser = DataBaseHelper.GetAllItemsFromDB<Order>().Where(o => this.SelectByUser(o));
             // add any isin of these orders (HashSet only allows uniques -> duplicates are not added)
             var unique = new HashSet<string>();
             foreach (var order in ordersByUser)
             {
                 unique.Add(order.ISIN);
             }
+
             // clear the colections
-            Shares.Clear();
+            this.Shares.Clear();
             var unsortedShares = new ObservableCollection<Share>();
             // get all shares for the user
             foreach (var isin in unique)
             {
                 unsortedShares.Add(DataBaseHelper.GetItemsFromDB<Share>(isin).First());
             }
+
             // sort the shares by name
             foreach (var share in unsortedShares.OrderBy((s) => { return s.ShareName; }))
             {
-                Shares.Add(share);
+                this.Shares.Add(share);
             }
 
-            if (Shares.Count > 0)
+            if (this.Shares.Count > 0)
             {
                 // set the selected share for initially creating the view model
-                SelectedShare = Shares.First();
+                this.SelectedShare = this.Shares.First();
             }
-
         }
 
         #endregion
 
-        #region Properties           
+        #region Properties
 
         /// <summary>
-        /// All orders of the selected share
+        /// Gets or sets all orders of the selected share.
         /// </summary>
         public ShareViewModel DisplayedShare { get; set; }
 
         /// <summary>
-        /// The <see cref="Share"/>s that are currently managed in the database
+        /// Gets the <see cref="Share"/>s that are currently managed in the database.
         /// </summary>
         public ObservableCollection<Share> Shares { get; private set; }
 
         private Share _selectedShare;
+
         /// <summary>
-        /// The <see cref="Share"/> that is currently selected
+        /// Gets or sets the <see cref="Share"/> that is currently selected.
         /// </summary>
         public Share SelectedShare
         {
-            get { return _selectedShare; }
+            get
+            {
+                return this._selectedShare;
+            }
+
             set
             {
-                if (_selectedShare != value)
+                if (this._selectedShare != value)
                 {
-                    _selectedShare = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
+                    this._selectedShare = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SelectedShare)));
 
-                    if (SelectedShare != null)
+                    if (this.SelectedShare != null)
                     {
-                        DisplayedShare = new ShareViewModel(SelectedShare);
+                        this.DisplayedShare = new ShareViewModel(this.SelectedShare);
                         // notify Share of CurrentUser so values are refreshed
-                        ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
-                        OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayedShare)));
-                        DisplayedShare.PropertyChanged -= DisplayedShare_PropertyChanged;
-                        DisplayedShare.PropertyChanged += DisplayedShare_PropertyChanged;
-
-
+                        ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
+                        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedShare)));
+                        this.DisplayedShare.PropertyChanged -= this.DisplayedShare_PropertyChanged;
+                        this.DisplayedShare.PropertyChanged += this.DisplayedShare_PropertyChanged;
                     }
                 }
             }

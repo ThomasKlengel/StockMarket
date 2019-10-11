@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace StockMarket
 {
     /// <summary>
-    /// An interface representing any share component that relates to a user
+    /// An interface representing any share component that relates to a user.
     /// </summary>
     public interface IHasUserName
     {

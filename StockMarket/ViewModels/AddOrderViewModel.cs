@@ -1,16 +1,16 @@
-﻿using IronOcr;
-using Microsoft.Win32;
-using Prism.Events;
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using IronOcr;
+using Microsoft.Win32;
+using Prism.Events;
 
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for a single <see cref="Order"/>
+    /// A ViewModel for a single <see cref="Order"/>.
     /// </summary>
     public class AddOrderViewModel : ViewModelBase
     {
@@ -21,18 +21,23 @@ namespace StockMarket.ViewModels
         bool ignoreUpdate = false;
 
         #region ctor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddOrderViewModel"/> class.
+        /// </summary>
         public AddOrderViewModel()
         {
-            AddOrderCommand = new RelayCommand(AddOrder, CanAddOrder);
-            AddInputViaPdfCommand = new RelayCommand(AddInputViaPdf);
-            Shares = new ObservableCollection<Share>();
+            this.AddOrderCommand = new RelayCommand(this.AddOrder, this.CanAddOrder);
+            this.AddInputViaPdfCommand = new RelayCommand(this.AddInputViaPdf);
+            this.Shares = new ObservableCollection<Share>();
             foreach (var share in  DataBaseHelper.GetSharesFromDB() )
             {
-                Shares.Add(share);
+                this.Shares.Add(share);
             }
-            SelectedShare = Shares.First();
 
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { CurrentUser = user; });
+            this.SelectedShare = this.Shares.First();
+
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Subscribe((user) => { this.CurrentUser = user; });
         }
 
         #endregion
@@ -40,179 +45,216 @@ namespace StockMarket.ViewModels
         #region Properties
 
         private User _currentUser;
+
         /// <summary>
-        /// The <see cref="User"/> currently selected in the main window
+        /// Gets or sets the <see cref="User"/> currently selected in the main window.
         /// </summary>
         public User CurrentUser
         {
             get
             {
-                if (_currentUser != null)
+                if (this._currentUser != null)
                 {
-                    return _currentUser;
+                    return this._currentUser;
                 }
+
                 return User.Default();
             }
+
             set
             {
-                if (CurrentUser != value)
+                if (this.CurrentUser != value)
                 {
-                    _currentUser = value;
+                    this._currentUser = value;
                 }
             }
         }
 
         /// <summary>
-        /// The <see cref="Share"/>s the user can choose from to add an orders to
+        /// Gets or sets the <see cref="Share"/>s the user can choose from to add an orders to.
         /// </summary>
         public ObservableCollection<Share> Shares { get; set; }
 
         private double _actPrice;
+
         /// <summary>
-        /// The current price of a single share
+        /// Gets or sets the current price of a single share.
         /// </summary>
         public double ActPrice
         {
-            get { return _actPrice; }
+            get
+            {
+                return this._actPrice;
+            }
+
             set
             {
-                if (_actPrice != value)
+                if (this._actPrice != value)
                 {
-                    _actPrice = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActPrice)));
+                    this._actPrice = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ActPrice)));
                 }
             }
         }
 
-        private double _expenses =10.0;
+        private double _expenses = 10.0;
+
         /// <summary>
-        /// The expenses for any transaction
+        /// Gets or sets the expenses for any transaction.
         /// </summary>
         public double Expenses
         {
-            get { return _expenses; }
+            get
+            {
+                return this._expenses;
+            }
+
             set
             {
-                if (_expenses != value)
+                if (this._expenses != value)
                 {
-                    _expenses = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Expenses)));
+                    this._expenses = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Expenses)));
                 }
             }
         }
 
         private Share _selectedShare;
+
         /// <summary>
-        /// The <see cref="Share"/> that is currently selected in the UI to add the orders to
+        /// Gets or sets the <see cref="Share"/> that is currently selected in the UI to add the orders to.
         /// </summary>
         public Share SelectedShare
         {
-            get { return _selectedShare; }
+            get
+            {
+                return this._selectedShare;
+            }
+
             set
             {
-                if (_selectedShare != value)
+                if (this._selectedShare != value)
                 {
-                    _selectedShare = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(SelectedShare)));
+                    this._selectedShare = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SelectedShare)));
                     // update when Share is selected by user, not when reading from PDF
-                    if (!ignoreUpdate)
+                    if (!this.ignoreUpdate)
                     {
-                        GetPriceAsync();
-                        Expenses = 10;
-                        Amount = 0;
-                        OrderDate = DateTime.Today;
-                        OrderType = ShareComponentType.buy;
+                        this.GetPriceAsync();
+                        this.Expenses = 10;
+                        this.Amount = 0;
+                        this.OrderDate = DateTime.Today;
+                        this.OrderType = ShareComponentType.Buy;
                     }
-                    ignoreUpdate = false;
+
+                    this.ignoreUpdate = false;
                 }
-                
             }
         }
-               
+
         private double _amount;
+
         /// <summary>
-        /// The amount of shares purchased
+        /// Gets or sets the amount of shares purchased.
         /// </summary>
         public double Amount
         {
-            get { return _amount; }
-            set
+            get
             {
-                if (_amount != value)
-                {
-                    _amount = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
-                }
+                return this._amount;
             }
-        }             
 
-        private ShareComponentType _orderType = ShareComponentType.buy;
-        /// <summary>
-        /// The type of order
-        /// </summary>
-        public ShareComponentType OrderType
-        {
-            get { return _orderType; }
             set
             {
-                if (_orderType != value)
+                if (this._amount != value)
                 {
-                    _orderType = value;
-                    // Update the Checkboxes
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsBuy)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsSell)));
+                    this._amount = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Amount)));
                 }
             }
         }
-        
+
+        private ShareComponentType _orderType = ShareComponentType.Buy;
+
         /// <summary>
-        /// Used to check the buy/sell-checkbox
+        /// Gets or sets the type of order.
+        /// </summary>
+        public ShareComponentType OrderType
+        {
+            get
+            {
+                return this._orderType;
+            }
+
+            set
+            {
+                if (this._orderType != value)
+                {
+                    this._orderType = value;
+                    // Update the Checkboxes
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.OrderType)));
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.OrderIsBuy)));
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.OrderIsSell)));
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether used to check the buy/sell-checkbox.
         /// </summary>
         public bool OrderIsBuy
         {
             get
             {
-                return OrderType == ShareComponentType.buy;
+                return this.OrderType == ShareComponentType.Buy;
             }
+
             set
             {
                 if (value) // dont update when bound CheckBox is unchecked
                 {
-                    OrderType = OrderType == ShareComponentType.sell ? ShareComponentType.buy : ShareComponentType.sell;
+                    this.OrderType = this.OrderType == ShareComponentType.Sell ? ShareComponentType.Buy : ShareComponentType.Sell;
                 }
             }
         }
+
         /// <summary>
-        /// Used to check the buy/sell-checkbox
+        /// Gets or sets a value indicating whether used to check the buy/sell-checkbox.
         /// </summary>
         public bool OrderIsSell
         {
             get
             {
-                return OrderType == ShareComponentType.sell;
+                return this.OrderType == ShareComponentType.Sell;
             }
+
             set
             {
                 if (value) // dont update when bound CheckBox is unchecked
                 {
-                    OrderType = OrderType == ShareComponentType.sell ? ShareComponentType.buy : ShareComponentType.sell;
+                    this.OrderType = this.OrderType == ShareComponentType.Sell ? ShareComponentType.Buy : ShareComponentType.Sell;
                 }
             }
         }
 
         private DateTime _dateTime = DateTime.Today;
+
         /// <summary>
-        /// The date at which the order has been booked
+        /// Gets or sets the date at which the order has been booked.
         /// </summary>
         public DateTime OrderDate
         {
-            get { return _dateTime; }
-            set {
-                if (_dateTime != value)
+            get
+            {
+                return this._dateTime;
+            }
+
+            set
+            {
+                if (this._dateTime != value)
                 {
-                    _dateTime = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderDate)));
+                    this._dateTime = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.OrderDate)));
                 }
             }
         }
@@ -222,11 +264,11 @@ namespace StockMarket.ViewModels
         #region Methods
 
         /// <summary>
-        /// Gets the current price of the <see cref="SelectedShare"/>
+        /// Gets the current price of the <see cref="SelectedShare"/>.
         /// </summary>
         private async void GetPriceAsync()
         {
-            ActPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
+            this.ActPrice = await RegexHelper.GetSharePriceAsync(this.SelectedShare);
         }
 
         #endregion
@@ -239,7 +281,7 @@ namespace StockMarket.ViewModels
         private void AddOrder(object o)
         {
             // cehck if a valid user is selected
-            if (CurrentUser.Equals(User.Default()))
+            if (this.CurrentUser.Equals(User.Default()))
             {
                 System.Windows.MessageBox.Show("There is no valid user selected");
                 return;
@@ -247,30 +289,30 @@ namespace StockMarket.ViewModels
 
             // create a new order
             Order order = new Order();
-            order.Amount = Amount;
-            order.OrderExpenses = Expenses;
-            order.OrderType = OrderType;
-            order.SharePrice = ActPrice;
-            order.Date = OrderDate;
-            order.ISIN = SelectedShare.ISIN;
-            order.UserName = CurrentUser.ToString();
+            order.Amount = this.Amount;
+            order.OrderExpenses = this.Expenses;
+            order.OrderType = this.OrderType;
+            order.SharePrice = this.ActPrice;
+            order.Date = this.OrderDate;
+            order.ISIN = this.SelectedShare.ISIN;
+            order.UserName = this.CurrentUser.ToString();
 
             // add the order to the matching share
             DataBaseHelper.AddOrderToDB(order);
 
             // set Amount to zero so that it cant be added by accident twice
-            Amount = 0;
+            this.Amount = 0;
         }
 
         private bool CanAddOrder(object o)
         {
             // anly add if the amount of ordered Shares is more then zero
-            return Amount > 0 ? true : false;
+            return this.Amount > 0 ? true : false;
         }
 
         private void AddInputViaPdf(object o)
         {
-            //create the OCR reader
+            // create the OCR reader
             AdvancedOcr Ocr = new AdvancedOcr()
             {
                 CleanBackgroundNoise = false,
@@ -283,7 +325,7 @@ namespace StockMarket.ViewModels
                 EnhanceResolution = true,
                 InputImageType = AdvancedOcr.InputTypes.Document,
                 ReadBarCodes = false,
-                Strategy = AdvancedOcr.OcrStrategy.Advanced
+                Strategy = AdvancedOcr.OcrStrategy.Advanced,
             };
 
             // create a file dialog
@@ -293,29 +335,29 @@ namespace StockMarket.ViewModels
                 CheckPathExists = true,
                 Multiselect = false,
                 Filter = "PDFs|*.pdf",
-                InitialDirectory = @"C:\"
+                InitialDirectory = @"C:\",
             };
 
             if (ofd.ShowDialog() == true)
-            {                
+            {
                 var pdfToRead = ofd.FileName;
 
                 // create a rectangle from which to read (dont set for complete page)
-                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);                
-                var Results = Ocr.ReadPdf(pdfToRead, area, 1);                
+                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
+                var Results = Ocr.ReadPdf(pdfToRead, area, 1);
                 var lines = Results.Pages[0].LinesOfText;
 
-                //get order type
+                // get order type
                 foreach (var line in lines)
                 {
                     if (line.Text.StartsWith("Wertpapier Abrechnung"))
                     {
                         var buySell = line.Words.Last().Text;
-                        OrderType = buySell == "Verkauf" ? ShareComponentType.sell : ShareComponentType.buy;
+                        this.OrderType = buySell == "Verkauf" ? ShareComponentType.Sell : ShareComponentType.Buy;
                         break;
                     }
                 }
-                
+
                 // get Amount, ISIN, WKN
                 foreach (var line in lines)
                 {
@@ -324,43 +366,47 @@ namespace StockMarket.ViewModels
                         // get ordered amount
                         var strAmount = line.Words[1].Text;
                         int intAmount = 0;
-                        Int32.TryParse(strAmount, out intAmount);
-                        Amount = intAmount;
+                        int.TryParse(strAmount, out intAmount);
+                        this.Amount = intAmount;
 
                         // Share by ISIN or WKN
-                        var isin = line.Words[(line.WordCount - 2)].Text;
-                        var wkn = line.Words.Last().Text.Replace("(", "").Replace(")", "");
+                        var isin = line.Words[line.WordCount - 2].Text;
+                        var wkn = line.Words.Last().Text.Replace("(", string.Empty).Replace(")", string.Empty);
 
-                        ignoreUpdate = true;
-                        var sharesByIsin = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; }));  
+                        this.ignoreUpdate = true;
+                        var sharesByIsin = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin; });
                         if (sharesByIsin.Count() != 0)
                         {
-                            SelectedShare = sharesByIsin.First();
+                            this.SelectedShare = sharesByIsin.First();
                             break;
                         }
-                        var sharesByWkn = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; }));
+
+                        var sharesByWkn = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn; });
                         if (sharesByWkn.Count() != 0)
                         {
-                            SelectedShare = sharesByWkn.First();
+                            this.SelectedShare = sharesByWkn.First();
                             break;
                         }
-                        var sharesByIsin0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); }));
+
+                        var sharesByIsin0 = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == isin.Replace("O", "0"); });
                         if (sharesByIsin0.Count() != 0)
                         {
-                            SelectedShare = sharesByIsin0.First();
+                            this.SelectedShare = sharesByIsin0.First();
                             break;
                         }
-                        var sharesByWkn0 = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); }));
+
+                        var sharesByWkn0 = DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == wkn.Replace("O", "0"); });
                         if (sharesByWkn0.Count() != 0)
                         {
-                            SelectedShare = sharesByWkn0.First();
+                            this.SelectedShare = sharesByWkn0.First();
                             break;
                         }
+
                         break;
                     }
                 }
 
-                //get SharePrice at ordertime
+                // get SharePrice at ordertime
                 foreach (var line in lines)
                 {
                     if (line.Text.StartsWith("Ausführungskurs"))
@@ -368,13 +414,13 @@ namespace StockMarket.ViewModels
                         // get share price
                         var strPrice = line.Words[1].Text;
                         double doublePrice = 0.0;
-                        Double.TryParse(strPrice, out doublePrice);
-                        ActPrice = doublePrice;
+                        double.TryParse(strPrice, out doublePrice);
+                        this.ActPrice = doublePrice;
                         break;
                     }
                 }
 
-                //get orderdate
+                // get orderdate
                 foreach (var line in lines)
                 {
                     if (line.Text.StartsWith("Schluss"))
@@ -384,8 +430,8 @@ namespace StockMarket.ViewModels
                         // get share price
                         var strDate = match.Value;
                         DateTime Date;
-                        DateTime.TryParse(strDate, out Date );                        
-                        OrderDate = Date;
+                        DateTime.TryParse(strDate, out Date );
+                        this.OrderDate = Date;
                         break;
                     }
                 }
@@ -394,99 +440,94 @@ namespace StockMarket.ViewModels
                 int lineIndex = 0;
                 int provisionLineIndex = 1000;
                 foreach (var line in lines)                {
-                    
+
                     if (line.Text.StartsWith("Provision"))
                     {
                         provisionLineIndex = lineIndex;
                         // get order expenses
-                        var strExpense = line.Words[1].Text.Replace("-","");
+                        var strExpense = line.Words[1].Text.Replace("-",string.Empty);
                         double doubleExpense = 0.0;
-                        Double.TryParse(strExpense, out doubleExpense);
-                        Expenses = doubleExpense;
+                        double.TryParse(strExpense, out doubleExpense);
+                        this.Expenses = doubleExpense;
                         lineIndex++;
                         continue;
                     }
 
-                    if (provisionLineIndex<100)
+                    if (provisionLineIndex < 100)
                     {
                         if (line.Text.StartsWith("Ausmachender") || line.Text.StartsWith("Ermittlung"))
                         {
                             break;
                         }
 
-                        if (line.Words[line.Words.Count()-2].Text.EndsWith("-"))
+                        if (line.Words[line.Words.Count() - 2].Text.EndsWith("-"))
                         {
                             // get additional expenses
-                            var strExpense = line.Words[line.Words.Count() - 2].Text.Replace("-","");
+                            var strExpense = line.Words[line.Words.Count() - 2].Text.Replace("-",string.Empty);
                             double doubleExpense = 0.0;
-                            Double.TryParse(strExpense, out doubleExpense);
-                            Expenses += doubleExpense;
+                            double.TryParse(strExpense, out doubleExpense);
+                            this.Expenses += doubleExpense;
                         }
-
                     }
+
                     lineIndex++;
                 }
 
+                // Wertpapier Abrechnung Kauf
+                // Nominale Wertpapierbezeichnung ISIN(WKN)
+                // Stück 80 UBS AG(LONDON BRANCH) DEOOOUFOAA67(UFOAA6)  --> replace  "O" durch "0" wkn,isin match share by isin -> nomatch: wkn
+                // FAKTL O.END AMAZON
+                // Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
+                // Börsensegment FRAB
+                // Market - Order
+                // Limit billigst
+                // Schlusstagl - Zeit 23.05.201919:46:13 Auftraggeber Vorname Nachname
+                // Ausführungskurs 6,15 EUR Auftragserteilung/ -ort Online - Banking
+                // Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck —
+                // Kurswert 492,00 - EUR
+                // Provision 10,00 - EUR
+                // Ausmachender Betrag 502,00 - EUR
+                // Den Gegenwert buchen wir mit Valuta 27.05.2019 zu Lasten des Kontos xxxxxxxx04
+                // (IBAN DE77 xxxx xxxx xxxx xxxx 04), BLZ xxxxxxxx(BIC xxxxxxxxx).
+                // Die Wertpapiere schreiben wir Ihrem Depotkonto gut.
 
-
-                //Wertpapier Abrechnung Kauf
-                //Nominale Wertpapierbezeichnung ISIN(WKN)                
-                //Stück 80 UBS AG(LONDON BRANCH) DEOOOUFOAA67(UFOAA6)  --> replace  "O" durch "0" wkn,isin match share by isin -> nomatch: wkn
-                //FAKTL O.END AMAZON                
-                //Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
-                //Börsensegment FRAB                
-                //Market - Order                
-                //Limit billigst
-                //Schlusstagl - Zeit 23.05.201919:46:13 Auftraggeber Vorname Nachname
-                //Ausführungskurs 6,15 EUR Auftragserteilung/ -ort Online - Banking                
-                //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck —                
-                //Kurswert 492,00 - EUR
-                //Provision 10,00 - EUR
-                //Ausmachender Betrag 502,00 - EUR                
-                //Den Gegenwert buchen wir mit Valuta 27.05.2019 zu Lasten des Kontos xxxxxxxx04
-                //(IBAN DE77 xxxx xxxx xxxx xxxx 04), BLZ xxxxxxxx(BIC xxxxxxxxx).
-                //Die Wertpapiere schreiben wir Ihrem Depotkonto gut.
-
-                //Wertpapier Abrechnung Verkauf
-                //Nominale Wertpapierbezeichnung ISIN (WKN)
-                //Stück 10 UBISOFT ENTERTAINMENT S.A. FR0000054470 (901581)
-                //ACTIONS PORT. EO 0,0775                
-                //Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
-                //Börsensegment FRAB                
-                //Market - Order                
-                //Limit bestens
-                //Schlusstagl - Zeit 26.04.2019 12:46:53 Auftraggeber Vorname Nachname
-                //Ausführungskurs 83,70 EUR Auftragserteilung/ -ort Online—Banking                
-                //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck -                
-                //Kurswert 837,00 EUR
-                //Provision 10,00 - EUR
-                //Transaktionsentgeltßörse 0,71 - EUR
-                //Ubertragungs -/ Liefergebühr 0,13 - EUR
-                //Handelsentgelt 3,00 - EUR
-                //Ermittlung steuerrelevante Erträge                
-                //Veräußerungsverlust 164,99 - EUR                
-                //Eingebuchte Aktienverluste 164,99 EUR                
-                //Ausmachender Betraa 823.16 EUR
-
-
+                // Wertpapier Abrechnung Verkauf
+                // Nominale Wertpapierbezeichnung ISIN (WKN)
+                // Stück 10 UBISOFT ENTERTAINMENT S.A. FR0000054470 (901581)
+                // ACTIONS PORT. EO 0,0775
+                // Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
+                // Börsensegment FRAB
+                // Market - Order
+                // Limit bestens
+                // Schlusstagl - Zeit 26.04.2019 12:46:53 Auftraggeber Vorname Nachname
+                // Ausführungskurs 83,70 EUR Auftragserteilung/ -ort Online—Banking
+                // Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck -
+                // Kurswert 837,00 EUR
+                // Provision 10,00 - EUR
+                // Transaktionsentgeltßörse 0,71 - EUR
+                // Ubertragungs -/ Liefergebühr 0,13 - EUR
+                // Handelsentgelt 3,00 - EUR
+                // Ermittlung steuerrelevante Erträge
+                // Veräußerungsverlust 164,99 - EUR
+                // Eingebuchte Aktienverluste 164,99 EUR
+                // Ausmachender Betraa 823.16 EUR
                 var completeText = Results.Pages[0].Text;
 
                 // time for OCR ~8s ... animation für busy einbauen?
 
-                //< Style >
+                // < Style >
                 //    < Style.Triggers >
-                //        < DataTrigger Binding = "{Binding IsAnimationRunning}" Value = "True" >   
-                //               < DataTrigger.EnterActions >   
-                //                   < BeginStoryboard >   
-                //                       < Storyboard >   
-                //                           < SomeAnimation />   
-                //                       </ Storyboard >   
-                //                   </ BeginStoryboard >   
-                //               </ DataTrigger.EnterActions >   
-                //           </ DataTrigger >   
+                //        < DataTrigger Binding = "{Binding IsAnimationRunning}" Value = "True" >
+                //               < DataTrigger.EnterActions >
+                //                   < BeginStoryboard >
+                //                       < Storyboard >
+                //                           < SomeAnimation />
+                //                       </ Storyboard >
+                //                   </ BeginStoryboard >
+                //               </ DataTrigger.EnterActions >
+                //           </ DataTrigger >
                 //       </ Style.Triggers >
                 //   </ Style >
-
             }
         }
         #endregion

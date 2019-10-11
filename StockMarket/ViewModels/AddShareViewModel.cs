@@ -4,206 +4,266 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 
-
 namespace StockMarket.ViewModels
 {
     public class AddShareViewModel : ViewModelBase
     {
         #region ctors
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddShareViewModel"/> class.
+        /// </summary>
         public AddShareViewModel()
         {
-            //Orders = new ObservableCollection<OrderViewModel>();
-            //DayValues = new ObservableCollection<DayValueViewModel>();
-
-            AutoFillCommand = new RelayCommand(AutofillAsync, CanAutoFill);
-            InsertCommand = new RelayCommand(Insert, CanInsert);
+            // Orders = new ObservableCollection<OrderViewModel>();
+            // DayValues = new ObservableCollection<DayValueViewModel>();
+            this.AutoFillCommand = new RelayCommand(this.AutofillAsync, this.CanAutoFill);
+            this.InsertCommand = new RelayCommand(this.Insert, this.CanInsert);
         }
 
         #endregion
 
-        #region Properties                  
+        #region Properties
 
         private string _shareName;
+
         /// <summary>
-        /// The name of the stock company
+        /// Gets or sets the name of the stock company.
         /// </summary>
         public string ShareName
         {
-            get { return _shareName; }
+            get
+            {
+                return this._shareName;
+            }
+
             set
             {
-                if (_shareName != value)
+                if (this._shareName != value)
                 {
-                    _shareName = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
+                    this._shareName = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ShareName)));
                 }
             }
         }
 
         private string _webSite;
+
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// Gets or sets the website from which to get the data for the <see cref="Share"/>.
         /// </summary>
         public string WebSite
         {
-            get { return _webSite; }
+            get
+            {
+                return this._webSite;
+            }
+
             set
             {
-                if (_webSite != value)
+                if (this._webSite != value)
                 {
-                    _webSite = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                    this._webSite = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WebSite)));
                 }
             }
         }
 
         private string _webSite2;
+
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// Gets or sets the website from which to get the data for the <see cref="Share"/>.
         /// </summary>
         public string WebSite2
         {
-            get { return _webSite2; }
+            get
+            {
+                return this._webSite2;
+            }
+
             set
             {
-                if (_webSite2 != value)
+                if (this._webSite2 != value)
                 {
-                    _webSite2 = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite2)));
+                    this._webSite2 = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WebSite2)));
                 }
             }
         }
 
         private string _webSite3;
+
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// Gets or sets the website from which to get the data for the <see cref="Share"/>.
         /// </summary>
         public string WebSite3
         {
-            get { return _webSite3; }
+            get
+            {
+                return this._webSite3;
+            }
+
             set
             {
-                if (_webSite3 != value)
+                if (this._webSite3 != value)
                 {
-                    _webSite3 = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite3)));
+                    this._webSite3 = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WebSite3)));
                 }
             }
         }
 
         private string _wkn;
+
         /// <summary>
-        /// The WKN of the <see cref="Share"/>
+        /// Gets or sets the WKN of the <see cref="Share"/>.
         /// </summary>
         public string WKN
         {
-            get { return _wkn; }
+            get
+            {
+                return this._wkn;
+            }
+
             set
             {
-                if (_wkn != value)
+                if (this._wkn != value)
                 {
-                    _wkn = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                    this._wkn = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WKN)));
                 }
             }
         }
 
         private string _isin;
+
         /// <summary>
-        /// The ISIN of the <see cref="Share"/>
+        /// Gets or sets the ISIN of the <see cref="Share"/>.
         /// </summary>
         public string ISIN
         {
-            get { return _isin; }
+            get
+            {
+                return this._isin;
+            }
+
             set
             {
-                if (_isin != value)
+                if (this._isin != value)
                 {
-                    _isin = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                    this._isin = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ISIN)));
                 }
             }
         }
 
         private double _actPrice;
+
         /// <summary>
-        /// The current price for the share
+        /// Gets or sets the current price for the share.
         /// </summary>
         public double ActualPrice
         {
-            get { return _actPrice; }
+            get
+            {
+                return this._actPrice;
+            }
+
             set
             {
-                if (_actPrice != value)
+                if (this._actPrice != value)
                 {
-                    _actPrice = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ActualPrice)));
+                    this._actPrice = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ActualPrice)));
                 }
             }
         }
 
         private ShareType _shareType = ShareType.Share;
+
         public ShareType ShareType
             {
-            get { return _shareType; }
-            set
-            {
-                if (_shareType!=value)
+                get
                 {
-                    _shareType = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareType)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsETF)));
+                    return this._shareType;
+                }
+
+                set
+                {
+                    if (this._shareType != value)
+                {
+                    this._shareType = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ShareType)));
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsShare)));
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsCertificate)));
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsETF)));
+                }
                 }
             }
-            }
+
         public bool IsShare
         {
-            get { return ShareType == ShareType.Share;  }
+            get
+            {
+                return this.ShareType == ShareType.Share;
+            }
+
             set
             {
                 if (value)
                 {
-                    ShareType = ShareType.Share;
+                    this.ShareType = ShareType.Share;
                 }
             }
         }
 
         public bool IsCertificate
         {
-            get { return ShareType == ShareType.Certificate; }
+            get
+            {
+                return this.ShareType == ShareType.Certificate;
+            }
+
             set
             {
                 if (value)
                 {
-                    ShareType = ShareType.Certificate;
+                    this.ShareType = ShareType.Certificate;
                 }
             }
         }
 
         public bool IsETF
         {
-            get { return ShareType == ShareType.ETF; }
+            get
+            {
+                return this.ShareType == ShareType.ETF;
+            }
+
             set
             {
                 if (value)
                 {
-                    ShareType = ShareType.ETF;
+                    this.ShareType = ShareType.ETF;
                 }
             }
         }
 
         private byte _factor;
+
         public byte Factor
         {
-            get { return _factor; }
+            get
+            {
+                return this._factor;
+            }
+
             set
             {
-                if (_factor != value)
+                if (this._factor != value)
                 {
-                    _factor = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Factor)));
+                    this._factor = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Factor)));
                 }
             }
         }
@@ -212,41 +272,39 @@ namespace StockMarket.ViewModels
 
         #region Commands
         public RelayCommand AutoFillCommand { get; private set; }
-        
+
         /// <summary>
         /// The execute method of the AutoFill<see cref="RelayCommand"/>
-        /// Sets <see cref="AddShareViewModel"/> properties after reading data from a website
+        /// Sets <see cref="AddShareViewModel"/> properties after reading data from a website.
         /// </summary>
-        /// <param name="o">A parameter for this method</param>
+        /// <param name="o">A parameter for this method.</param>
         private async void AutofillAsync(object o)
         {
             // get the web content
-            string webContent = await WebHelper.getWebContent(WebSite);
+            string webContent = await WebHelper.GetWebContent(this.WebSite);
 
-            //check the share type
-            var type = RegexHelper.GetShareTypeShare(WebSite);
+            // check the share type
+            var type = RegexHelper.GetShareTypeShare(this.WebSite);
             switch (type)
             {
                 case ShareType.Share:
-                    IsShare = true;
+                    this.IsShare = true;
                     break;
                 case ShareType.Certificate:
-                    IsCertificate = true;
+                    this.IsCertificate = true;
                     break;
                 case ShareType.ETF:
-                    IsShare = false;
-                    IsCertificate = false;
+                    this.IsShare = false;
+                    this.IsCertificate = false;
                     break;
             }
 
-
-
-            //set empty values
+            // set empty values
             string wkn = string.Empty, isin = string.Empty, name = string.Empty;
             double price = 0.0;
 
             // set values if it is a share
-            if (IsShare)
+            if (this.IsShare)
             {
                 // get values of WKN and ISIN
                 var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
@@ -255,72 +313,70 @@ namespace StockMarket.ViewModels
                 wkn = wknMatch.Value.Substring(5);
                 isin = isinMatch.Value.Substring(6);
 
-                //< h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
+                // < h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
                 // get name of SHARE
                 var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
                 var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
-                name = nameM2.Value.Substring(10).Trim().Replace(" in", "");
-                //Factor for Shares is always 1
-                Factor = 1;
-                //get the current price
-                //price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
-                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, WebSite, "iah345", "de0000000000"));
+                name = nameM2.Value.Substring(10).Trim().Replace(" in", string.Empty);
+                // Factor for Shares is always 1
+                this.Factor = 1;
+                // get the current price
+                // price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
+                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000"));
             }
 
-
-            //set values if it is a certificate
-            if (IsCertificate)
+            // set values if it is a certificate
+            if (this.IsCertificate)
             {
                 // get values of WKN and ISIN
                 var title = Regex.Match(webContent, RegexHelper.REGEX_CertificateTitle);
                 var wknMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertWKN);
                 var isinMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertISIN);
-                wkn = wknMatch.Value.Replace("|","").Trim();
-                isin = isinMatch.Value.Replace("|", "").Trim();
-                                
+                wkn = wknMatch.Value.Replace("|",string.Empty).Trim();
+                isin = isinMatch.Value.Replace("|", string.Empty).Trim();
+
                 // get the certificate factor
                 var factorMatch = Regex.Match(title.Value,RegexHelper.REGEX_Group_CertFactor);
-                Factor = Convert.ToByte(factorMatch.Value.Substring(6));
+                this.Factor = Convert.ToByte(factorMatch.Value.Substring(6));
                 // get the current bid price
-                //var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                //price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
-
-                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, WebSite, "iah345", "de0000000000", ShareType.Certificate));
+                // var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                // price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
+                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000", ShareType.Certificate));
 
                 // get name of SHARE certificate
                 var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
-                name = nameMatch.Value.Substring(4).Replace(" von", "").Trim() + " Certificate "+factorMatch.Value+"x";
+                name = nameMatch.Value.Substring(4).Replace(" von", string.Empty).Trim() + " Certificate " + factorMatch.Value + "x";
             }
 
             // write values to view model
-            ISIN = isin;
-            ShareName = name;
-            WKN = wkn;
-            ActualPrice = price;
+            this.ISIN = isin;
+            this.ShareName = name;
+            this.WKN = wkn;
+            this.ActualPrice = price;
 
-            //DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = ActualPrice });
-
+            // DayValues.Add(new DayValueViewModel() { Date = DateTime.Today, Price = ActualPrice });
         }
 
         /// <summary>
         /// The canExecute method of the AutoFill<see cref="RelayCommand"/>
-        /// Checks by validating a website
+        /// Checks by validating a website.
         /// </summary>
-        /// <param name="sender">A parameter for this method</param>
+        /// <param name="sender">A parameter for this method.</param>
         private bool CanAutoFill(object sender)
         {
-            Button b = new Button(); 
-            if (sender!= null)
+            Button b = new Button();
+            if (sender != null)
             {
-                if (sender.GetType()==typeof(Button))
+                if (sender.GetType() == typeof(Button))
                 {
                     b = sender as Button;
                     b.ToolTip = "Website is not valid";
                 }
             }
-            if (WebSite != null)
+
+            if (this.WebSite != null)
             {
-                if (RegexHelper.WebsiteIsValid(WebSite))                
+                if (RegexHelper.WebsiteIsValid(this.WebSite))
                 {
                     b.ToolTip = "Website is valid";
                     return true;
@@ -328,41 +384,39 @@ namespace StockMarket.ViewModels
             }
 
             return false;
-
         }
-               
+
         public RelayCommand InsertCommand { get; private set; }
 
         /// <summary>
         /// The execute method of the Insert<see cref="RelayCommand"/>
-        /// Tries to add the share to the Database
+        /// Tries to add the share to the Database.
         /// </summary>
-        /// <param name="o">A parameter for this method</param>
+        /// <param name="o">A parameter for this method.</param>
         private void Insert(object o)
         {
             // Add the share to the database
             switch (DataBaseHelper.AddShareToDB(this))
             {
-                case 1: WebSite = String.Empty; break;
+                case 1: this.WebSite = string.Empty; break;
                 case 0: // Message if it already exist
-                    MessageBox.Show($"You already have a share with an ISIN matching ISIN={ISIN}.");
+                    MessageBox.Show($"You already have a share with an ISIN matching ISIN={this.ISIN}.");
                     break;
                 case -1: // Message if the was an error while inserting
-                    MessageBox.Show($"There was an error while inserting the share with the ISIN={ISIN} to the database.");
+                    MessageBox.Show($"There was an error while inserting the share with the ISIN={this.ISIN} to the database.");
                     break;
                 default: break;
             }
-
         }
 
         /// <summary>
         /// The canExecute method of the Insert<see cref="RelayCommand"/>
-        /// Checks by validating ISIN and WebSite
+        /// Checks by validating ISIN and WebSite.
         /// </summary>
-        /// <param name="sender">A parameter for this method</param>
+        /// <param name="sender">A parameter for this method.</param>
         private bool CanInsert(object sender)
         {
-            
+
             Button b = new Button();
             if (sender != null)
             {
@@ -378,36 +432,35 @@ namespace StockMarket.ViewModels
                     return false;
                 }
             }
-            
 
-            if (WebSite != null && ISIN != null)
+            if (this.WebSite != null && this.ISIN != null)
             {
                 // if WebSite is not valid...
-                if (!RegexHelper.WebsiteIsValid(WebSite))
+                if (!RegexHelper.WebsiteIsValid(this.WebSite))
                 {
-                    //... set error tool tip
+                    // ... set error tool tip
                     b.ToolTip = "Website is not valid";
                     return false;
                 }
+
                 // if ISIN is not valid...
-                else if (!RegexHelper.IsinIsValid(ISIN))
-                {   //... set error tool tip
+                else if (!RegexHelper.IsinIsValid(this.ISIN))
+                {   // ... set error tool tip
                     b.ToolTip = "ISIN is not valid";
                     return false;
                 }
+
                 // if both are valid...
                 else
-                {   //... set OK tool tip
+                {   // ... set OK tool tip
                     b.ToolTip = "You can add the share to the database";
                     return true;
-                }                           
+                }
             }
+
             return false;
-
-
         }
 
         #endregion
     }
-
 }

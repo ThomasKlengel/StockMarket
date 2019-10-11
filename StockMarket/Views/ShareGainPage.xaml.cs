@@ -16,13 +16,16 @@ using System.Windows.Shapes;
 namespace StockMarket.Views
 {
     /// <summary>
-    /// Interaktionslogik für OrdersGainPage2.xaml
+    /// Interaktionslogik für OrdersGainPage2.xaml.
     /// </summary>
     public partial class ShareGainPage : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShareGainPage"/> class.
+        /// </summary>
         public ShareGainPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

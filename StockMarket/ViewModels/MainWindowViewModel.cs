@@ -1,20 +1,20 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using System.Linq;
-using System.Collections.ObjectModel;
 using Prism.Events;
 
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// a view model for the main window
+    /// a view model for the main window.
     /// </summary>
-    class MainWindowViewModel: ViewModels.ViewModelBase
+    class MainWindowViewModel : ViewModels.ViewModelBase
     {
         /// <summary>
-        /// creates a new instance of a ViewModel for the MainWindow
+        /// creates a new instance of a ViewModel for the MainWindow.
         /// </summary>
         public MainWindowViewModel()
         {
@@ -23,58 +23,61 @@ namespace StockMarket.ViewModels
             // TODO: single share Graph
 
             // set the start page to an empty page
-            DisplayPage = new Pages.BlankPage();
+            this.DisplayPage = new Pages.BlankPage();
 
             // define the commands for the buttons
-            AddUserCommand = new RelayCommand(AddUser);
-            AddShareCommand = new RelayCommand(AddShare);
-            AddDividendCommand = new RelayCommand(AddDividend);
-            AddOrderCommand = new RelayCommand(AddOrder,CanAddOrder);
-            DisplaySingleShareOverviewCommand = new RelayCommand(DisplaySingleShareOverview, CanDisplaySingleShareOverview);
-            DisplaySharesOverviewCommand = new RelayCommand(DisplaySharesOverview, CanDisplaySharesOverview);
-            DisplayShareDetailCommand = new RelayCommand(DisplayShareDetail, CanDisplayShareDetail);
+            this.AddUserCommand = new RelayCommand(this.AddUser);
+            this.AddShareCommand = new RelayCommand(this.AddShare);
+            this.AddDividendCommand = new RelayCommand(this.AddDividend);
+            this.AddOrderCommand = new RelayCommand(this.AddOrder,this.CanAddOrder);
+            this.DisplaySingleShareOverviewCommand = new RelayCommand(this.DisplaySingleShareOverview, this.CanDisplaySingleShareOverview);
+            this.DisplaySharesOverviewCommand = new RelayCommand(this.DisplaySharesOverview, this.CanDisplaySharesOverview);
+            this.DisplayShareDetailCommand = new RelayCommand(this.DisplayShareDetail, this.CanDisplayShareDetail);
 
             // create a timer for updating the Sharevalues in the database
             DispatcherTimer t = new DispatcherTimer
             {
-                Interval = new System.TimeSpan(0, 20, 0)
+                Interval = new System.TimeSpan(0, 20, 0),
             };
-            t.Tick += TimerTick;
+            t.Tick += this.TimerTick;
             t.Start();
 
             // try to update share values once at program start
-            TimerTick(null, null);
-            
+            this.TimerTick(null, null);
+
             // set the initial Users
-            if (Users == null)
+            if (this.Users == null)
             {
-                Users = new ObservableCollection<User>();
+                this.Users = new ObservableCollection<User>();
             }
+
             foreach (var user in DataBaseHelper.GetUsersFromDB())
             {
-                Users.Add(user);
+                this.Users.Add(user);
             }
-            CurrentUser = Users.First((u) => { return u.Equals(User.Default()); });
+
+            this.CurrentUser = this.Users.First((u) => { return u.Equals(User.Default()); });
         }
 
         #region EventHandler
+
         /// <summary>
-        /// Eventhandler for updating the Sharevalues in the database
+        /// Eventhandler for updating the Sharevalues in the database.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private async void TimerTick(object sender, System.EventArgs e)
-        {                  
+        {
             // if its a friday night...
-            if (/*DateTime.Now.DayOfWeek == DayOfWeek.Friday*/ 
+            if (/*DateTime.Now.DayOfWeek == DayOfWeek.Friday*/
                 DateTime.Now.DayOfWeek != DayOfWeek.Saturday &&
                 DateTime.Now.DayOfWeek != DayOfWeek.Sunday &&
-                DateTime.Now.Hour>=22)
+                DateTime.Now.Hour >= 22)
             {
-                //... get all shares in the portfolio
+                // ... get all shares in the portfolio
                 var shares = DataBaseHelper.GetAllItemsFromDB<Share>();
 
-                for (int i=shares.Count-1;i>=0;i--)
+                for (int i = shares.Count - 1;i >= 0;i--)
                 {
                     var orders = DataBaseHelper.GetItemsFromDB<Order>(shares[i]);
 
@@ -82,22 +85,21 @@ namespace StockMarket.ViewModels
                     foreach (var o in orders)
                     {
 
-                        if (o.OrderType == ShareComponentType.buy)
+                        if (o.OrderType == ShareComponentType.Buy)
                         {
                             amountRemaining += o.Amount;
                         }
-                        else if (o.OrderType==ShareComponentType.sell)
+                        else if (o.OrderType == ShareComponentType.Sell)
                         {
                             amountRemaining -= o.Amount;
                         }
                     }
-                    if (amountRemaining<1)
+
+                    if (amountRemaining < 1)
                     {
                         shares.RemoveAt(i);
                     }
                 }
-
-
 
                 // for each of these shares...
                 foreach (var share in shares)
@@ -109,22 +111,23 @@ namespace StockMarket.ViewModels
                         var latestValue = latestValues.First();
                         // if it is from today...
                         if (latestValue?.Date.Date == DateTime.Today)
-                        {   //... we can ignore the following and continue with the next share
+                        {   // ... we can ignore the following and continue with the next share
                             continue;
                         }
                     }
-                
-                    //... if it is not from today get the current price of the share
-                    var webcontent = await WebHelper.getWebContent(share.WebSite);
+
+                    // ... if it is not from today get the current price of the share
+                    var webcontent = await WebHelper.GetWebContent(share.WebSite);
                     var price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
                     if (price == 0.0)
                     {
-                        webcontent = await WebHelper.getWebContent(share.WebSite2);
+                        webcontent = await WebHelper.GetWebContent(share.WebSite2);
                         price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
                     }
+
                     if (price == 0.0)
                     {
-                        webcontent = await WebHelper.getWebContent(share.WebSite3);
+                        webcontent = await WebHelper.GetWebContent(share.WebSite3);
                         price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
                     }
 
@@ -133,12 +136,11 @@ namespace StockMarket.ViewModels
                     {
                         Date = DateTime.Today,
                         ISIN = share.ISIN,
-                        Price = price                    
+                        Price = price,
                     };
 
                     // and add it to the database
-                    DataBaseHelper.AddShareValueToDB(s);                  
-
+                    DataBaseHelper.AddShareValueToDB(s);
                 }
             }
         }
@@ -146,21 +148,23 @@ namespace StockMarket.ViewModels
 
         #region Properties
         private Page _displayPage;
+
         /// <summary>
-        /// The <see cref="Page"/> to display in the main frame
+        /// Gets the <see cref="Page"/> to display in the main frame.
         /// </summary>
         public Page DisplayPage
         {
             get
             {
-                return _displayPage;
+                return this._displayPage;
             }
+
             private set
             {
-                if (_displayPage != value)
+                if (this._displayPage != value)
                 {
-                    _displayPage = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(DisplayPage)));
+                    this._displayPage = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayPage)));
                 }
             }
         }
@@ -171,52 +175,54 @@ namespace StockMarket.ViewModels
         }
 
         private User _currentUser;
+
         public User CurrentUser
         {
             get
             {
-                return _currentUser;
+                return this._currentUser;
             }
+
             set
             {
-                if (_currentUser!=value)
+                if (this._currentUser != value)
                 {
-                    _currentUser = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(CurrentUser)));
-                    ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+                    this._currentUser = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.CurrentUser)));
+                    ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
                 }
             }
         }
         #endregion
 
-        #region Commands             
+        #region Commands
 
-        #region Add User Command        
+        #region Add User Command
         public RelayCommand AddUserCommand { get; private set; }
 
         private void AddUser(object o)
         {
-            DisplayPage = new Pages.AddUserPage();
+            this.DisplayPage = new Pages.AddUserPage();
         }
         #endregion
 
-        #region Add Share Command        
+        #region Add Share Command
         public RelayCommand AddShareCommand { get; private set; }
 
         private void AddShare(object o)
         {
-            DisplayPage = new Pages.AddSharePage();
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+            this.DisplayPage = new Pages.AddSharePage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
         }
         #endregion
 
-        #region Add Dividend Command        
+        #region Add Dividend Command
         public RelayCommand AddDividendCommand { get; private set; }
 
         private void AddDividend(object o)
         {
-            DisplayPage = new Pages.AddDividendPage();
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+            this.DisplayPage = new Pages.AddDividendPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
         }
         #endregion
 
@@ -225,8 +231,8 @@ namespace StockMarket.ViewModels
 
         private void AddOrder(object o)
         {
-            DisplayPage = new Pages.AddOrderPage();
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+            this.DisplayPage = new Pages.AddOrderPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
         }
 
         private bool CanAddOrder(object o)
@@ -241,6 +247,7 @@ namespace StockMarket.ViewModels
             {
                 return true;
             }
+
             // execute only when we have at least one share
             return shares > 0;
         }
@@ -251,8 +258,8 @@ namespace StockMarket.ViewModels
 
         private void DisplayShareDetail(object o)
         {
-            DisplayPage = new Pages.ShareDetailPage();
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+            this.DisplayPage = new Pages.ShareDetailPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
         }
 
         private bool CanDisplayShareDetail(object o)
@@ -267,6 +274,7 @@ namespace StockMarket.ViewModels
             {
                 return true;
             }
+
             // execute only when we have at least one share
             return count > 0;
         }
@@ -277,8 +285,8 @@ namespace StockMarket.ViewModels
 
         private void DisplaySingleShareOverview(object o)
         {
-            DisplayPage = new Views.ShareGainPage();
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+            this.DisplayPage = new Views.ShareGainPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
         }
 
         private bool CanDisplaySingleShareOverview(object o)
@@ -309,8 +317,8 @@ namespace StockMarket.ViewModels
 
         private void DisplaySharesOverview(object o)
         {
-            DisplayPage = new Pages.SharesOverviewPage();
-            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(CurrentUser);
+            this.DisplayPage = new Pages.SharesOverviewPage();
+            ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
         }
 
         private bool CanDisplaySharesOverview(object o)
@@ -325,9 +333,10 @@ namespace StockMarket.ViewModels
             {
                 return true;
             }
+
             // execute only when we have at least one share
             return count > 0;
-        } 
+        }
         #endregion
 
         #endregion
