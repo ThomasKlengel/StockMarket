@@ -9,3 +9,11 @@ calculations
 	 - amont today: foreach month after including buy (amount += order buyprice/price per piece at day of ourchase)
 	 - price today: foreach month after including buy (amount today * price per piece today)
 	 - buyprice: foreach month after including buy (price+= orderbuyprice)
+
+
+
+
+Getting Share Information:
+	- via WebService (Yahoo/FrankfurterBörse/Xetra)
+	- siehe AllTradeableInstruments.csv
+	- 
