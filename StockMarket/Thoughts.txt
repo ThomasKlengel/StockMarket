@@ -14,6 +14,7 @@ calculations
 
 
 Getting Share Information:
-	- via WebService (Yahoo/FrankfurterBörse/Xetra)
+	- via WebService (Yahoo/FrankfurterBörse/Xetra) 
+		+ https://documentation.tradier.com/brokerage-api
 	- siehe AllTradeableInstruments.csv
 	- 

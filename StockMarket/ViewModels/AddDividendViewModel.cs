@@ -309,16 +309,16 @@ namespace StockMarket.ViewModels
             AdvancedOcr Ocr = new AdvancedOcr()
             {
                 CleanBackgroundNoise = false,
-                ColorDepth = 8,
-                ColorSpace = AdvancedOcr.OcrColorSpace.Color,
-                EnhanceContrast = true,
+                ColorDepth = 0,
+                ColorSpace = AdvancedOcr.OcrColorSpace.GrayScale,
+                EnhanceContrast = false,
                 DetectWhiteTextOnDarkBackgrounds = false,
                 RotateAndStraighten = false,
                 Language = IronOcr.Languages.German.OcrLanguagePack,
-                EnhanceResolution = true,
-                InputImageType = AdvancedOcr.InputTypes.Document,
+                EnhanceResolution = false,
+                InputImageType = AdvancedOcr.InputTypes.AutoDetect,
                 ReadBarCodes = false,
-                Strategy = AdvancedOcr.OcrStrategy.Advanced
+                Strategy = AdvancedOcr.OcrStrategy.Fast
             };
 
             // create a file dialog
@@ -338,9 +338,8 @@ namespace StockMarket.ViewModels
 
                 try
                 {
-                    // create a rectangle from which to read (don't set for complete page)
-                    System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);
-                    var Results = Ocr.ReadPdf(pdfToRead, area, 1);
+                    // create a rectangle from which to read (don't set for complete page)                    
+                    var Results = Ocr.ReadPdf(pdfToRead, 1);
                     var lines = Results.Pages[0].LinesOfText;               
 
 
