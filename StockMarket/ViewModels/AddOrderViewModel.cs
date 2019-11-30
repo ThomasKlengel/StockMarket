@@ -274,13 +274,13 @@ namespace StockMarket.ViewModels
             AdvancedOcr Ocr = new AdvancedOcr()
             {
                 CleanBackgroundNoise = false,
-                ColorDepth = 8,
-                ColorSpace = AdvancedOcr.OcrColorSpace.Color,
-                EnhanceContrast = true,
+                ColorDepth = 0,
+                ColorSpace = AdvancedOcr.OcrColorSpace.GrayScale,
+                EnhanceContrast = false,
                 DetectWhiteTextOnDarkBackgrounds = false,
                 RotateAndStraighten = false,
                 Language = IronOcr.Languages.German.OcrLanguagePack,
-                EnhanceResolution = true,
+                EnhanceResolution = false,
                 InputImageType = AdvancedOcr.InputTypes.Document,
                 ReadBarCodes = false,
                 Strategy = AdvancedOcr.OcrStrategy.Advanced
@@ -301,10 +301,11 @@ namespace StockMarket.ViewModels
                 var pdfToRead = ofd.FileName;
 
                 // create a rectangle from which to read (dont set for complete page)
-                System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);                
-                var Results = Ocr.ReadPdf(pdfToRead, area, 1);                
-                var lines = Results.Pages[0].LinesOfText;
+                //System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);                
+                var Results = Ocr.ReadPdf(pdfToRead, 1);                
+                var lines = Results.Pages[0].LinesOfText.ToList();
 
+                int i = 0;
                 //get order type
                 foreach (var line in lines)
                 {
@@ -314,7 +315,11 @@ namespace StockMarket.ViewModels
                         OrderType = buySell == "Verkauf" ? ShareComponentType.sell : ShareComponentType.buy;
                         break;
                     }
+                    i++;
                 }
+                lines.RemoveRange(0, ++i);
+                i = 0;
+
                 
                 // get Amount, ISIN, WKN
                 foreach (var line in lines)
@@ -358,7 +363,29 @@ namespace StockMarket.ViewModels
                         }
                         break;
                     }
+                    i++;
                 }
+                lines.RemoveRange(0, ++i);
+                i = 0;
+
+                //get orderdate
+                foreach (var line in lines)
+                {
+                    if (line.Text.StartsWith("Schluss"))
+                    {
+
+                        var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
+                        // get share price
+                        var strDate = match.Value;
+                        DateTime Date;
+                        DateTime.TryParse(strDate, out Date);
+                        OrderDate = Date;
+                        break;
+                    }
+                    i++;
+                }
+                lines.RemoveRange(0, ++i);
+                i = 0;
 
                 //get SharePrice at ordertime
                 foreach (var line in lines)
@@ -372,24 +399,10 @@ namespace StockMarket.ViewModels
                         ActPrice = doublePrice;
                         break;
                     }
+                    i++;
                 }
-
-                //get orderdate
-                foreach (var line in lines)
-                {
-                    if (line.Text.StartsWith("Schluss"))
-                    {
-
-                        var match = Regex.Match(line.Text, "\\d{2}\\.\\d{2}.\\d{4}");
-                        // get share price
-                        var strDate = match.Value;
-                        DateTime Date;
-                        DateTime.TryParse(strDate, out Date );                        
-                        OrderDate = Date;
-                        break;
-                    }
-                }
-
+                lines.RemoveRange(0, ++i);
+                
                 // get expenses
                 int lineIndex = 0;
                 int provisionLineIndex = 1000;
@@ -426,66 +439,6 @@ namespace StockMarket.ViewModels
                     }
                     lineIndex++;
                 }
-
-
-
-                //Wertpapier Abrechnung Kauf
-                //Nominale Wertpapierbezeichnung ISIN(WKN)                
-                //Stück 80 UBS AG(LONDON BRANCH) DEOOOUFOAA67(UFOAA6)  --> replace  "O" durch "0" wkn,isin match share by isin -> nomatch: wkn
-                //FAKTL O.END AMAZON                
-                //Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
-                //Börsensegment FRAB                
-                //Market - Order                
-                //Limit billigst
-                //Schlusstagl - Zeit 23.05.201919:46:13 Auftraggeber Vorname Nachname
-                //Ausführungskurs 6,15 EUR Auftragserteilung/ -ort Online - Banking                
-                //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck —                
-                //Kurswert 492,00 - EUR
-                //Provision 10,00 - EUR
-                //Ausmachender Betrag 502,00 - EUR                
-                //Den Gegenwert buchen wir mit Valuta 27.05.2019 zu Lasten des Kontos xxxxxxxx04
-                //(IBAN DE77 xxxx xxxx xxxx xxxx 04), BLZ xxxxxxxx(BIC xxxxxxxxx).
-                //Die Wertpapiere schreiben wir Ihrem Depotkonto gut.
-
-                //Wertpapier Abrechnung Verkauf
-                //Nominale Wertpapierbezeichnung ISIN (WKN)
-                //Stück 10 UBISOFT ENTERTAINMENT S.A. FR0000054470 (901581)
-                //ACTIONS PORT. EO 0,0775                
-                //Handels -/ Ausführungsplatz Frankfurt(gemäß Weisung)
-                //Börsensegment FRAB                
-                //Market - Order                
-                //Limit bestens
-                //Schlusstagl - Zeit 26.04.2019 12:46:53 Auftraggeber Vorname Nachname
-                //Ausführungskurs 83,70 EUR Auftragserteilung/ -ort Online—Banking                
-                //Girosammelverw.mehrere Sammelurkunden -kein Stückeausdruck -                
-                //Kurswert 837,00 EUR
-                //Provision 10,00 - EUR
-                //Transaktionsentgeltßörse 0,71 - EUR
-                //Ubertragungs -/ Liefergebühr 0,13 - EUR
-                //Handelsentgelt 3,00 - EUR
-                //Ermittlung steuerrelevante Erträge                
-                //Veräußerungsverlust 164,99 - EUR                
-                //Eingebuchte Aktienverluste 164,99 EUR                
-                //Ausmachender Betraa 823.16 EUR
-
-
-                var completeText = Results.Pages[0].Text;
-
-                // time for OCR ~8s ... animation für busy einbauen?
-
-                //< Style >
-                //    < Style.Triggers >
-                //        < DataTrigger Binding = "{Binding IsAnimationRunning}" Value = "True" >   
-                //               < DataTrigger.EnterActions >   
-                //                   < BeginStoryboard >   
-                //                       < Storyboard >   
-                //                           < SomeAnimation />   
-                //                       </ Storyboard >   
-                //                   </ BeginStoryboard >   
-                //               </ DataTrigger.EnterActions >   
-                //           </ DataTrigger >   
-                //       </ Style.Triggers >
-                //   </ Style >
 
             }
         }
