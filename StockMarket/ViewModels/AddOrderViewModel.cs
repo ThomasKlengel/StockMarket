@@ -121,7 +121,7 @@ namespace StockMarket.ViewModels
                         Expenses = 10;
                         Amount = 0;
                         OrderDate = DateTime.Today;
-                        OrderType = ShareComponentType.buy;
+                        OrderType = ShareComponentType.Buy;
                     }
                     ignoreUpdate = false;
                 }
@@ -146,7 +146,7 @@ namespace StockMarket.ViewModels
             }
         }             
 
-        private ShareComponentType _orderType = ShareComponentType.buy;
+        private ShareComponentType _orderType = ShareComponentType.Buy;
         /// <summary>
         /// The type of order
         /// </summary>
@@ -173,13 +173,13 @@ namespace StockMarket.ViewModels
         {
             get
             {
-                return OrderType == ShareComponentType.buy;
+                return OrderType == ShareComponentType.Buy;
             }
             set
             {
                 if (value) // dont update when bound CheckBox is unchecked
                 {
-                    OrderType = OrderType == ShareComponentType.sell ? ShareComponentType.buy : ShareComponentType.sell;
+                    OrderType = OrderType == ShareComponentType.Sell ? ShareComponentType.Buy : ShareComponentType.Sell;
                 }
             }
         }
@@ -190,13 +190,13 @@ namespace StockMarket.ViewModels
         {
             get
             {
-                return OrderType == ShareComponentType.sell;
+                return OrderType == ShareComponentType.Sell;
             }
             set
             {
                 if (value) // dont update when bound CheckBox is unchecked
                 {
-                    OrderType = OrderType == ShareComponentType.sell ? ShareComponentType.buy : ShareComponentType.sell;
+                    OrderType = OrderType == ShareComponentType.Sell ? ShareComponentType.Buy : ShareComponentType.Sell;
                 }
             }
         }
@@ -312,7 +312,7 @@ namespace StockMarket.ViewModels
                     if (line.Text.StartsWith("Wertpapier Abrechnung"))
                     {
                         var buySell = line.Words.Last().Text;
-                        OrderType = buySell == "Verkauf" ? ShareComponentType.sell : ShareComponentType.buy;
+                        OrderType = buySell == "Verkauf" ? ShareComponentType.Sell : ShareComponentType.Buy;
                         break;
                     }
                     i++;
