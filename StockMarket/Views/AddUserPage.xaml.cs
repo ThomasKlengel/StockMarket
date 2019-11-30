@@ -16,13 +16,16 @@ using System.Windows.Shapes;
 namespace StockMarket.Pages
 {
     /// <summary>
-    /// Interaktionslogik für AddUserPage.xaml
+    /// Interaktionslogik für AddUserPage.xaml.
     /// </summary>
     public partial class AddUserPage : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddUserPage"/> class.
+        /// </summary>
         public AddUserPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

@@ -3,15 +3,16 @@
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// The basic ViewModel for simplifying the creation of other ViewModels
+    /// The basic ViewModel for simplifying the creation of other ViewModels.
     /// </summary>
     public class ViewModelBase : INotifyPropertyChanged
     {
+        /// <inheritdoc/>
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
         {
-            PropertyChanged?.Invoke(this, e);
+            this.PropertyChanged?.Invoke(this, e);
         }
     }
 }

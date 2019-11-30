@@ -10,33 +10,40 @@ using System.Windows.Threading;
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for a <see cref="Share"/>
+    /// A ViewModel for a <see cref="Share"/>.
     /// </summary>
-    class ShareViewModel : ShareComponentViewModel
+    public class ShareViewModel : ShareComponentViewModel
     {
-
         #region Constructors
-        public ShareViewModel():base()
-        {
-            ShareComponents = new ObservableCollection<ShareComponentViewModel>();
-            SortCommand = new RelayCommand(SortComponents);
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShareViewModel"/> class.
+        /// </summary>
+        public ShareViewModel()
+            : base()
+        {
+            this.ShareComponents = new ObservableCollection<ShareComponentViewModel>();
+            this.SortCommand = new RelayCommand(this.SortComponents);
         }
 
-        public ShareViewModel(Share share) : base()
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ShareViewModel"/> class.
+        /// </summary>
+        /// <param name="share"></param>
+        public ShareViewModel(Share share)
+            : base()
         {
-            ShareComponents = new ObservableCollection<ShareComponentViewModel>();
-            SortCommand = new RelayCommand(SortComponents);
-            baseShare = share;
-            ShareName = share.ShareName;
-            WebSite = share.WebSite;
-            WebSite2 = share.WebSite2;
-            WebSite3 = share.WebSite3;
-            WKN = share.WKN;
-            ISIN = share.ISIN;
-            IsShare = share.ShareType == ShareType.Share ? true : false;
-            Factor = IsShare == true ? (byte)1  : (byte)10;
-
+            this.ShareComponents = new ObservableCollection<ShareComponentViewModel>();
+            this.SortCommand = new RelayCommand(this.SortComponents);
+            this.baseShare = share;
+            this.ShareName = share.ShareName;
+            this.WebSite = share.WebSite;
+            this.WebSite2 = share.WebSite2;
+            this.WebSite3 = share.WebSite3;
+            this.WKN = share.WKN;
+            this.ISIN = share.ISIN;
+            this.IsShare = share.ShareType == ShareType.Share ? true : false;
+            this.Factor = this.IsShare == true ? (byte)1  : (byte)10;
         }
 
         #endregion
@@ -44,65 +51,76 @@ namespace StockMarket.ViewModels
         #region Properties
 
         /// <summary>
-        /// The current share price for the orders
+        /// Gets or sets the current share price for the orders.
         /// </summary>
         public override double SinglePriceNow
         {
-            get { return base.SinglePriceNow; }
+            get
+            {
+                return base.SinglePriceNow;
+            }
+
             set
             {
-                if (_singlePriceNow != value)
+                if (this._singlePriceNow != value)
                 {
-                    foreach (var order in ShareComponents)
+                    foreach (var order in this.ShareComponents)
                     {
                         order.SinglePriceNow = value;
                     }
                 }
-                base.SinglePriceNow = value;                
+
+                base.SinglePriceNow = value;
             }
         }
 
         /// <summary>
-        /// The amount of shares in all orders
+        /// Gets or sets the amount of shares in all orders.
         /// </summary>
-        override public double Amount
+        public override double Amount
         {
             get
             {
                 double sum = 0;
-                foreach (var order in ShareComponents)
+                foreach (var order in this.ShareComponents)
                 {
-                    if (order.ComponentType == ShareComponentType.buy)
+                    if (order.ComponentType == ShareComponentType.Buy)
                     {
                         sum += order.Amount;
                     }
-                };
+                }
+
                 return sum;
             }
-            set { return; }
+
+            set
+            {
+                return;
+            }
         }
 
         /// <summary>
-        /// The amount of shares sold over all orders
+        /// Gets the amount of shares sold over all orders.
         /// </summary>
-        override public double AmountSold
+        public override double AmountSold
         {
             get
             {
                 double sum = 0;
-                foreach (var order in ShareComponents)
+                foreach (var order in this.ShareComponents)
                 {
-                    if (order.ComponentType == ShareComponentType.sell)
+                    if (order.ComponentType == ShareComponentType.Sell)
                     {
                         sum += order.Amount;
                     }
-                };
+                }
+
                 return sum;
             }
         }
 
         /// <summary>
-        /// The current date
+        /// Gets the current date.
         /// </summary>
         public DateTime Date
         {
@@ -110,49 +128,51 @@ namespace StockMarket.ViewModels
         }
 
         /// <summary>
-        /// The summed up price for all orders on the date of purchase
+        /// Gets the summed up price for all orders on the date of purchase.
         /// </summary>
-        override public double SumBuy
+        public override double SumBuy
         {
             get
             {
                 double sum = 0;
 
-                foreach (var shareComponent in ShareComponents)
+                foreach (var shareComponent in this.ShareComponents)
                 {
                     // we can ignors sells, because sells have no "buy" costs
                     // we can also ignore dividends because divends have no "buy" costs either
-                    if (shareComponent.ComponentType == ShareComponentType.buy)
+                    if (shareComponent.ComponentType == ShareComponentType.Buy)
                     {
                         sum += shareComponent.SumBuy;
                     }
                 }
+
                 return sum;
             }
         }
 
         /// <summary>
-        /// The current summed up price for all orders 
+        /// Gets the current summed up price for all orders.
         /// </summary>
-        override public double SumNow
+        public override double SumNow
         {
             get
             {
                 double sum = 0;
-                foreach (var order in ShareComponents)
+                foreach (var order in this.ShareComponents)
                 {
                     // we dont need to take sells into account since sells are represented in the SumNow of a buy if any amount of it was sold
-                    if (order.ComponentType == ShareComponentType.buy  || order.ComponentType== ShareComponentType.dividend)
+                    if (order.ComponentType == ShareComponentType.Buy  || order.ComponentType == ShareComponentType.Dividend)
                     {
                         sum += order.SumNow;
                     }
-                };
+                }
+
                 return sum;
             }
         }
 
         /// <summary>
-        /// All orders of the selected share
+        /// Gets or sets all orders of the selected share.
         /// </summary>
         public ObservableCollection<ShareComponentViewModel> ShareComponents { get; set; }
 
@@ -160,144 +180,190 @@ namespace StockMarket.ViewModels
         private readonly Share baseShare;
 
         private string _shareName;
+
         /// <summary>
-        /// The name of the stock company
+        /// Gets or sets the name of the stock company.
         /// </summary>
         public string ShareName
         {
-            get { return _shareName; }
+            get
+            {
+                return this._shareName;
+            }
+
             set
             {
-                if (_shareName != value)
+                if (this._shareName != value)
                 {
-                    _shareName = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ShareName)));
+                    this._shareName = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ShareName)));
                 }
             }
         }
 
         private string _webSite;
+
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// Gets or sets the website from which to get the data for the <see cref="Share"/>.
         /// </summary>
         public string WebSite
         {
-            get { return _webSite; }
+            get
+            {
+                return this._webSite;
+            }
+
             set
             {
-                if (_webSite != value)
+                if (this._webSite != value)
                 {
-                    _webSite = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite)));
+                    this._webSite = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WebSite)));
                 }
             }
         }
 
         private string _webSite2;
+
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// Gets or sets the website from which to get the data for the <see cref="Share"/>.
         /// </summary>
         public string WebSite2
         {
-            get { return _webSite2; }
+            get
+            {
+                return this._webSite2;
+            }
+
             set
             {
-                if (_webSite2 != value)
+                if (this._webSite2 != value)
                 {
-                    _webSite2 = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite2)));
+                    this._webSite2 = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WebSite2)));
                 }
             }
         }
 
         private string _webSite3;
+
         /// <summary>
-        /// The website from which to get the data for the <see cref="Share"/>
+        /// Gets or sets the website from which to get the data for the <see cref="Share"/>.
         /// </summary>
         public string WebSite3
         {
-            get { return _webSite3; }
+            get
+            {
+                return this._webSite3;
+            }
+
             set
             {
-                if (_webSite3 != value)
+                if (this._webSite3 != value)
                 {
-                    _webSite3 = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WebSite3)));
+                    this._webSite3 = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WebSite3)));
                 }
             }
         }
 
         private string _wkn;
+
         /// <summary>
-        /// Thw WKN of the <see cref="Share"/>
+        /// Gets or sets thw WKN of the <see cref="Share"/>.
         /// </summary>
         public string WKN
         {
-            get { return _wkn; }
+            get
+            {
+                return this._wkn;
+            }
+
             set
             {
-                if (_wkn != value)
+                if (this._wkn != value)
                 {
-                    _wkn = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(WKN)));
+                    this._wkn = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.WKN)));
                 }
             }
         }
 
         private string _isin;
+
         /// <summary>
-        /// The ISIN of the <see cref="Share"/>
+        /// Gets or sets the ISIN of the <see cref="Share"/>.
         /// </summary>
         public string ISIN
         {
-            get { return _isin; }
+            get
+            {
+                return this._isin;
+            }
+
             set
             {
-                if (_isin != value)
+                if (this._isin != value)
                 {
-                    _isin = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(ISIN)));
+                    this._isin = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ISIN)));
                 }
             }
         }
 
         private bool _shareTypeIsShare = true;
+
         public bool IsShare
         {
-            get { return _shareTypeIsShare; }
+            get
+            {
+                return this._shareTypeIsShare;
+            }
+
             set
             {
                 if (value)
                 {
-                    _shareTypeIsShare = true;
+                    this._shareTypeIsShare = true;
                 }
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsShare)));
+
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsShare)));
             }
         }
 
         public bool IsCertificate
         {
-            get { return !_shareTypeIsShare; }
+            get
+            {
+                return !this._shareTypeIsShare;
+            }
+
             set
             {
                 if (value)
                 {
-                    _shareTypeIsShare = false;
+                    this._shareTypeIsShare = false;
                 }
-                OnPropertyChanged(new PropertyChangedEventArgs(nameof(IsCertificate)));
+
+                this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsCertificate)));
             }
         }
 
         private byte _factor;
+
         public byte Factor
         {
-            get { return _factor; }
+            get
+            {
+                return this._factor;
+            }
+
             set
             {
-                if (_factor != value)
+                if (this._factor != value)
                 {
-                    _factor = value;
-                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(Factor)));
+                    this._factor = value;
+                    this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Factor)));
                 }
             }
         }
@@ -306,60 +372,61 @@ namespace StockMarket.ViewModels
         #endregion
 
         #region Methods
+
         /// <summary>
         /// Selects the <see cref="ShareComponents"/> associated to the selected <see cref="Share"/>
-        /// and add them to the <see cref="ShareComponents"/> property
+        /// and add them to the <see cref="ShareComponents"/> property.
         /// </summary>
         private void SetOrdersInitially()
         {
             // create or clear the list of Orders
-            if (ShareComponents == null)
+            if (this.ShareComponents == null)
             {
-                ShareComponents = new ObservableCollection<ShareComponentViewModel>();
+                this.ShareComponents = new ObservableCollection<ShareComponentViewModel>();
             }
-            ShareComponents.Clear();
 
+            this.ShareComponents.Clear();
 
-            // add the orders from the database for this user  
-            foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(baseShare)
-                .Where(o => SelectByUser(o)))
+            // add the orders from the database for this user
+            foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(this.baseShare)
+                .Where(o => this.SelectByUser(o)))
             {
-                ShareComponents.Add(new OrderViewModel(order));
+                this.ShareComponents.Add(new OrderViewModel(order));
             }
 
             // add the dividends from the database for this user
-            foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(baseShare)
-                  .Where(dividend => SelectByUser(dividend)))
+            foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(this.baseShare)
+                  .Where(dividend => this.SelectByUser(dividend)))
             {
-                ShareComponents.Add(new DividendViewModel(dividend));
+                this.ShareComponents.Add(new DividendViewModel(dividend));
             }
 
-            //sort the displayed by Date
-            ShareComponents = SortCollection(ShareComponents, "Date", false);
+            // sort the displayed by Date
+            this.ShareComponents = this.SortCollection(this.ShareComponents, "Date", false);
 
             // notify UI of changes
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(Amount)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(AmountSold)));
-            OnPropertyChanged(new PropertyChangedEventArgs(nameof(SumBuy)));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Amount)));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.AmountSold)));
+            this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SumBuy)));
 
-            RefreshPriceAsync();
-
+            this.RefreshPriceAsync();
         }
 
         /// <summary>
-        /// refreshes the actual <see cref="Share"/> price
+        /// refreshes the actual <see cref="Share"/> price.
         /// </summary>
         private async void RefreshPriceAsync()
         {
-            var price = await RegexHelper.GetSharePriceAsync(baseShare);
+            var price = await RegexHelper.GetSharePriceAsync(this.baseShare);
 
-            //set the price for the UI
-            SinglePriceNow = price;
+            // set the price for the UI
+            this.SinglePriceNow = price;
         }
 
+        /// <inheritdoc/>
         public override void UserChanged()
         {
-            SetOrdersInitially();
+            this.SetOrdersInitially();
         }
         #endregion
 
@@ -367,17 +434,17 @@ namespace StockMarket.ViewModels
 
         private void SortComponents(object o)
         {
-            if (ShareComponents.Count > 1)
+            if (this.ShareComponents.Count > 1)
             {
                 // check if clicked item is a column header
                 if (o.GetType() == typeof(GridViewColumnHeader))
                 {
                     var header = o as GridViewColumnHeader;
 
-                    var headerClicked = "";
+                    var headerClicked = string.Empty;
                     // if the binding is a binding...
                     if (header.Column.DisplayMemberBinding.GetType() == typeof(Binding))
-                    { //... set the header to the bound path
+                    { // ... set the header to the bound path
                         var content = header.Column.DisplayMemberBinding as Binding;
                         headerClicked = content.Path.Path;
                         if (headerClicked.Contains("Date"))
@@ -386,26 +453,25 @@ namespace StockMarket.ViewModels
                         }
                     }
                     else
-                    { //... otherwise it's amount (which is a multibinding)
+                    { // ... otherwise it's amount (which is a multibinding)
                         headerClicked = "Amount";
                     }
 
-                    //get the sort Direction
-                    if (lastSortedBy == headerClicked)
+                    // get the sort Direction
+                    if (this.lastSortedBy == headerClicked)
                     {
-                        lastSortAscending = !lastSortAscending;
+                        this.lastSortAscending = !this.lastSortAscending;
                     }
                     else
                     {
-                        lastSortAscending = false;
+                        this.lastSortAscending = false;
                     }
 
-                    //sort the orders
-                    ShareComponents = SortCollection(ShareComponents, headerClicked, lastSortAscending);
-                   
-                    // set the last sorted by for next sort
-                    lastSortedBy = headerClicked;
+                    // sort the orders
+                    this.ShareComponents = this.SortCollection(this.ShareComponents, headerClicked, this.lastSortAscending);
 
+                    // set the last sorted by for next sort
+                    this.lastSortedBy = headerClicked;
                 }
             }
         }

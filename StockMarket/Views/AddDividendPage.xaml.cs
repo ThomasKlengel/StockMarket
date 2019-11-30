@@ -16,13 +16,16 @@ using System.Windows.Shapes;
 namespace StockMarket.Pages
 {
     /// <summary>
-    /// Interaktionslogik für AddDividendPage.xaml
+    /// Interaktionslogik für AddDividendPage.xaml.
     /// </summary>
     public partial class AddDividendPage : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddDividendPage"/> class.
+        /// </summary>
         public AddDividendPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

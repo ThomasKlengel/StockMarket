@@ -1,36 +1,38 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Media;
-using System.Linq;
-using System.Collections.Generic;
 
 namespace StockMarket.ViewModels
 {
     /// <summary>
-    /// A ViewModel for a single <see cref="Order"/>
+    /// A ViewModel for a single <see cref="Order"/>.
     /// </summary>
     public class DividendViewModel : ShareComponentViewModel
     {
         #region ctor
+
         /// <summary>
-        /// Creates a ViewModel for an order with an AddOrderCommand 
+        /// Creates a ViewModel for an order with an AddOrderCommand.
         /// </summary>
-        public DividendViewModel() : base()
+        public DividendViewModel()
+            : base()
         {
-          
         }
 
         /// <summary>
-        /// Creates a ViewModel for an order from an order 
+        /// Creates a ViewModel for an order from an order.
         /// </summary>
-        /// <param name="dividend">The <see cref="Dividend"/> to create a ViewModel for</param>
-        public DividendViewModel(Dividend dividend) : base()
+        /// <param name="dividend">The <see cref="Dividend"/> to create a ViewModel for.</param>
+        public DividendViewModel(Dividend dividend)
+            : base()
         {
             this.Amount = dividend.Amount;
             this.BookingDate = dividend.DayOfPayment;
-            this.ComponentType =  ShareComponentType.dividend;
-            this.SinglePriceBuy = dividend.Value/dividend.Amount;
+            this.ComponentType =  ShareComponentType.Dividend;
+            this.SinglePriceBuy = dividend.Value / dividend.Amount;
             this.ISIN = dividend.ISIN;
             this.UserName = dividend.UserName;
         }
@@ -43,7 +45,8 @@ namespace StockMarket.ViewModels
 
         private readonly string ISIN;
 
-        override public double AmountSold
+        /// <inheritdoc/>
+        public override double AmountSold
         {
             get
             {
@@ -52,10 +55,10 @@ namespace StockMarket.ViewModels
         }
 
         /// <summary>
-        /// The summed up price of the shares at the day of purchase
-        /// (getter only)
+        /// Gets the summed up price of the shares at the day of purchase
+        /// (getter only).
         /// </summary>
-        override public double SumBuy
+        public override double SumBuy
         {
             get
             {
@@ -64,23 +67,23 @@ namespace StockMarket.ViewModels
         }
 
         /// <summary>
-        /// The current summed up price of the shares
-        /// (getter only)
+        /// Gets the current summed up price of the shares
+        /// (getter only).
         /// </summary>
-        override public double SumNow
+        public override double SumNow
         {
             get
             {
-                return Amount * SinglePriceBuy;
+                return this.Amount * this.SinglePriceBuy;
             }
         }
 
+        /// <inheritdoc/>
         public override double Percentage
         {
-            get { return SumNow / Amount / SinglePriceNow; }
+            get { return this.SumNow / this.Amount / this.SinglePriceNow; }
         }
         #endregion
-
 
     }
 }

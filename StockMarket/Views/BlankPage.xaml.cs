@@ -3,13 +3,16 @@
 namespace StockMarket.Pages
 {
     /// <summary>
-    /// Interaktionslogik für BlankPage.xaml
+    /// Interaktionslogik für BlankPage.xaml.
     /// </summary>
     public partial class BlankPage : Page
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BlankPage"/> class.
+        /// </summary>
         public BlankPage()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
     }
 }

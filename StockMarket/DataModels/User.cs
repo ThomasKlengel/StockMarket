@@ -3,24 +3,37 @@
 namespace StockMarket
 {
     /// <summary>
-    /// A class which represents a user
+    /// A class which represents a user.
     /// </summary>
     public class User
     {
         /// <summary>
-        /// returns a default instance ("All Users")
+        /// returns a default instance ("All Users").
         /// </summary>
         /// <returns></returns>
-        public static User Default() { return new User("All", "Users"); }
+        public static User Default()
+        {
+            return new User("All", "Users");
+        }
 
         #region Constructors
 
-        public User() { }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="User"/> class.
+        /// </summary>
+        public User()
+        {
+        }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="User"/> class.
+        /// </summary>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
         public User(string firstName, string lastName)
         {
-            FirstName = firstName;
-            LastName = lastName;
+            this.FirstName = firstName;
+            this.LastName = lastName;
         }
 
         #endregion
@@ -31,11 +44,12 @@ namespace StockMarket
         public int DB_ID { get; set; }
 
         /// <summary>
-        /// The first name of the user
+        /// Gets or sets the first name of the user.
         /// </summary>
         public string FirstName { get;  set; }
+
         /// <summary>
-        /// The last name of the user
+        /// Gets or sets the last name of the user.
         /// </summary>
         public string LastName { get;  set; }
 
@@ -44,16 +58,16 @@ namespace StockMarket
         #region Methods
 
         /// <summary>
-        /// returns the first name and the last name sepereated by a white space
+        /// returns the first name and the last name sepereated by a white space.
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return $"{FirstName} {LastName}";
+            return $"{this.FirstName} {this.LastName}";
         }
 
         /// <summary>
-        /// compares the user by its string representation
+        /// compares the user by its string representation.
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
@@ -65,9 +79,11 @@ namespace StockMarket
                 // compare the string values (first+last name)
                 return this.ToString() == (obj as User).ToString();
             }
+
             return false;
         }
 
+        /// <inheritdoc/>
         public override int GetHashCode()
         {
             return base.GetHashCode();

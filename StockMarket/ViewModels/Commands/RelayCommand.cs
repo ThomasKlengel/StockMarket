@@ -6,6 +6,8 @@ namespace StockMarket.ViewModels
     public class RelayCommand : ICommand
     {
         // event thrown by the UI when e.g. a TextBox has lost focus
+
+        /// <inheritdoc/>
         public event EventHandler CanExecuteChanged
         {
             // checks if the CanExecute has to be evaluated anew
@@ -17,31 +19,35 @@ namespace StockMarket.ViewModels
         private readonly Predicate<object> _canExecute;
 
         /// <summary>
-        /// Creates a new RelayCommand
+        /// Creates a new RelayCommand.
         /// </summary>
         /// <param name="execute">The <see cref="Action"/> the command should exectute.</param>
         /// <param name="canExecute">The <see cref="Predicate{T}"/> to check if the command can be executed.</param>
         public RelayCommand(Action<object> execute, Predicate<object> canExecute)
         {
-            _execute = execute;
-            _canExecute = canExecute != null ? canExecute : new Predicate<object>((o) => { return true; });
+            this._execute = execute;
+            this._canExecute = canExecute != null ? canExecute : new Predicate<object>((o) => { return true; });
         }
 
         /// <summary>
-        /// Creates a new RelayCommand that can always execute 
+        /// Creates a new RelayCommand that can always execute.
         /// </summary>
         /// <param name="execute">The <see cref="Action"/> the command should exectute.</param>
-        public RelayCommand(Action<object> execute) : this(execute, null) { }
-
-
-        public bool CanExecute(object parameter)
+        public RelayCommand(Action<object> execute)
+            : this(execute, null)
         {
-            return _canExecute(parameter);
         }
 
+        /// <inheritdoc/>
+        public bool CanExecute(object parameter)
+        {
+            return this._canExecute(parameter);
+        }
+
+        /// <inheritdoc/>
         public void Execute(object parameter)
         {
-            _execute.Invoke(parameter);
+            this._execute.Invoke(parameter);
         }
     }
 }
