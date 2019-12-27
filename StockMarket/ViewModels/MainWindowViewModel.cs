@@ -77,29 +77,30 @@ namespace StockMarket.ViewModels
                 // ... get all shares in the portfolio
                 var shares = DataBaseHelper.GetAllItemsFromDB<Share>();
 
-                for (int i = shares.Count - 1;i >= 0;i--)
-                {
-                    var orders = DataBaseHelper.GetItemsFromDB<Order>(shares[i]);
+                // remove the shares which where no share is currently purchased
+                //for (int i = shares.Count - 1;i >= 0;i--)
+                //{
+                //    var orders = DataBaseHelper.GetItemsFromDB<Order>(shares[i]);
 
-                    double amountRemaining = 0;
-                    foreach (var o in orders)
-                    {
+                //    double amountRemaining = 0;
+                //    foreach (var o in orders)
+                //    {
 
-                        if (o.OrderType == ShareComponentType.Buy)
-                        {
-                            amountRemaining += o.Amount;
-                        }
-                        else if (o.OrderType == ShareComponentType.Sell)
-                        {
-                            amountRemaining -= o.Amount;
-                        }
-                    }
+                //        if (o.OrderType == ShareComponentType.Buy)
+                //        {
+                //            amountRemaining += o.Amount;
+                //        }
+                //        else if (o.OrderType == ShareComponentType.Sell)
+                //        {
+                //            amountRemaining -= o.Amount;
+                //        }
+                //    }
 
-                    if (amountRemaining < 1)
-                    {
-                        shares.RemoveAt(i);
-                    }
-                }
+                //    if (amountRemaining < 1)
+                //    {
+                //        shares.RemoveAt(i);
+                //    }
+                //}
 
                 // for each of these shares...
                 foreach (var share in shares)
@@ -116,21 +117,8 @@ namespace StockMarket.ViewModels
                         }
                     }
 
-                    // ... if it is not from today get the current price of the share
-                    var webcontent = await WebHelper.GetWebContent(share.WebSite);
-                    var price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
-                    if (price == 0.0)
-                    {
-                        webcontent = await WebHelper.GetWebContent(share.WebSite2);
-                        price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
-                    }
-
-                    if (price == 0.0)
-                    {
-                        webcontent = await WebHelper.GetWebContent(share.WebSite3);
-                        price = RegexHelper.GetSharePrice(webcontent, share.ShareType);
-                    }
-
+                    var price = await RegexHelper.GetSharePriceAsync(share);
+                    
                     // create a new sharevalue
                     ShareValue s = new ShareValue()
                     {
