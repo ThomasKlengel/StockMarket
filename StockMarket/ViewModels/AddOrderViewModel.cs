@@ -270,6 +270,7 @@ namespace StockMarket.ViewModels
 
         private void AddInputViaPdf(object o)
         {
+            // TODO: use other OCR (which doesnt need licence) (Microsoft?)
             //create the OCR reader
             AdvancedOcr Ocr = new AdvancedOcr()
             {
@@ -327,7 +328,7 @@ namespace StockMarket.ViewModels
                     if (line.Text.StartsWith("Stück"))
                     {
                         // get ordered amount
-                        var strAmount = line.Words[1].Text;
+                        var strAmount = line.Words[1].Text.Replace(".", "");
                         int intAmount = 0;
                         Int32.TryParse(strAmount, out intAmount);
                         Amount = intAmount;
@@ -361,6 +362,56 @@ namespace StockMarket.ViewModels
                             SelectedShare = sharesByWkn0.First();
                             break;
                         }
+                        var sharesByIsinPercentage = (DataBaseHelper.GetSharesFromDB().Where((s) => {
+                            int matches = 0;
+                            string tempIsin = isin.Replace("O", "0");
+                            for (int count=0;count<isin.Length;count++)
+                            {
+                                if (tempIsin[count] == s.ISIN[count])
+                                {
+                                    matches++;
+                                }
+                            }
+                            if (matches > 7) // 66% matching
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }));
+                        if (sharesByIsinPercentage.Count() != 0)
+                        {
+                            SelectedShare = sharesByIsinPercentage.First();
+                            break;
+                        }
+
+                        var sharesByWknPercentage = (DataBaseHelper.GetSharesFromDB().Where((s) => {
+                            int matches = 0;
+                            string tempWkn = wkn.Replace("O", "0");
+                            for (int count = 0; count < isin.Length; count++)
+                            {
+                                if (tempWkn[count] == s.WKN[count])
+                                {
+                                    matches++;
+                                }
+                            }
+                            if (matches > 3) // 50% matching
+                            {
+                                return true;
+                            }
+                            else
+                            {
+                                return false;
+                            }
+                        }));
+                        if (sharesByWknPercentage.Count() != 0)
+                        {
+                            SelectedShare = sharesByWknPercentage.First();
+                            break;
+                        }
+
                         break;
                     }
                     i++;
@@ -393,7 +444,7 @@ namespace StockMarket.ViewModels
                     if (line.Text.StartsWith("Ausführungskurs"))
                     {
                         // get share price
-                        var strPrice = line.Words[1].Text;
+                        var strPrice = line.Words[1].Text.Replace(".",",");
                         double doublePrice = 0.0;
                         Double.TryParse(strPrice, out doublePrice);
                         ActPrice = doublePrice;

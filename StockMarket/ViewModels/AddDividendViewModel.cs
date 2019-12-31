@@ -476,9 +476,9 @@ namespace StockMarket.ViewModels
                         }
                     }
                 }
-                catch(Exception)
+                catch(Exception ex )
                 {
-                    MessageBox.Show("Error on reading pdf");
+                    MessageBox.Show($"Error on reading pdf + {ex.Message}");
                 }
 
 
