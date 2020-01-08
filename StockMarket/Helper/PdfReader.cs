@@ -12,7 +12,7 @@ namespace StockMarket
         /// <param name="path">The path to the file</param>
         /// <param name="pageCount">The number of pages to read (0=all, 1 by default) </param>
         /// <returns></returns>
-        public static DocumentTree PdfToText(string path, int pageCount=1 )
+        public static DocumentTree PdfToText(string path, int pageCount = 1)
         {
             var pages = new DocumentTree();
             using (iText.Kernel.Pdf.PdfReader reader = new iText.Kernel.Pdf.PdfReader(path))
@@ -27,7 +27,7 @@ namespace StockMarket
                     {
                         pagesToRead = pageCount;
                     }
-                    if (pagesToRead > pdfDocument.GetNumberOfPages() || pageCount==0)
+                    if (pagesToRead > pdfDocument.GetNumberOfPages() || pageCount == 0)
                     {
                         pagesToRead = pdfDocument.GetNumberOfPages();
                     }
@@ -47,8 +47,32 @@ namespace StockMarket
             return pages;
         }
 
+        /// <summary>
+        /// Gets the first lines of a <see cref="DocumentTree"/> which start with a given word
+        /// </summary>
+        /// <param name="doc">The <see cref="DocumentTree"/> to search</param>
+        /// <param name="startWords">The words the lines have to start with</param>
+        /// <returns>A dictionary containing the starting word with its first line found</returns>
+        public static Dictionary<string, Line> GetLinesStartingWith(DocumentTree doc, List<string> startWords)
+        {
+            var retVal = new Dictionary<string, Line>();
+            foreach (string word in startWords)
+            {
+                var lines = from page in doc.Pages
+                            from line in page.Lines
+                            where line.Words.First().StartsWith(word)
+                            select line;
+
+                if (lines.Count() > 0)
+                {
+                    retVal.Add(word, lines.First());
+                }
+            }
+
+            return retVal;
+        }
     }
-    
+
     /// <summary>
     /// A class representing parts of a PDF document.
     /// </summary>
@@ -102,7 +126,7 @@ namespace StockMarket
             {
                 // add lines to the page if the content is not empty
                 if (!string.IsNullOrWhiteSpace(line))
-                {                    
+                {
                     _lines.Add(new Line(line));
                 }
             }
@@ -118,7 +142,7 @@ namespace StockMarket
             get
             {
                 return _lines;
-            }            
+            }
         }
 
         /// <summary>
@@ -147,7 +171,7 @@ namespace StockMarket
         {
             get
             {
-                return CompleteLine.Split(" ".ToArray()).Where((word)=> { return !string.IsNullOrWhiteSpace(word); }).ToList();
+                return CompleteLine.Split(" ".ToArray()).Where((word) => { return !string.IsNullOrWhiteSpace(word); }).ToList();
             }
         }
 
@@ -161,4 +185,5 @@ namespace StockMarket
             return CompleteLine;
         }
     }
+
 }
