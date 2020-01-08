@@ -336,6 +336,8 @@ namespace StockMarket.ViewModels
             {                
                 var pdfToRead = ofd.FileName;
 
+                var a = PdfReader.PdfToText(pdfToRead,0);
+
                 try
                 {
                     // create a rectangle from which to read (don't set for complete page)                    

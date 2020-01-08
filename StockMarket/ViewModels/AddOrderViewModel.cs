@@ -15,8 +15,8 @@ namespace StockMarket.ViewModels
     public class AddOrderViewModel : ViewModelBase
     {
         /// <summary>
-        /// set to true when a <see cref="Share"/> is selected from reading a pdf
-        /// to irgnore auto updates for <see cref="ActPrice"/>, etc.
+        /// set to true when a <see cref="Share"/> is selected from reading a PDF
+        /// to ignore auto updates for <see cref="ActPrice"/>, etc.
         /// </summary>
         bool ignoreUpdate = false;
 
@@ -158,7 +158,7 @@ namespace StockMarket.ViewModels
                 if (_orderType != value)
                 {
                     _orderType = value;
-                    // Update the Checkboxes
+                    // Update the Check boxes
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderType)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsBuy)));
                     OnPropertyChanged(new PropertyChangedEventArgs(nameof(OrderIsSell)));
@@ -167,7 +167,7 @@ namespace StockMarket.ViewModels
         }
         
         /// <summary>
-        /// Used to check the buy/sell-checkbox
+        /// Used to check the buy/sell-check box
         /// </summary>
         public bool OrderIsBuy
         {
@@ -177,14 +177,14 @@ namespace StockMarket.ViewModels
             }
             set
             {
-                if (value) // dont update when bound CheckBox is unchecked
+                if (value) // don't update when bound CheckBox is unchecked
                 {
                     OrderType = OrderType == ShareComponentType.Sell ? ShareComponentType.Buy : ShareComponentType.Sell;
                 }
             }
         }
         /// <summary>
-        /// Used to check the buy/sell-checkbox
+        /// Used to check the buy/sell-check box
         /// </summary>
         public bool OrderIsSell
         {
@@ -194,7 +194,7 @@ namespace StockMarket.ViewModels
             }
             set
             {
-                if (value) // dont update when bound CheckBox is unchecked
+                if (value) // don't update when bound CheckBox is unchecked
                 {
                     OrderType = OrderType == ShareComponentType.Sell ? ShareComponentType.Buy : ShareComponentType.Sell;
                 }
@@ -238,7 +238,7 @@ namespace StockMarket.ViewModels
 
         private void AddOrder(object o)
         {
-            // cehck if a valid user is selected
+            // check if a valid user is selected
             if (CurrentUser.Equals(User.Default()))
             {
                 System.Windows.MessageBox.Show("There is no valid user selected");
@@ -264,13 +264,13 @@ namespace StockMarket.ViewModels
 
         private bool CanAddOrder(object o)
         {
-            // anly add if the amount of ordered Shares is more then zero
+            // only add if the amount of ordered Shares is more then zero
             return Amount > 0 ? true : false;
         }
 
         private void AddInputViaPdf(object o)
         {
-            // TODO: use other OCR (which doesnt need licence) (Microsoft?)
+            // TODO: use other OCR (which doesn't need license) (Microsoft?)
             //create the OCR reader
             AdvancedOcr Ocr = new AdvancedOcr()
             {
@@ -301,7 +301,9 @@ namespace StockMarket.ViewModels
             {                
                 var pdfToRead = ofd.FileName;
 
-                // create a rectangle from which to read (dont set for complete page)
+                var a = PdfReader.PdfToText(pdfToRead,0);
+
+                // create a rectangle from which to read (don't set for complete page)
                 //System.Drawing.Rectangle area = new System.Drawing.Rectangle(0, 1000, 2400, 1500);                
                 var Results = Ocr.ReadPdf(pdfToRead, 1);                
                 var lines = Results.Pages[0].LinesOfText.ToList();
@@ -419,7 +421,7 @@ namespace StockMarket.ViewModels
                 lines.RemoveRange(0, ++i);
                 i = 0;
 
-                //get orderdate
+                //get order date
                 foreach (var line in lines)
                 {
                     if (line.Text.StartsWith("Schluss"))
@@ -438,7 +440,7 @@ namespace StockMarket.ViewModels
                 lines.RemoveRange(0, ++i);
                 i = 0;
 
-                //get SharePrice at ordertime
+                //get SharePrice at order time
                 foreach (var line in lines)
                 {
                     if (line.Text.StartsWith("Ausführungskurs"))
