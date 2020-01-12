@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
+﻿using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text.RegularExpressions;
-using IronOcr;
-using Microsoft.Win32;
-using Prism.Events;
 
 namespace StockMarket.ViewModels
 {

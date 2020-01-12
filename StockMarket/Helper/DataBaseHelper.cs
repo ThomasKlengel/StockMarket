@@ -404,5 +404,86 @@ namespace StockMarket
                 return -1;
             }
         }
+
+        public static Share GetShareByIdentifier(string identifier)
+        {
+            // try to match a Share already in the database
+            // first by ISIN
+            var shares = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == identifier; }));
+            if (shares.Count() != 0)
+            {
+                return shares.First();
+            }
+            // if none is found by ISIN try by WKN
+            shares = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == identifier; }));
+            if (shares.Count() != 0)
+            {
+                return shares.First();
+            }
+            // if none is found by WKN try by ISIN with "O" replaced by zeros
+            shares = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.ISIN == identifier.Replace("O", "0"); }));
+            if (shares.Count() != 0)
+            {
+                return shares.First();
+            }
+            // if none is found try by WKN with "O" replaced by zeros
+            shares = (DataBaseHelper.GetSharesFromDB().Where((s) => { return s.WKN == identifier.Replace("O", "0"); }));
+            if (shares.Count() != 0)
+            {
+                return shares.First();
+            }
+
+            // if none is found try by 66% isin match
+            var sharesByIsinPercentage = (DataBaseHelper.GetSharesFromDB().Where((s) => {
+                int matches = 0;
+                string tempIsin = identifier.Replace("O", "0");
+                for (int count = 0; count < identifier.Length; count++)
+                {
+                    if (tempIsin[count] == s.ISIN[count])
+                    {
+                        matches++;
+                    }
+                }
+                if (matches > 7) // 66% matching
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }));
+            if (sharesByIsinPercentage.Count() != 0)
+            {
+                return sharesByIsinPercentage.First();
+            }
+
+            // if none is found try by 50% wkn match
+            var sharesByWknPercentage = (DataBaseHelper.GetSharesFromDB().Where((s) => {
+                int matches = 0;
+                string tempWkn = identifier.Replace("O", "0");
+                for (int count = 0; count < identifier.Length; count++)
+                {
+                    if (tempWkn[count] == s.WKN[count])
+                    {
+                        matches++;
+                    }
+                }
+                if (matches > 3) // 50% matching
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }));
+            if (sharesByWknPercentage.Count() != 0)
+            {
+                return sharesByWknPercentage.First();
+            }
+
+            return null;
+        }
     }
 }

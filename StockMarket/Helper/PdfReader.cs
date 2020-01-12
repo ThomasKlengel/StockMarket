@@ -71,6 +71,34 @@ namespace StockMarket
 
             return retVal;
         }
+
+        public static List<Line> GetLinesBetween(DocumentTree doc, string startWord, string endWord)
+        {
+            var lines = from page in doc.Pages
+                        from line in page.Lines
+                        select line;
+            List<Line> retVal = lines.ToList();
+
+            for (int i=0;i< retVal.Count();i++)
+            {
+                if (retVal[i].Words.First() == startWord)
+                {
+                    retVal.RemoveRange(0, i);
+                    break;
+                }
+            }
+
+            for (int i = 0; i < retVal.Count(); i++)
+            {
+                if (retVal[i].Words.First() == endWord)
+                {
+                    retVal.RemoveRange(i + 1, retVal.Count() - i-1);
+                    break;
+                }
+            }
+            return retVal;
+        }
+
     }
 
     /// <summary>

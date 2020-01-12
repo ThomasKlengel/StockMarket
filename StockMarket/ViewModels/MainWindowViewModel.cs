@@ -4,7 +4,6 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Controls;
 using System.Windows.Threading;
-using Prism.Events;
 
 namespace StockMarket.ViewModels
 {
@@ -50,7 +49,7 @@ namespace StockMarket.ViewModels
             {
                 this.Users = new ObservableCollection<User>();
             }
-
+            
             foreach (var user in DataBaseHelper.GetUsersFromDB())
             {
                 this.Users.Add(user);
