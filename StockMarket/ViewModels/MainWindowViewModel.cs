@@ -22,7 +22,7 @@ namespace StockMarket.ViewModels
             // TODO: single share Graph
 
             // set the start page to an empty page
-            this.DisplayPage = new Pages.BlankPage();
+            this.DisplayPage = new Pages.SharesOverviewPage();
 
             // define the commands for the buttons
             this.AddUserCommand = new RelayCommand(this.AddUser);

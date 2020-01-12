@@ -169,9 +169,6 @@
     <Compile Include="Views\AddOrderPage.xaml.cs">
       <DependentUpon>AddOrderPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\BlankPage.xaml.cs">
-      <DependentUpon>BlankPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="DataModels\Share.cs" />
     <Compile Include="ViewModels\AddDividendViewModel.cs" />
     <Compile Include="ViewModels\AddUserViewModel.cs" />
@@ -236,10 +233,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\BlankPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Styles\GeneralStyles.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
