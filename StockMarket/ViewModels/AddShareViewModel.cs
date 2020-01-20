@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -322,7 +323,10 @@ namespace StockMarket.ViewModels
                 this.Factor = 1;
                 // get the current price
                 // price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
-                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000"));
+                await Task.Run(async () =>
+                {
+                    price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000"));
+                });
             }
 
             // set values if it is a certificate
@@ -341,8 +345,10 @@ namespace StockMarket.ViewModels
                 // get the current bid price
                 // var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
                 // price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
-                price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000", ShareType.Certificate));
-
+                await Task.Run(async () =>
+                {
+                    price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000", ShareType.Certificate));
+                });
                 // get name of SHARE certificate
                 var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
                 name = nameMatch.Value.Substring(4).Replace(" von", string.Empty).Trim() + " Certificate " + factorMatch.Value + "x";

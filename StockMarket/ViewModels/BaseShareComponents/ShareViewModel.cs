@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
@@ -417,10 +418,14 @@ namespace StockMarket.ViewModels
         /// </summary>
         private async void RefreshPriceAsync()
         {
-            var price = await RegexHelper.GetSharePriceAsync(this.baseShare);
+            await Task.Run(async() =>
+            {
+                var price = await RegexHelper.GetSharePriceAsync(this.baseShare);
 
-            // set the price for the UI
-            this.SinglePriceNow = price;
+                // set the price for the UI
+                this.SinglePriceNow = price;
+            });
+
         }
 
         /// <inheritdoc/>

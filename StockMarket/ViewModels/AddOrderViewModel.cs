@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace StockMarket.ViewModels
@@ -228,7 +229,10 @@ namespace StockMarket.ViewModels
         /// </summary>
         private async void GetPriceAsync()
         {
-            ActPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
+            await Task.Run(async () =>
+            {
+                ActPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
+            });
         }
 
         #endregion

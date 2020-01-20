@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
@@ -116,18 +117,21 @@ namespace StockMarket.ViewModels
                         }
                     }
 
-                    var price = await RegexHelper.GetSharePriceAsync(share);
-                    
-                    // create a new sharevalue
-                    ShareValue s = new ShareValue()
+                    await Task.Run(async () =>
                     {
-                        Date = DateTime.Today,
-                        ISIN = share.ISIN,
-                        Price = price,
-                    };
+                        var price = await RegexHelper.GetSharePriceAsync(share);
 
-                    // and add it to the database
-                    DataBaseHelper.AddShareValueToDB(s);
+                        // create a new sharevalue
+                        ShareValue s = new ShareValue()
+                        {
+                            Date = DateTime.Today,
+                            ISIN = share.ISIN,
+                            Price = price,
+                        };
+
+                        // and add it to the database
+                        DataBaseHelper.AddShareValueToDB(s);
+                    });
                 }
             }
         }

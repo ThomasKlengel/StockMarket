@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 
 namespace StockMarket.ViewModels
@@ -250,14 +251,17 @@ namespace StockMarket.ViewModels
         /// </summary>
         private async void GetDividendReturnAsync()
         {
-            // get the current price of the selected share
-            currentPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
-            if(currentPrice == 0.0)
-            {    
-                DividendReturn= 0.0;
-            }
-            // calculate the return (dividenden rendite)
-            DividendReturn =  DividendPerShare / currentPrice;
+            await Task.Run(async () =>
+            {
+                // get the current price of the selected share
+                currentPrice = await RegexHelper.GetSharePriceAsync(SelectedShare);
+                if (currentPrice == 0.0)
+                {
+                    DividendReturn = 0.0;
+                }
+                // calculate the return (dividenden rendite)
+                DividendReturn = DividendPerShare / currentPrice;
+            });
         }
 
         #endregion
