@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
-using System.Windows.Controls;
-using System.Windows.Data;
 
 namespace StockMarket.ViewModels
 {
@@ -119,10 +118,10 @@ namespace StockMarket.ViewModels
                         this.DisplayedShare = new ShareViewModel(this.SelectedShare);
                         // notify Share of CurrentUser so values are refreshed
                         ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
-                        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedShare)));
-                        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedCharts)));
+                        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedShare)));                        
                         this.DisplayedShare.PropertyChanged -= this.DisplayedShare_PropertyChanged;
                         this.DisplayedShare.PropertyChanged += this.DisplayedShare_PropertyChanged;
+                        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedCharts)));
                     }
                 }
             }
@@ -138,16 +137,60 @@ namespace StockMarket.ViewModels
             get; set;
         }
         
+        /// <summary>
+        /// A collection of charts  that is to be displayed
+        /// </summary>
         public LiveCharts.SeriesCollection DisplayedCharts
         {
             get
-            { 
+            {
+                // get the charts for the selected share
                 var charts = Charts.ChartCreator.CreateCharts(SelectedShare);
                 var collection = new LiveCharts.SeriesCollection();
-                collection.Add(charts.OrderSeries);
-                collection.Add(charts.AbsoluteSeries);
-                collection.Add(charts.GrowthSeries);
-                return collection;           
+                if (charts.OrderSeries.Values.Count > 0)
+                {
+                    // add the charts to the displayed collection
+                    collection.Add(charts.DividendSeries);
+                    collection.Add(charts.AbsoluteSeries);
+                    collection.Add(charts.GrowthSeries);
+                    collection.Add(charts.OrderSeries);
+                }
+
+                return collection;
+
+            }
+        }
+
+        /// <summary>
+        /// A formatter for the x-axis values of the chart
+        /// </summary>
+        public Func<double, string> XDateFormat
+        {
+            get
+            {
+                return val => new DateTime((long)val).ToString("yyyy-MM-dd");
+            }
+        }
+
+        /// <summary>
+        /// A formatter for the y-axis values of the chart
+        /// </summary>
+        public Func<double, string> YEuroFormat
+        {
+            get
+            {
+                return val => val.ToString("N0") + "€";
+            }
+        }
+
+        /// <summary>
+        /// A formatter for the y-axis values of the chart
+        /// </summary>
+        public Func<double, string> YPercentFormat
+        {
+            get
+            {
+                return val => val.ToString("N0") + "%";
             }
         }
 

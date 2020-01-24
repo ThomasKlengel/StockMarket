@@ -26,7 +26,7 @@
 
         <!--Combobox containing the shares in the database on grid row 1-->
         <ComboBox Name="CoBo_AG" Margin="5" ItemsSource="{Binding Shares}"
-                      DisplayMemberPath="ShareName" SelectedItem="{Binding SelectedShare}" Grid.Row="0">
+                      DisplayMemberPath="ShareName" SelectedItem="{Binding SelectedShare}" Grid.Row="0" SelectionChanged="CoBo_AG_SelectionChanged">
         </ComboBox>
 
         <!--Grid containing orders of the selected share on grid row 2 -->
@@ -70,7 +70,7 @@
             </ListView>
         </Grid>
         
-        <GridSplitter Grid.Row ="2" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <GridSplitter Grid.Row ="2" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="LightGray"/>
 
         <ScrollViewer Grid.Row="3" VerticalScrollBarVisibility="Auto">
             <StackPanel Orientation="Vertical">
@@ -119,10 +119,18 @@
             </StackPanel>
         </ScrollViewer>
 
-        <GridSplitter Grid.Row ="4" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <GridSplitter Grid.Row ="4" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  Background="LightGray"/>
 
         <Grid Grid.Row="5">
-            <lvc:CartesianChart Series="{Binding  DisplayedCharts}" LegendLocation="Right" />
+            <lvc:CartesianChart Name="Chart" Series="{Binding  DisplayedCharts}" LegendLocation="Right" Zoom="X" MouseRightButtonUp="Chart_MouseRightButtonUp"  >
+                <lvc:CartesianChart.AxisX>
+                    <lvc:Axis Title="Year" LabelFormatter="{Binding XDateFormat}"></lvc:Axis>
+                </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.AxisY>
+                    <lvc:Axis LabelFormatter="{Binding YEuroFormat}"></lvc:Axis>
+                    <lvc:Axis LabelFormatter="{Binding YPercentFormat}" Foreground="Orange" Position="RightTop"></lvc:Axis>
+                </lvc:CartesianChart.AxisY>
+            </lvc:CartesianChart>
         </Grid>
         
     </Grid>
