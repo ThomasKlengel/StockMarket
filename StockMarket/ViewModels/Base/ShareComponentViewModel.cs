@@ -51,15 +51,16 @@ namespace StockMarket.ViewModels
         /// <summary>
         /// Gets or sets the price of a single <see cref="Share"/>/<see cref="Order"/>/<see cref="Dividend"/> at the day of purchase.
         /// </summary>
-        public virtual double SinglePriceBuy {
-    get
-    {
-        return this._singlePriceBuy;
-    }
+        public virtual double SinglePriceBuy
+        {
+            get
+            {
+                return this._singlePriceBuy;
+            }
 
-    set
-    {
-        if (this._singlePriceBuy != value)
+            set
+            {
+                if (this._singlePriceBuy != value)
                 {
                     this._singlePriceBuy = value;
                     this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.SinglePriceBuy)));
@@ -68,7 +69,7 @@ namespace StockMarket.ViewModels
                     this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Percentage)));
                     this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.Background)));
                 }
-    }
+            }
         }
 
         /// <summary>

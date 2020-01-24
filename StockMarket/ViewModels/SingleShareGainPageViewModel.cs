@@ -120,6 +120,7 @@ namespace StockMarket.ViewModels
                         // notify Share of CurrentUser so values are refreshed
                         ApplicationService.Instance.EventAggregator.GetEvent<UserChangedEvent>().Publish(this.CurrentUser);
                         this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedShare)));
+                        this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.DisplayedCharts)));
                         this.DisplayedShare.PropertyChanged -= this.DisplayedShare_PropertyChanged;
                         this.DisplayedShare.PropertyChanged += this.DisplayedShare_PropertyChanged;
                     }
@@ -135,6 +136,19 @@ namespace StockMarket.ViewModels
         public TileViewModel TileDividends
         {
             get; set;
+        }
+        
+        public LiveCharts.SeriesCollection DisplayedCharts
+        {
+            get
+            { 
+                var charts = Charts.ChartCreator.CreateCharts(SelectedShare);
+                var collection = new LiveCharts.SeriesCollection();
+                collection.Add(charts.OrderSeries);
+                collection.Add(charts.AbsoluteSeries);
+                collection.Add(charts.GrowthSeries);
+                return collection;           
+            }
         }
 
         #endregion
