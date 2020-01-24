@@ -5,6 +5,7 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:StockMarket"
       xmlns:view="clr-namespace:StockMarket.ViewModels"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="OrdersOverviewPage">
@@ -15,6 +16,8 @@
     <Grid>
         <!--define grid rows-->
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
@@ -115,5 +118,12 @@
                 </Grid>
             </StackPanel>
         </ScrollViewer>
+
+        <GridSplitter Grid.Row ="4" Height="3" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+
+        <Grid Grid.Row="5">
+            <lvc:CartesianChart Series="{Binding  DisplayedCharts}" LegendLocation="Right" />
+        </Grid>
+        
     </Grid>
 </Page>

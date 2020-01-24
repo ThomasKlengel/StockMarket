@@ -142,8 +142,8 @@
     <Compile Include="DataModels\ShareValue.cs" />
     <Compile Include="DataModels\User.cs" />
     <Compile Include="GlobalSuppressions.cs" />
-    <Compile Include="Graphs\GraphCreator.cs" />
-    <Compile Include="Graphs\GraphShareModel.cs" />
+    <Compile Include="Charts\ChartCreator.cs" />
+    <Compile Include="Charts\GraphShareModel.cs" />
     <Compile Include="Helper\ApplicationService.cs" />
     <Compile Include="Helper\DataBaseHelper.cs" />
     <Compile Include="Helper\GeneralHelper.cs" />

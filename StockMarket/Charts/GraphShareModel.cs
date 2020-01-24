@@ -8,7 +8,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Threading;
 
-namespace StockMarket.Graphs
+namespace StockMarket.Charts
 {
     /// <summary>
     /// A GraphModel for a <see cref="Share"/>.
@@ -328,14 +328,14 @@ namespace StockMarket.Graphs
 
             // add the orders from the database for this user at the given date
             foreach (var order in DataBaseHelper.GetItemsFromDB<Order>(this.baseShare)
-                .Where(o => this.SelectByUser(o)).Where(o => o.Date <= Date))
+                /*.Where(o => this.SelectByUser(o))*/.Where(o => o.Date <= Date))
             {
                 this.ShareComponents.Add(new OrderViewModel(order));
             }
 
             // add the dividends from the database for this user
             foreach (var dividend in DataBaseHelper.GetItemsFromDB<Dividend>(this.baseShare)
-                  .Where(dividend => this.SelectByUser(dividend)).Where(dividend => dividend.DayOfPayment <= Date))
+                  /*.Where(dividend => this.SelectByUser(dividend))*/.Where(dividend => dividend.DayOfPayment <= Date))
             {
                 this.ShareComponents.Add(new DividendViewModel(dividend));
             }
