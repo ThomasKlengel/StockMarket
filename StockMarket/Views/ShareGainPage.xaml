@@ -127,7 +127,7 @@
                     <lvc:Axis Title="Year" LabelFormatter="{Binding XDateFormat}"></lvc:Axis>
                 </lvc:CartesianChart.AxisX>
                 <lvc:CartesianChart.AxisY>
-                    <lvc:Axis LabelFormatter="{Binding YEuroFormat}"></lvc:Axis>
+                    <lvc:Axis LabelFormatter="{Binding YEuroFormat}" MinValue="{Binding YMin}" MaxValue="{Binding YMax}" ></lvc:Axis>
                     <lvc:Axis LabelFormatter="{Binding YPercentFormat}" Foreground="Orange" Position="RightTop"></lvc:Axis>
                 </lvc:CartesianChart.AxisY>
             </lvc:CartesianChart>

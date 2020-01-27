@@ -146,6 +146,9 @@ namespace StockMarket.ViewModels
             {
                 // get the charts for the selected share
                 var charts = Charts.ChartCreator.CreateCharts(SelectedShare);
+
+                YMin = charts.YMin;
+                YMax = charts.YMax;
                 var collection = new LiveCharts.SeriesCollection();
                 if (charts.OrderSeries.Values.Count > 0)
                 {
@@ -160,6 +163,35 @@ namespace StockMarket.ViewModels
 
             }
         }
+
+        private double _ymin;
+        public double YMin
+        {
+            get { return _ymin; }
+            private set
+            {
+                if (_ymin != value)
+                {
+                    _ymin = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(YMin)));
+                }
+            }
+        }
+
+        private double _ymax;
+        public double YMax
+        {
+            get { return _ymax; }
+            private set
+            {
+                if (_ymax != value)
+                {
+                    _ymax = value;
+                    OnPropertyChanged(new PropertyChangedEventArgs(nameof(YMax)));
+                }
+            }
+        }
+
 
         /// <summary>
         /// A formatter for the x-axis values of the chart

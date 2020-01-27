@@ -21,7 +21,16 @@ namespace StockMarket.Charts
             {
                 // get the relevant values of the share                
                 var orders = DataBaseHelper.GetItemsFromDB<Order>(share).OrderBy((s) => s.Date);
-                var shareValues = DataBaseHelper.GetItemsFromDB<ShareValue>(share).Where((s)=> s.Date>= orders.FirstOrDefault().Date.Date).OrderBy((s) => s.Date);
+                IOrderedEnumerable<ShareValue> shareValues;
+                if (orders.Count() > 0)
+                {
+                    shareValues = DataBaseHelper.GetItemsFromDB<ShareValue>(share).Where((s) => s.Date >= orders.FirstOrDefault().Date.Date).OrderBy((s) => s.Date);
+                }
+                else
+                {
+                    shareValues = DataBaseHelper.GetItemsFromDB<ShareValue>(share).OrderBy((s) => s.Date);
+                }            
+
                 var dividends = DataBaseHelper.GetItemsFromDB<Dividend>(share).OrderBy((s) => s.DayOfPayment);
 
                 // fill the data of the OrderSeries
@@ -39,6 +48,8 @@ namespace StockMarket.Charts
 
                 // fill the data of the AbsoluteSeries and Growth Series
                 //TODO: get the value of the orders at the date of the shareValue
+                double min = 10000;
+                double max = -10000;
                 var first = orders.FirstOrDefault();
                 foreach (var shareValue in shareValues)
                 {
@@ -49,6 +60,14 @@ namespace StockMarket.Charts
                     foreach (var dividend in dividends.Where(s=>s.DayOfPayment<=shareValue.Date))
                     {
                         completeValue += dividend.Value;
+                        if (completeValue<min)
+                        {
+                            min = completeValue;
+                        }
+                        if ( completeValue>max)
+                        {
+                            max = completeValue;
+                        }
                     }
                     returnCharts.AbsoluteSeries.Values.Add(new DateTimePoint(shareValue.Date.Date, model.SumNow));
                     // calculate the percentagewise growth
@@ -56,6 +75,8 @@ namespace StockMarket.Charts
                     returnCharts.GrowthSeries.Values.Add(new DateTimePoint(shareValue.Date.Date, percentage));
                 }
 
+                returnCharts.YMin = min * 0.9;
+                returnCharts.YMax = max * 1.1;
             }
             return returnCharts;
         }             
@@ -71,10 +92,12 @@ namespace StockMarket.Charts
         /// </summary>
         public ChartCollection()
         {
-            OrderSeries = new ScatterSeries() { Title = "Orders", Values = new ChartValues<DateTimePoint>(), PointGeometry= DefaultGeometries.Square, Opacity=1 };
-            DividendSeries = new ScatterSeries() { Title = "Dividends", Values = new ChartValues<DateTimePoint>(), PointGeometry = DefaultGeometries.Triangle, Opacity=1 };
-            AbsoluteSeries = new LineSeries() { Title = "Absolute Value", Values = new ChartValues<DateTimePoint>(), PointGeometry=null };
-            GrowthSeries = new LineSeries() { Title = "Growth", Values = new ChartValues<DateTimePoint>(), PointGeometry=null, ScalesYAt=1 };
+            OrderSeries = new ScatterSeries() { Title = "Orders", Values = new ChartValues<DateTimePoint>(), PointGeometry = DefaultGeometries.Square, Opacity = 1 };
+            DividendSeries = new ScatterSeries() { Title = "Dividends", Values = new ChartValues<DateTimePoint>(), PointGeometry = DefaultGeometries.Triangle, Opacity = 1 };
+            AbsoluteSeries = new LineSeries() { Title = "Absolute Value", Values = new ChartValues<DateTimePoint>(), PointGeometry = null };
+            GrowthSeries = new LineSeries() { Title = "Growth", Values = new ChartValues<DateTimePoint>(), PointGeometry = null, ScalesYAt = 1 };
+            YMin = 500;
+            YMax = 2000;
         }
 
         /// <summary>
@@ -93,6 +116,10 @@ namespace StockMarket.Charts
         /// A chart series for the percentagewise growths of a <see cref="ShareValue"/>
         /// </summary>
         public LineSeries GrowthSeries { get; set; }
-        
+
+        public double YMin { get; set; }
+
+        public double YMax { get; set; }
+
     }
 }
