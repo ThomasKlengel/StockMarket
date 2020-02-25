@@ -314,7 +314,7 @@ namespace StockMarket.ViewModels
                 CheckPathExists = true,
                 Multiselect = false,
                 Filter = "PDFs|*.pdf",
-                InitialDirectory = @"C:\"
+                InitialDirectory = App.DEFAULTPATH
             };
 
             // when a file was selected....

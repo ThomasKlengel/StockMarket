@@ -183,15 +183,15 @@ namespace StockMarket.ViewModels
         private ShareType _shareType = ShareType.Share;
 
         public ShareType ShareType
+        {
+            get
             {
-                get
-                {
-                    return this._shareType;
-                }
+                return this._shareType;
+            }
 
-                set
-                {
-                    if (this._shareType != value)
+            set
+            {
+                if (this._shareType != value)
                 {
                     this._shareType = value;
                     this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.ShareType)));
@@ -199,8 +199,8 @@ namespace StockMarket.ViewModels
                     this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsCertificate)));
                     this.OnPropertyChanged(new PropertyChangedEventArgs(nameof(this.IsETF)));
                 }
-                }
             }
+        }
 
         public bool IsShare
         {
@@ -281,8 +281,16 @@ namespace StockMarket.ViewModels
         /// <param name="o">A parameter for this method.</param>
         private async void AutofillAsync(object o)
         {
+            // set emtpty values
+            // set empty values
+            string wkn = string.Empty, isin = string.Empty, name = string.Empty;
+            double price = 0;
+
             // get the web content
             string webContent = await WebHelper.GetWebContent(this.WebSite);
+
+            // set empty values
+            RegexHelper.GetShareIDs(webContent, out name, out isin, out wkn, out price);
 
             // check the share type
             var type = RegexHelper.GetShareTypeShare(this.WebSite);
@@ -290,6 +298,7 @@ namespace StockMarket.ViewModels
             {
                 case ShareType.Share:
                     this.IsShare = true;
+                    Factor = 1;
                     break;
                 case ShareType.Certificate:
                     this.IsCertificate = true;
@@ -297,63 +306,46 @@ namespace StockMarket.ViewModels
                 case ShareType.ETF:
                     this.IsShare = false;
                     this.IsCertificate = false;
+                    Factor = 1;
                     break;
             }
 
-            // set empty values
-            string wkn = string.Empty, isin = string.Empty, name = string.Empty;
-            double price = 0.0;
 
-            // set values if it is a share
-            if (this.IsShare)
+            if (price != 0)
             {
-                // get values of WKN and ISIN
-                var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
-                var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
-                var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
-                wkn = wknMatch.Value.Substring(5);
-                isin = isinMatch.Value.Substring(6);
-
-                // < h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
-                // get name of SHARE
-                var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
-                var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
-                name = nameM2.Value.Substring(10).Trim().Replace(" in", string.Empty);
-                // Factor for Shares is always 1
-                this.Factor = 1;
-                // get the current price
-                // price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
-                await Task.Run(async () =>
+                // set values if it is a share
+                if (this.IsShare)
                 {
-                    price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000"));
-                });
-            }
+                    this.Factor = 1;
+                    // get the current price
+                    // price = RegexHelper.GetSharePrice(webContent,ShareType.Share);
+                    await Task.Run(async () =>
+                    {
+                        price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000"));
+                    });
+                }
 
-            // set values if it is a certificate
-            if (this.IsCertificate)
-            {
-                // get values of WKN and ISIN
-                var title = Regex.Match(webContent, RegexHelper.REGEX_CertificateTitle);
-                var wknMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertWKN);
-                var isinMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertISIN);
-                wkn = wknMatch.Value.Replace("|",string.Empty).Trim();
-                isin = isinMatch.Value.Replace("|", string.Empty).Trim();
-
-                // get the certificate factor
-                var factorMatch = Regex.Match(title.Value,RegexHelper.REGEX_Group_CertFactor);
-                this.Factor = Convert.ToByte(factorMatch.Value.Substring(6));
-                // get the current bid price
-                // var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                // price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
-                await Task.Run(async () =>
+                // set values if it is a certificate
+                if (this.IsCertificate)
                 {
-                    price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000", ShareType.Certificate));
-                });
-                // get name of SHARE certificate
-                var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
-                name = nameMatch.Value.Substring(4).Replace(" von", string.Empty).Trim() + " Certificate " + factorMatch.Value + "x";
-            }
+                    // get values of WKN and ISIN
+                    var title = Regex.Match(webContent, RegexHelper.REGEX_CertificateTitle);
 
+                    // get the certificate factor
+                    var factorMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertFactor);
+                    this.Factor = Convert.ToByte(factorMatch.Value.Substring(6));
+                    // get the current bid price
+                    // var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                    // price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);
+                    await Task.Run(async () =>
+                    {
+                        price = await RegexHelper.GetSharePriceAsync(new Share(string.Empty, this.WebSite, "iah345", "de0000000000", ShareType.Certificate));
+                    });
+                    // get name of SHARE certificate
+                    var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
+                    name = nameMatch.Value.Substring(4).Replace(" von", string.Empty).Trim() + " Certificate " + factorMatch.Value + "x";
+                }
+            }
             // write values to view model
             this.ISIN = isin;
             this.ShareName = name;

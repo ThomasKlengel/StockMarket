@@ -7,5 +7,7 @@ namespace StockMarket
     /// </summary>
     public partial class App : Application
     {
+
+        internal const string DEFAULTPATH = @"C:\Users\Thoms\Documents\Aktien\DKB";
     }
 }

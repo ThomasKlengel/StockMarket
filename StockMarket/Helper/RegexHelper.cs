@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace StockMarket
 {
@@ -11,75 +12,14 @@ namespace StockMarket
     public static class RegexHelper
     {
         // TODO: default page by isin = https://www.finanzen.net/kurse/de000uf0aa67
-
-        // TODO: add regex to get values from other pages like
-        // https://kurse.boerse.ard.de/ard/kurse_einzelkurs_uebersicht.htn?i=48310499
-
-        // <!DOCTYPE html>
-        // <html lang = "de" >
-        // < head >
-        // < title > UF0AA6 | DE000UF0AA67 | Amazon.com FaktorZert open end(UBS) aktuell | boerse.ARD.de</title>
-        // <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-        // <meta name = "language" content="de" />
-        // <meta name = "apple-mobile-web-app-capable" content="yes"/>
-        // <meta name = "apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-        // <meta name = "viewport" content="width=device-width"/>
-        // <meta name = "description" content="Finden Sie Informationen zum Zertifikat Amazon.com FaktorZert  open end (UBS) (WKN UF0AA6, ISIN DE000UF0AA67), sowie den aktuellen Zertifikat-Kurs und Chart." />
-
-        // <table summary = "Die folgende Tabelle enth&auml;lt Kursinformationen zu Amazon.com FaktorZert  open end (UBS)." cellspacing="0" >
-        //  <tbody>
-        //    <tr class="gray_bg">
-        //      <th id = "aktueller_kurs" scope="row" class="tleft"><strong>Aktueller Kurs:</strong></th>
-        //      <td headers = "aktueller_kurs" class="tright">5,39&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="">
-        //      <th id = "tageshoch" scope="row" class="tleft"><strong>Tageshoch:</strong></th>
-        //      <td headers = "tageshoch" class="tright">5,39&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="gray_bg">
-        //      <th id = "tagestief" scope="row" class="tleft"><strong>Tagestief:</strong></th>
-        //      <td headers = "tagestief" class="tright">5,21&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="">
-        //      <th id = "eroeffnung" scope="row" class="tleft"><strong>Er&ouml;ffnung:</strong></th>
-        //      <td headers = "eroeffnung" class="tright">5,26&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="gray_bg">
-        //      <th id = "vortag" scope="row" class="tleft"><strong>Vortag:</strong> (16.08.19)</th>
-        //      <td headers = "vortag" class="tright">5,06&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="">
-        //      <th id = "wochenhoch" scope="row" class="tleft"><strong>52-Wochenhoch:</strong></th>
-        //      <td headers = "wochenhoch" class="tright">9,92&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="gray_bg">
-        //      <th id = "wochentief" scope="row" class="tleft"><strong>52-Wochentief:</strong></th>
-        //      <td headers = "wochentief" class="tright">3,55&nbsp;&euro;</td>
-        //    </tr>
-        //    <tr class="">
-        //      <th id = "boerse" scope="row" class="tleft"><strong>Börsenplatz:</strong></th>
-        //      <td headers = "boerse" class="tright">Stuttgart</td>
-        //    </tr>
-
-        // <tr class="gray_bg">
-        //      <th id = "gattung" scope="row" class="tleft"><strong>Gattung:</strong></th>
-        //      <td headers = "gattung" class="tright">Faktor</td>
-        //    </tr>
-
-        // <tr class="">
-        //        <th id = "emittent" scope="row" class="tleft"><strong>Emittent:</strong></th>
-        //        <td headers = "boerse" class="tright">UBS</td>
-        //      </tr>
-
-        // </tbody>
-        // </table>
+        
         #region Regex strings
         public const string REGEX_Website_Valid1 = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
         public const string REGEX_Website_Valid2 = "^https:\\/{2}kurse\\.boerse\\.ard\\.de.+$";
 
         public const string REGEX_SharePrice = "\\d*\\.?\\d*,\\d*";
         public const string REGEX_Group_SharePrice = "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span";
-        public const string REGEX_Group_IDs = "instrument-id\"\\>.{40}";
+        public const string REGEX_Group_IDs = "instrument-id.{150}";
         public const string REGEX_ISIN = "ISIN: \\S{12}";
         public const string REGEX_WKN = "WKN: .{6}";
         public const string REGEX_Group_ShareName = "box-headline\"\\>Aktienkurs.{50}";
@@ -95,7 +35,11 @@ namespace StockMarket
         public const string REGEX_Group_CertPrice = "<div .*data-template=\"Bid\".* data-animation.*<\\/span><\\/div>";
 
         public const string REGEX_ARD = "<title>.*boerse.ARD.de<\\/title>";
-        public const string REGEX_Group_ARD_Price = "<td headers=\"aktueller_kurs.*<\\/td>"; // headers = \"aktueller_kurs.*<\\/td>
+        public const string REGEX_ARD_Group_IDs = "einzelkurs_header"; // get index... substring (index, 1100)
+        public const string REGEX_ARD_ISIN = "ISIN \\S{12}";
+        public const string REGEX_ARD_WKN = "WKN .{6}";
+        public const string REGEX_ARD_Group_ShareName = "<h1>.*h1>";
+        public const string REGEX_ARD_Group_SharePrice = "aktueller Wert.{30}";
 
         #endregion
 
@@ -110,7 +54,7 @@ namespace StockMarket
             var ARD = Regex.Match(webContent, REGEX_ARD).Success;
             if (ARD)
             {
-                var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ARD_Price);
+                var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_ARD_Group_SharePrice);
                 if (!priceMatch.Success)
                 {
                     return 0.0;
@@ -155,6 +99,108 @@ namespace StockMarket
             }
 
             return Convert.ToDouble(price, CultureInfo.GetCultureInfo("de-DE"));
+        }
+
+        /// <summary>
+        /// Tries to get the values defining a share from webcontent
+        /// </summary>
+        /// <param name="webContent">The input to search for the values</param>
+        /// <param name="name">The name of the <see cref="Share"/></param>
+        /// <param name="isin">The ISIN of the <see cref="Share"/></param>
+        /// <param name="wkn">The WKN of the <see cref="Share"/></param>
+        public static void GetShareIDs(string webContent, out string name, out string isin, out string wkn, out double price)
+        {
+            // set empty values
+            wkn = string.Empty; isin = string.Empty; name = string.Empty;
+            price = 0;
+
+            var ARD = Regex.Match(webContent, REGEX_ARD).Success;
+            if (ARD)
+            {
+                string ids = string.Empty;
+                // get values of WKN and ISIN
+                try
+                {
+                    var idMatch = Regex.Match(webContent, RegexHelper.REGEX_ARD_Group_IDs);
+                    ids = webContent.Substring(idMatch.Index, 1100);
+                    var wknMatch = Regex.Match(ids, RegexHelper.REGEX_ARD_WKN);
+                    var isinMatch = Regex.Match(ids, RegexHelper.REGEX_ARD_ISIN);
+                    wkn = wknMatch.Value.Substring(4);
+                    isin = isinMatch.Value.Substring(5);
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show("Did not find ISIN/WKN match");
+                    return;
+                }
+
+                // get name of SHARE
+                var nameMatch = Regex.Match(ids, RegexHelper.REGEX_ARD_Group_ShareName);
+                name = nameMatch.Value.Trim().Replace("h1>", string.Empty).Replace("<", string.Empty).Replace("/", string.Empty);
+
+                //get price of share
+                var pricematch = Regex.Match(ids, REGEX_ARD_Group_SharePrice);
+                var priceString = Regex.Match(pricematch.Value, REGEX_SharePrice).Value;
+                Double.TryParse(priceString, out price);
+
+            }
+            else // finanzen.net
+            {
+                try
+                {
+                    var type = RegexHelper.GetShareTypeShare(webContent);
+                    // set values if it is a share
+                    if (type == ShareType.Share)
+                    {
+                        // get values of WKN and ISIN
+                        try
+                        {
+                            var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
+                            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
+                            var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
+                            wkn = wknMatch.Value.Substring(5);
+                            isin = isinMatch.Value.Substring(6);
+                        }
+                        catch (Exception Ex)
+                        {
+                            MessageBox.Show("Did not find ISIN/WKN match");
+                            return;
+                        }
+
+                        // < h2 class="box-headline">Aktienkurs Infineon AG in <span id = "jsCurrencySelect" > EUR </ span >
+                        // get name of SHARE
+                        var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
+                        var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
+                        name = nameM2.Value.Substring(10).Trim().Replace(" in", string.Empty);
+                    }
+
+                    // set values if it is a certificate
+                    if (type == ShareType.Certificate)
+                    {
+                        // get values of WKN and ISIN
+                        var title = Regex.Match(webContent, RegexHelper.REGEX_CertificateTitle);
+                        var wknMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertWKN);
+                        var isinMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertISIN);
+                        wkn = wknMatch.Value.Replace("|", string.Empty).Trim();
+                        isin = isinMatch.Value.Replace("|", string.Empty).Trim();
+
+                        // get the certificate factor
+                        var factorMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertFactor);
+
+                        // get name of SHARE certificate
+                        var nameMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertName);
+                        name = nameMatch.Value.Substring(4).Replace(" von", string.Empty).Trim() + " Certificate " + factorMatch.Value + "x";
+                    }
+
+                }
+                catch (Exception Ex)
+                {
+                    MessageBox.Show("Did not find ISIN/WKN match");
+                    return;
+                }
+            }
+
+
         }
 
         /// <summary>

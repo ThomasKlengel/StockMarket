@@ -283,7 +283,7 @@ namespace StockMarket.ViewModels
                 CheckPathExists = true,
                 Multiselect = false,
                 Filter = "PDFs|*.pdf",
-                InitialDirectory = @"C:\"
+                InitialDirectory = App.DEFAULTPATH
             };
 
             if (ofd.ShowDialog() == true)
@@ -294,106 +294,113 @@ namespace StockMarket.ViewModels
                 var document = PdfReader.PdfToText(pdfToRead, 0);
                 var lines = PdfReader.GetLinesStartingWith(document, new List<string>() { "Wertpapier", "Stück", "Schluss", "Ausführungskurs", "Geschäftsjahr" });
 
-                string word = "Wertpapier";
-                //get order type
-                if (lines.ContainsKey(word))
+                try
                 {
-                    var line = lines[word];
-                    var buySell = line.Words.Last();
-                    OrderType = buySell == "Verkauf" ? ShareComponentType.Sell : ShareComponentType.Buy;
-                }
-
-                word = "Stück";
-                //get ISIN, WKN, Amiount
-                if (lines.ContainsKey(word))
-                {
-                    try
+                    string word = "Wertpapier";
+                    //get order type
+                    if (lines.ContainsKey(word))
                     {
                         var line = lines[word];
+                        var buySell = line.Words.Last();
+                        OrderType = buySell == "Verkauf" ? ShareComponentType.Sell : ShareComponentType.Buy;
+                    }
 
-                        // get ordered amount
-                        var strAmount = line.Words[1];
-                        double doubleAmount = 0;
-                        Double.TryParse(strAmount, out doubleAmount);
-                        Amount = doubleAmount;
-
-                        //            // Share by ISIN or WKN
-                        var isin = line.Words[(line.Words.Count - 2)];
-                        var wkn = line.Words.Last().Replace("(", "").Replace(")", "");
-
-                        var share = DataBaseHelper.GetShareByIdentifier(isin);
-                        if (share != null)
+                    word = "Stück";
+                    //get ISIN, WKN, Amiount
+                    if (lines.ContainsKey(word))
+                    {
+                        try
                         {
-                            SelectedShare = share;
-                        }
-                        else
-                        {
-                            share = DataBaseHelper.GetShareByIdentifier(wkn);
+                            var line = lines[word];
+
+                            // get ordered amount
+                            var strAmount = line.Words[1];
+                            double doubleAmount = 0;
+                            Double.TryParse(strAmount, out doubleAmount);
+                            Amount = doubleAmount;
+
+                            //            // Share by ISIN or WKN
+                            var isin = line.Words[(line.Words.Count - 2)];
+                            var wkn = line.Words.Last().Replace("(", "").Replace(")", "");
+
+                            var share = DataBaseHelper.GetShareByIdentifier(isin);
                             if (share != null)
                             {
                                 SelectedShare = share;
                             }
+                            else
+                            {
+                                share = DataBaseHelper.GetShareByIdentifier(wkn);
+                                if (share != null)
+                                {
+                                    SelectedShare = share;
+                                }
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            MessageBox.Show("Error on reading of ISIN, WKN or Amount");
                         }
                     }
-                    catch (Exception)
-                    {
-                        MessageBox.Show("Error on reading of ISIN, WKN or Amount");
-                    }
-                }
 
-                word = "Schluss";
-                //get order date
-                if (lines.ContainsKey(word))
-                {
-                    var line = lines[word];
-                    var match = Regex.Match(line.ToString(), "\\d{2}\\.\\d{2}.\\d{4}");
+                    word = "Schluss";
+                    //get order date
+                    if (lines.ContainsKey(word))
+                    {
+                        var line = lines[word];
+                        var match = Regex.Match(line.ToString(), "\\d{2}\\.\\d{2}.\\d{4}");
                         // get share price
                         var strDate = match.Value;
                         DateTime Date;
                         DateTime.TryParse(strDate, out Date);
-                        OrderDate = Date;    
-                }
-
-                word = "Ausführungskurs";
-                //get SharePrice at order time
-                if (lines.ContainsKey(word))
-                {
-                    var line = lines[word];
-                    // get share price
-                    var strPrice = line.Words[1].Replace(".", "");
-                    double doublePrice = 0.0;
-                    Double.TryParse(strPrice, out doublePrice);
-                    ActPrice = doublePrice;
-                }
-
-
-                // get expenses
-                var l1 = PdfReader.GetLinesBetween(document, "Provision", "Ermittlung");
-                l1.Remove(l1.Last());
-                var l2 = PdfReader.GetLinesBetween(document, "Provision", "Ausmachender");
-                l2.Remove(l2.Last());
-                var linesProv = l2.Count > l1.Count ? l1 : l2;
-
-                foreach (var line in linesProv)
-                {
-                    if (line.ToString().StartsWith("Provision"))
-                    {
-                        // get order expenses
-                        var strExpense = line.Words[1].Replace("-", "");
-                        double doubleExpense = 0.0;
-                        Double.TryParse(strExpense, out doubleExpense);
-                        Expenses = doubleExpense;
-                        continue;
+                        OrderDate = Date;
                     }
 
-                    if (line.Words[line.Words.Count() - 2].EndsWith("-"))
+                    word = "Ausführungskurs";
+                    //get SharePrice at order time
+                    if (lines.ContainsKey(word))
                     {
-                        // get additional expenses
-                        var strExpense = line.Words[line.Words.Count() - 2].Replace("-", "");
-                        double doubleExpense = 0.0;
-                        Double.TryParse(strExpense, out doubleExpense);
-                        Expenses += doubleExpense;
+                        var line = lines[word];
+                        // get share price
+                        var strPrice = line.Words[1].Replace(".", "");
+                        double doublePrice = 0.0;
+                        Double.TryParse(strPrice, out doublePrice);
+                        ActPrice = doublePrice;
                     }
+
+
+                    // get expenses
+                    var l1 = PdfReader.GetLinesBetween(document, "Provision", "Ermittlung");
+                    l1.Remove(l1.Last());
+                    var l2 = PdfReader.GetLinesBetween(document, "Provision", "Ausmachender");
+                    l2.Remove(l2.Last());
+                    var linesProv = l2.Count > l1.Count ? l1 : l2;
+
+                    foreach (var line in linesProv)
+                    {
+                        if (line.ToString().StartsWith("Provision"))
+                        {
+                            // get order expenses
+                            var strExpense = line.Words[1].Replace("-", "");
+                            double doubleExpense = 0.0;
+                            Double.TryParse(strExpense, out doubleExpense);
+                            Expenses = doubleExpense;
+                            continue;
+                        }
+
+                        if (line.Words[line.Words.Count() - 2].EndsWith("-"))
+                        {
+                            // get additional expenses
+                            var strExpense = line.Words[line.Words.Count() - 2].Replace("-", "");
+                            double doubleExpense = 0.0;
+                            Double.TryParse(strExpense, out doubleExpense);
+                            Expenses += doubleExpense;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    //TODO: log ex
                 }
 
             }

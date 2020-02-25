@@ -60,15 +60,18 @@ namespace StockMarket.Charts
                     foreach (var dividend in dividends.Where(s=>s.DayOfPayment<=shareValue.Date))
                     {
                         completeValue += dividend.Value;
-                        if (completeValue<min)
-                        {
-                            min = completeValue;
-                        }
-                        if ( completeValue>max)
-                        {
-                            max = completeValue;
-                        }
+
                     }
+
+                    if (completeValue < min)
+                    {
+                        min = completeValue;
+                    }
+                    if (completeValue > max)
+                    {
+                        max = completeValue;
+                    }
+
                     returnCharts.AbsoluteSeries.Values.Add(new DateTimePoint(shareValue.Date.Date, model.SumNow));
                     // calculate the percentagewise growth
                     double percentage = Math.Round(((shareValue.Price - first.SharePrice) / first.SharePrice * 100), 3);

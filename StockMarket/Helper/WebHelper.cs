@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace StockMarket
@@ -30,6 +31,11 @@ namespace StockMarket
             catch (WebException WebEx)
             {
                 System.Windows.MessageBox.Show(WebEx.Message);
+                return string.Empty;
+            }
+            catch(Exception Ex)
+            {
+                System.Windows.MessageBox.Show(Ex.Message);
                 return string.Empty;
             }
         }
