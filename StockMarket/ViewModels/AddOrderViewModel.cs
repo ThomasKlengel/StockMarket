@@ -103,6 +103,8 @@ namespace StockMarket.ViewModels
             }
         }
 
+        //TODO: add taxes
+
         private Share _selectedShare;
         /// <summary>
         /// The <see cref="Share"/> that is currently selected in the UI to add the orders to
@@ -220,6 +222,8 @@ namespace StockMarket.ViewModels
             }
         }
 
+
+        //TODO: orders can be shared between users by value(e.g. 1000€) or amount
         #endregion
 
         #region Methods

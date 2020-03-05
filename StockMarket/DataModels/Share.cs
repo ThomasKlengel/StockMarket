@@ -86,17 +86,11 @@ namespace StockMarket
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
-        public override bool Equals(object obj)
-        {
-            // check if it is a share to compare
-            if (obj.GetType() == typeof(Share))
-            {
-                // compare the ISIN
-                return this.ISIN == (obj as Share).ISIN;
-            }
+        public override bool Equals(object obj) =>
+            obj is Share s
+            ? this.ISIN == s.ISIN
+            : false;
 
-            return false;
-        }
 
         /// <inheritdoc/>
         public override int GetHashCode()

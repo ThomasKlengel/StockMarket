@@ -20,6 +20,8 @@ namespace StockMarket
         public const string REGEX_SharePrice = "\\d*\\.?\\d*,\\d*";
         public const string REGEX_Group_SharePrice = "\\<tr\\>\\<td class=\"font-bold\"\\>Kurs\\<.*EUR.*\\<span";
         public const string REGEX_Group_IDs = "instrument-id.{150}";
+        public const string REGEX_Group_IDs2 = "<title>.*<\\/title>";
+        public const string REGEX_Group_IDs3 = "(.{6},\\S{12})";
         public const string REGEX_ISIN = "ISIN: \\S{12}";
         public const string REGEX_WKN = "WKN: .{6}";
         public const string REGEX_Group_ShareName = "box-headline\"\\>Aktienkurs.{50}";
@@ -33,6 +35,7 @@ namespace StockMarket
         public const string REGEX_Group_CertName = "\\bauf .* von\\b";
         public const string REGEX_Group_CertFactor = "Faktor \\d{1,2}";
         public const string REGEX_Group_CertPrice = "<div .*data-template=\"Bid\".* data-animation.*<\\/span><\\/div>";
+        public const string REGEX_Group_CertPrice2 = "<div .*data-template=\"Bid\".*";
 
         public const string REGEX_ARD = "<title>.*boerse.ARD.de<\\/title>";
         public const string REGEX_ARD_Group_IDs = "einzelkurs_header"; // get index... substring (index, 1100)
@@ -86,8 +89,9 @@ namespace StockMarket
                     case ShareType.Certificate:
                         {
                             // get the current bid price
-                            var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                            price = Regex.Match(priceMath.Value, RegexHelper.REGEX_SharePrice).Value;
+                            var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
+                            priceMatch = priceMatch.Success? priceMatch: Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice2);
+                            price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value;
 
                             break;
                         }
@@ -108,7 +112,7 @@ namespace StockMarket
         /// <param name="name">The name of the <see cref="Share"/></param>
         /// <param name="isin">The ISIN of the <see cref="Share"/></param>
         /// <param name="wkn">The WKN of the <see cref="Share"/></param>
-        public static void GetShareIDs(string webContent, out string name, out string isin, out string wkn, out double price)
+        public static void GetShareIDs(string webContent, out string name, out string isin, out string wkn, out double price, string website)
         {
             // set empty values
             wkn = string.Empty; isin = string.Empty; name = string.Empty;
@@ -148,7 +152,7 @@ namespace StockMarket
             {
                 try
                 {
-                    var type = RegexHelper.GetShareTypeShare(webContent);
+                    var type = RegexHelper.GetShareTypeShare(website);
                     // set values if it is a share
                     if (type == ShareType.Share)
                     {
@@ -156,10 +160,24 @@ namespace StockMarket
                         try
                         {
                             var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
-                            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
+                            idMatch = idMatch.Success?idMatch: Regex.Match(webContent, RegexHelper.REGEX_Group_IDs2);
+                            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);                            
                             var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
-                            wkn = wknMatch.Value.Substring(5);
-                            isin = isinMatch.Value.Substring(6);
+                            if (wknMatch.Success && isinMatch.Success)
+                            {
+                                wkn = wknMatch.Value.Substring(5);
+                                isin = isinMatch.Value.Substring(6);
+                            }
+                            else
+                            {
+                                var IDs = Regex.Match(idMatch.Value, RegexHelper.REGEX_Group_IDs3);
+                                if (IDs.Success)
+                                {                                    
+                                    wkn = IDs.Value.Substring(1,6);
+                                    isin = isinMatch.Value.Substring(7,12);
+                                }
+
+                            }
                         }
                         catch (Exception Ex)
                         {
@@ -262,13 +280,22 @@ namespace StockMarket
 
         public static ShareType GetShareTypeShare(string website)
         {
+
+            if (Regex.Match(website, "optionsscheine").Success)
+            {
+                return ShareType.Certificate;
+            }
+            else if (Regex.Match(website, "knockouts").Success)
+            {
+                return ShareType.Certificate;
+            }
+            else if (Regex.Match(website, "hebelprodukte").Success)
+            {
+                return ShareType.Certificate;
+            }
             if (Regex.Match(website, "aktien").Success)
             {
                 return ShareType.Share;
-            }
-            else if (Regex.Match(website, "optionsscheine").Success)
-            {
-                return ShareType.Certificate;
             }
             else
             {

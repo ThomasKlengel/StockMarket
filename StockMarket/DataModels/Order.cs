@@ -43,6 +43,7 @@ namespace StockMarket
         /// </summary>
         public DateTime Date { get; set; }
 
+        //TODO: Add Taxes
         /// <summary>
         /// Gets or sets the fee for the purchase.
         /// </summary>

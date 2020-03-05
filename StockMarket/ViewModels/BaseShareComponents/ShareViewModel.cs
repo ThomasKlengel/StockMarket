@@ -149,6 +149,8 @@ namespace StockMarket.ViewModels
             }
         }
 
+
+        //TODO: recalculate the current value
         /// <summary>
         /// Gets the current summed up price for all orders.
         /// </summary>

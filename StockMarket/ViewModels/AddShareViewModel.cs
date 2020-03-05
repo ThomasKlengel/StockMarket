@@ -290,7 +290,7 @@ namespace StockMarket.ViewModels
             string webContent = await WebHelper.GetWebContent(this.WebSite);
 
             // set empty values
-            RegexHelper.GetShareIDs(webContent, out name, out isin, out wkn, out price);
+            RegexHelper.GetShareIDs(webContent, out name, out isin, out wkn, out price, this.WebSite);
 
             // check the share type
             var type = RegexHelper.GetShareTypeShare(this.WebSite);
@@ -311,7 +311,7 @@ namespace StockMarket.ViewModels
             }
 
 
-            if (price != 0)
+            if (price == 0)
             {
                 // set values if it is a share
                 if (this.IsShare)
@@ -333,7 +333,10 @@ namespace StockMarket.ViewModels
 
                     // get the certificate factor
                     var factorMatch = Regex.Match(title.Value, RegexHelper.REGEX_Group_CertFactor);
-                    this.Factor = Convert.ToByte(factorMatch.Value.Substring(6));
+                    if (factorMatch.Success)
+                    {
+                        this.Factor = Convert.ToByte(factorMatch.Value.Substring(6));
+                    }
                     // get the current bid price
                     // var priceMath = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
                     // price = Convert.ToDouble(Regex.Match(priceMath.Value,RegexHelper.REGEX_SharePrice).Value);

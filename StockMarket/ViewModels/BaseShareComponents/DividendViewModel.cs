@@ -66,6 +66,7 @@ namespace StockMarket.ViewModels
             }
         }
 
+        //TODO: recalculate the current value
         /// <summary>
         /// Gets the current summed up price of the shares
         /// (getter only).
