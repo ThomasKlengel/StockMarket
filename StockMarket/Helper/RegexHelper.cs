@@ -12,7 +12,7 @@ namespace StockMarket
     public static class RegexHelper
     {
         // TODO: default page by isin = https://www.finanzen.net/kurse/de000uf0aa67
-        
+
         #region Regex strings
         public const string REGEX_Website_Valid1 = "^https:\\/{2}w{3}\\.finanzen\\.net.+$";
         public const string REGEX_Website_Valid2 = "^https:\\/{2}kurse\\.boerse\\.ard\\.de.+$";
@@ -90,7 +90,7 @@ namespace StockMarket
                         {
                             // get the current bid price
                             var priceMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice);
-                            priceMatch = priceMatch.Success? priceMatch: Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice2);
+                            priceMatch = priceMatch.Success ? priceMatch : Regex.Match(webContent, RegexHelper.REGEX_Group_CertPrice2);
                             price = Regex.Match(priceMatch.Value, RegexHelper.REGEX_SharePrice).Value;
 
                             break;
@@ -160,8 +160,8 @@ namespace StockMarket
                         try
                         {
                             var idMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_IDs);
-                            idMatch = idMatch.Success?idMatch: Regex.Match(webContent, RegexHelper.REGEX_Group_IDs2);
-                            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);                            
+                            idMatch = idMatch.Success ? idMatch : Regex.Match(webContent, RegexHelper.REGEX_Group_IDs2);
+                            var wknMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_WKN);
                             var isinMatch = Regex.Match(idMatch.Value, RegexHelper.REGEX_ISIN);
                             if (wknMatch.Success && isinMatch.Success)
                             {
@@ -172,9 +172,9 @@ namespace StockMarket
                             {
                                 var IDs = Regex.Match(idMatch.Value, RegexHelper.REGEX_Group_IDs3);
                                 if (IDs.Success)
-                                {                                    
-                                    wkn = IDs.Value.Substring(1,6);
-                                    isin = isinMatch.Value.Substring(7,12);
+                                {
+                                    wkn = IDs.Value.Substring(1, 6);
+                                    isin = isinMatch.Value.Substring(7, 12);
                                 }
 
                             }
@@ -189,11 +189,14 @@ namespace StockMarket
                         // get name of SHARE
                         var nameMatch = Regex.Match(webContent, RegexHelper.REGEX_Group_ShareName);
                         var nameM2 = Regex.Match(nameMatch.Value, RegexHelper.REGEX_ShareName);
-                        name = nameM2.Value.Substring(10).Trim().Replace(" in", string.Empty);
+                        if (nameM2.Success)
+                        {
+                            name = nameM2.Value.Substring(10).Trim().Replace(" in", string.Empty);
+                        }
                     }
 
                     // set values if it is a certificate
-                    if (type == ShareType.Certificate)
+                    else if (type == ShareType.Certificate)
                     {
                         // get values of WKN and ISIN
                         var title = Regex.Match(webContent, RegexHelper.REGEX_CertificateTitle);
@@ -280,16 +283,15 @@ namespace StockMarket
 
         public static ShareType GetShareTypeShare(string website)
         {
-
             if (Regex.Match(website, "optionsscheine").Success)
             {
                 return ShareType.Certificate;
             }
-            else if (Regex.Match(website, "knockouts").Success)
+            if (Regex.Match(website, "knockouts").Success)
             {
                 return ShareType.Certificate;
             }
-            else if (Regex.Match(website, "hebelprodukte").Success)
+            if (Regex.Match(website, "hebelprodukte").Success)
             {
                 return ShareType.Certificate;
             }
@@ -297,10 +299,12 @@ namespace StockMarket
             {
                 return ShareType.Share;
             }
-            else
+            if (Regex.Match(website, "kurse").Success)
             {
-                return ShareType.ETF;
+                return ShareType.Share;
             }
+
+            return ShareType.ETF;
         }
     }
 }
