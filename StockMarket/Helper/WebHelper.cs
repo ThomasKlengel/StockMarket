@@ -30,12 +30,12 @@ namespace StockMarket
             }
             catch (WebException WebEx)
             {
-                System.Windows.MessageBox.Show(WebEx.Message);
+                Logger.Log($"GetWebContent: {webSite}: {WebEx.Message}");                
                 return string.Empty;
             }
             catch(Exception Ex)
             {
-                System.Windows.MessageBox.Show(Ex.Message);
+                Logger.Log($"GetWebContent: {webSite}: {Ex.Message}");
                 return string.Empty;
             }
         }

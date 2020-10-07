@@ -418,13 +418,20 @@ namespace StockMarket.ViewModels
         /// </summary>
         private async void RefreshPriceAsync()
         {
-            await Task.Run(async() =>
+            try
             {
-                var price = await RegexHelper.GetSharePriceAsync(this.baseShare);
+                await Task.Run(async () =>
+                {
+                    var price = await RegexHelper.GetSharePriceAsync(this.baseShare);
 
                 // set the price for the UI
                 this.SinglePriceNow = price;
-            });
+                });
+            }
+            catch (Exception ex)
+            {
+                Logger.Log(ex.Message);
+            }
 
         }
 

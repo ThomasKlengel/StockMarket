@@ -231,22 +231,44 @@ namespace StockMarket
         /// <returns>A <see cref="Task{TResult}"/> representing the result of the asynchronous operation.</returns>
         public static async Task<double> GetSharePriceAsync(Share share)
         {
-            // get the website content
-            var content = await WebHelper.GetWebContent(share.WebSite);
-            // get the price
-            var price = RegexHelper.GetSharePrice(content, share.ShareType);
-            if (price == 0.0 && !share.WebSite2.IsNullEmptyWhitespace())
+            var content = string.Empty;
+            var price = 0.0;
+            int counter = 20;
+            while (price == 0.0 && counter != 0)
             {
-                content = await WebHelper.GetWebContent(share.WebSite2);
-                // get the price
-                price = RegexHelper.GetSharePrice(content, share.ShareType);
+                if (price == 0.0 && !share.WebSite.IsNullEmptyWhitespace())
+                {
+                    content = await WebHelper.GetWebContent(share.WebSite);
+                    // get the price
+                    price = RegexHelper.GetSharePrice(content, share.ShareType);
+                }
+                if (price == 0.0 && !share.WebSite2.IsNullEmptyWhitespace())
+                {
+                    content = await WebHelper.GetWebContent(share.WebSite2);
+                    // get the price
+                    price = RegexHelper.GetSharePrice(content, share.ShareType);
+                }
+
+                if (price == 0.0 && !share.WebSite3.IsNullEmptyWhitespace())
+                {
+                    content = await WebHelper.GetWebContent(share.WebSite3);
+                    // get the price
+                    price = RegexHelper.GetSharePrice(content, share.ShareType);
+                }
+                if (price == 0.0 )
+                {
+                    var website = $"https://www.finanzen.net/kurse/{share.ISIN}";
+                    content = await WebHelper.GetWebContent(website);
+                    // get the price
+                    price = RegexHelper.GetSharePrice(content, share.ShareType);
+                }
+                counter--;
+                await Task.Delay(500);
             }
 
-            if (price == 0.0 && !share.WebSite3.IsNullEmptyWhitespace())
+            if (counter == 0)
             {
-                content = await WebHelper.GetWebContent(share.WebSite3);
-                // get the price
-                price = RegexHelper.GetSharePrice(content, share.ShareType);
+                Logger.Log($"Could not find price for {share.ShareName} ({share.ISIN}) at the websites {share.WebSite},{share.WebSite2},{share.WebSite3}");
             }
 
             return price;

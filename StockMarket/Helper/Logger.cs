@@ -11,9 +11,29 @@ namespace StockMarket
     {
         public static void Log(string message)
         {
-            string logMessage = $"[{DateTime.Now.ToLongTimeString()}] : message \r\n";
+            Task.Run(async () =>
+            {
+                var errorOccured = true;
+                while (errorOccured)
+                {
+                    try
+                    {
+                        if (!Directory.Exists("logs"))
+                        {
+                            Directory.CreateDirectory("logs");
+                        }
 
-            File.AppendAllText($"Log_{DateTime.Today.ToShortDateString()}.csv", logMessage);
+                        string logMessage = $"[{DateTime.Now.ToString("HH:mm:ss.fff")}] : {message} \r\n";
+                        File.AppendAllText($"logs\\Log_{DateTime.Today.ToString("yyyy-MM-dd")}.csv", logMessage);
+                        errorOccured = false;
+                    }
+                    catch (Exception ex)
+                    {
+                        errorOccured = true;
+                        Task.Delay(100).Wait();
+                    }
+                }
+            });
 
         }
 

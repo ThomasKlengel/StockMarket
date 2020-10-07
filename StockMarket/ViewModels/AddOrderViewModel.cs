@@ -404,6 +404,7 @@ namespace StockMarket.ViewModels
                 }
                 catch (Exception ex)
                 {
+                    System.Windows.MessageBox.Show(ex.Message);
                     //TODO: log ex
                 }
 
